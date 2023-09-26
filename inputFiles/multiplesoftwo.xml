@@ -36,7 +36,7 @@ clock x, y, z;</declaration>
 			<source ref="id1"/>
 			<target ref="id0"/>
 			<label kind="guard" x="-127" y="-17">y == 2</label>
-			<label kind="assignment" x="-127" y="0">x = 0, z = 0</label>
+			<label kind="assignment" x="-127" y="0">x = 0, y = 0, qqq = 0, z = 0</label>
 			<nail x="-68" y="0"/>
 			<nail x="-136" y="0"/>
 		</transition>

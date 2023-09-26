@@ -16,6 +16,7 @@ int main() {
     // Conventions to follow:
     // In UPPAAL you have to mark final  states by giving them a color
     // Write the invariants like x<2&&y==1
+    // Write the guards like x<2&&y>1
     int idTA = 0;
     std::string currentDirPath = XSTRING(SOURCE_ROOT);
 

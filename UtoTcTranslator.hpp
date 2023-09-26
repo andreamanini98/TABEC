@@ -16,7 +16,7 @@ private:
     const std::string outFilePath;
 
     /**
-    * Method used to write the locations declaration in tChecker syntax.
+    * Method used to write the locations declarations in tChecker syntax.
     * @param processName the name of the process (up to now we only assume one process).
     * @param initialLocation the name of the TA's initial location.
     * @param locations a vector of locations saved in json format.
@@ -37,7 +37,7 @@ private:
                 (putColon) ? outString.append(" : ") : outString;
                 std::string labelKind = static_cast<std::string>(location.at("label").at("@kind"));
                 if (labelKind == "invariant") {
-                    outString.append(labelKind + ":");
+                    outString.append(labelKind + ": ");
                     outString.append(static_cast<std::string>(location.at("label").at("#text")));
                     putColon = true;
                 }
@@ -54,8 +54,64 @@ private:
             outString.append("}\n");
             out << outString;
         }
-
         out.flush();
+    }
+
+    /**
+     * Method used to write the transitions declarations in tChecker syntax.
+     * @param processName the name of the process (up to now we only assume one process).
+     * @param transitions a vector of transitions saved in json format.
+     * @param out the stream where we write our output file.
+     */
+    static void writeTransitionsDeclarations(const std::string &processName, std::vector<json> transitions, std::ofstream &out) {
+        for (auto &transition: transitions) {
+            bool putColon = false;
+            std::string outString =
+                    "edge:" + processName + ":" + static_cast<std::string>(transition.at("source").at("@ref")) +
+                    ":" + static_cast<std::string>(transition.at("target").at("@ref")) + ":" + "a" + "{";
+
+            if (transition.contains("label")) {
+                json labels = transition.at("label");
+                // We have to put this since, if a transition only have either a guard or a reset (not both),
+                // then labels is not a vector.
+                if (labels.is_array())
+                    writeTransitionsDeclarations_helper(outString, labels, putColon);
+                else {
+                    json labelsToArray = json::array();
+                    labelsToArray.push_back(labels);
+                    writeTransitionsDeclarations_helper(outString, labelsToArray, putColon);
+                }
+            }
+
+            outString.append("}\n");
+            out << outString;
+        }
+        out.flush();
+    }
+
+    /**
+     * Helper method used inside writeTransitionsDeclarations().
+     * @param outString the string that will be written in the output file.
+     * @param labels a vector containing all the labels of a transition (if any).
+     * @param putColon a boolean used to determine if in the tChecker translation we have to put a colon.
+     */
+    static void writeTransitionsDeclarations_helper(std::string &outString, std::vector<json> labels, bool &putColon) {
+        for (auto &label: labels) {
+            if (static_cast<std::string>(label.at("@kind")) == "guard") {
+                (putColon) ? outString.append(" : ") : outString;
+                outString.append("provided: ");
+                outString.append(static_cast<std::string>(label.at("#text")));
+                putColon = true;
+            }
+            if (static_cast<std::string>(label.at("@kind")) == "assignment") {
+                (putColon) ? outString.append(" : ") : outString;
+                outString.append("do: ");
+                std::string resetString = static_cast<std::string>(label.at("#text"));
+                std::replace(resetString.begin(), resetString.end(), ',', ';');
+                outString.append(resetString);
+                putColon = true;
+            }
+        }
     }
 
 
@@ -75,15 +131,20 @@ public:
         std::string processName = "P";
 
         out << "system:" + systemName + "\n\n";
+        // TODO you still have to implement clock declarations
         out << "QUI CI VANNO I CLOCK\n\n";
-        out << "event:a\n\n";
+        out << "event:a\n\n"; // Up to now we only use one event named a (also check in writeTransitionsDeclarations).
         out << "process:" + processName + "\n";
 
-        // Locations declaration
+        // Locations declaration.
         std::string initialLocation = inFile.at("nta").at("template").at("init").at("@ref");
-        std::vector<json> locations = inFile.at("nta").at("template").at("location");
+        json locations = inFile.at("nta").at("template").at("location");
         writeLocationsDeclarations(processName, initialLocation, locations, out);
-        
+
+        //Transitions declarations.
+        std::vector<json> transitions = inFile.at("nta").at("template").at("transition");
+        writeTransitionsDeclarations(processName, transitions, out);
+
         out.close();
     }
 
