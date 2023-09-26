@@ -13,21 +13,40 @@ using json = nlohmann::json;
 
 
 int main() {
-    // TODO we have to take all files from a directory and translate them in another directory
+    // Conventions to follow:
+    // In UPPAAL you have to mark final  states by giving them a color
+    // Write the invariants like x<2&&y==1
+    int idTA = 0;
     std::string currentDirPath = XSTRING(SOURCE_ROOT);
-    std::ifstream t(currentDirPath + "/multiplesoftwo.xml");
-    std::stringstream buffer;
-    buffer << t.rdbuf();
-    t.close();
 
-    // Maybe also here const will have to be removed if we take all files from a directory.
-    const std::string tmp = buffer.str();
-    const char *xml_str = tmp.c_str();
+    try {
+        for (const auto &entry: std::filesystem::directory_iterator(currentDirPath + "/inputFiles")) {
+            if (std::filesystem::is_regular_file(entry)) {
+                std::ifstream file(entry.path());
 
-    json j = nlohmann::json::parse(xml2json(xml_str));
+                if (file.is_open()) {
+                    std::stringstream buffer;
+                    buffer << file.rdbuf();
+                    file.close();
 
-    Translator translator(currentDirPath + "/example.txt");
-    translator.translateTA("ta1", j);
+                    std::string tmp = buffer.str();
+                    const char *xml_str = tmp.c_str();
+
+                    std::string nameTA = "ta" + std::to_string(idTA);
+                    std::string outputFileName = nameTA + "_out.txt";
+
+                    Translator translator(currentDirPath + "/outputFiles/" += outputFileName);
+                    translator.translateTA(nameTA, json::parse(xml2json(xml_str)));
+
+                    idTA++;
+                } else {
+                    std::cerr << "Failed to open file: " << entry.path() << std::endl;
+                }
+            }
+        }
+    } catch (const std::filesystem::filesystem_error &e) {
+        std::cerr << "Error while reading directory: " << e.what() << std::endl;
+    }
 
     return 0;
 }
