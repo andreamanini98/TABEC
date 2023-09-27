@@ -137,11 +137,13 @@ public:
         out << "process:" + processName + "\n";
 
         // Locations declaration.
+        // TODO devi gestire il caso in cui hai un solo stato oppure una sola transizione
         std::string initialLocation = inFile.at("nta").at("template").at("init").at("@ref");
         json locations = inFile.at("nta").at("template").at("location");
         writeLocationsDeclarations(processName, initialLocation, locations, out);
 
         //Transitions declarations.
+        // TODO devi gestire il caso in cui hai un solo stato oppure una sola transizione
         std::vector<json> transitions = inFile.at("nta").at("template").at("transition");
         writeTransitionsDeclarations(processName, transitions, out);
 
