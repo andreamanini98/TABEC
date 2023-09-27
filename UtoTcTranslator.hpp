@@ -72,8 +72,8 @@ private:
 
             if (transition.contains("label")) {
                 json labels = transition.at("label");
-                // We have to put this since, if a transition only have either a guard or a reset (not both),
-                // then labels is not a vector.
+                // We have to put this since, if a transition only have either
+                // a guard or a reset (not both), then labels is not a vector.
                 if (labels.is_array())
                     writeTransitionsDeclarations_helper(outString, labels, putColon);
                 else {
@@ -137,15 +137,27 @@ public:
         out << "process:" + processName + "\n";
 
         // Locations declaration.
-        // TODO devi gestire il caso in cui hai un solo stato oppure una sola transizione
         std::string initialLocation = inFile.at("nta").at("template").at("init").at("@ref");
         json locations = inFile.at("nta").at("template").at("location");
-        writeLocationsDeclarations(processName, initialLocation, locations, out);
+        // We have to put this since, if we have only one location, then locations is not a vector.
+        if (locations.is_array())
+            writeLocationsDeclarations(processName, initialLocation, locations, out);
+        else {
+            json locationsToArray = json::array();
+            locationsToArray.push_back(locations);
+            writeLocationsDeclarations(processName, initialLocation, locationsToArray, out);
+        }
 
         //Transitions declarations.
-        // TODO devi gestire il caso in cui hai un solo stato oppure una sola transizione
-        std::vector<json> transitions = inFile.at("nta").at("template").at("transition");
-        writeTransitionsDeclarations(processName, transitions, out);
+        json transitions = inFile.at("nta").at("template").at("transition");
+        // We have to put this since, if we have only one transition, then transitions is not a vector.
+        if (transitions.is_array())
+            writeTransitionsDeclarations(processName, transitions, out);
+        else {
+            json transitionsToArray = json::array();
+            transitionsToArray.push_back(transitions);
+            writeTransitionsDeclarations(processName, transitionsToArray, out);
+        }
 
         out.close();
     }
