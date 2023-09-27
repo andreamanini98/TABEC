@@ -165,14 +165,20 @@ public:
         // In our case study we don't care about having multiple processes, so we can simply put the name we want.
         std::string processName = "P";
 
+        std::cout << "Starting system declaration\n";
         out << "system:" + systemName + "\n\n";
 
+        std::cout << "Starting clocks declaration\n";
         writeClocksDeclarations(static_cast<std::string>(inFile.at("nta").at("template").at("declaration")), out);
 
+        std::cout << "Starting event declaration\n";
         out << "event:a\n\n"; // Up to now we only use one event named a (also check in writeTransitionsDeclarations).
+
+        std::cout << "Starting process declaration";
         out << "process:" + processName + "\n";
 
         // Locations declaration.
+        std::cout << "Starting locations declaration\n";
         std::string initialLocation = inFile.at("nta").at("template").at("init").at("@ref");
         json locations = inFile.at("nta").at("template").at("location");
         // We have to put this since, if we have only one location, then locations is not a vector.
@@ -185,6 +191,7 @@ public:
         }
 
         //Transitions declarations.
+        std::cout << "Starting transitions declaration\n";
         json transitions = inFile.at("nta").at("template").at("transition");
         // We have to put this since, if we have only one transition, then transitions is not a vector.
         if (transitions.is_array())

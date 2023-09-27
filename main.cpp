@@ -12,11 +12,6 @@ using json = nlohmann::json;
 #define XSTRING(x) STRING(x)
 
 
-// Conventions to follow:
-// In UPPAAL you have to mark final  states by giving them a color
-// Clock declarations must be written like: clock x, y, z;
-// Write the invariants like: x<2&&y==1
-// Write the guards like: x<2&&y>1
 int main(int argc, char *argv[]) {
     if (argc <= 4) {
         int idTA = 0;
@@ -43,9 +38,15 @@ int main(int argc, char *argv[]) {
                         std::string nameTA = "ta" + std::to_string(idTA);
                         std::string outputFileName = nameTA + "_out.tck";
 
+                        std::cout << "-------- " << nameTA << " --------\n";
+                        std::cout << "Starting conversion of file: " <<
+                                  std::endl << static_cast<std::string>(entry.path()) <<
+                                  std::endl << "as " << outputFileName <<
+                                  std::endl << "in dest directory: " << outputDirPath << std::endl;
+
                         json j = json::parse(xml2json(xml_str));
                         if (argc > 3 && !strcmp(argv[3], "-j"))
-                            std::cout << "\n" << "----- " << nameTA << " -----" << "\n" << std::setw(4) << j << "\n\n" << std::endl;
+                            std::cout << std::setw(4) << j << std::endl;
 
                         Translator translator(outputDirPath + "/" += outputFileName);
                         translator.translateTA(nameTA, j);
@@ -55,12 +56,14 @@ int main(int argc, char *argv[]) {
                         std::cerr << "Failed to open file: " << entry.path() << std::endl;
                     }
                 }
+                std::cout << "Conversion successful\n";
+                std::cout << "---------------------\n\n";
             }
         } catch (const std::filesystem::filesystem_error &e) {
             std::cerr << "Error while reading directory: " << e.what() << std::endl;
         }
     } else {
-        std::cerr << "The maximum number of allowed command line arguments is 2!" << std::endl;
+        std::cerr << "The maximum number of allowed command line arguments is 3!" << std::endl;
         return 1;
     }
 
