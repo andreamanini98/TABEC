@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<parameter>int t</parameter>
+		<declaration>// Place local declarations here.
+clock x, y, z;</declaration>
+		<location id="id0" x="-170" y="0">
+			<name x="-180" y="-34">q0</name>
+		</location>
+		<location id="id1" x="-102" y="-68" color="#ffa500">
+			<name x="-112" y="-102">q1</name>
+		</location>
+		<location id="id2" x="-34" y="0">
+			<name x="-44" y="-34">q2</name>
+		</location>
+		<location id="id3" x="-102" y="68">
+			<name x="-112" y="34">q3</name>
+		</location>
+		<location id="id4" x="68" y="0">
+			<name x="58" y="-34">q4</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id5">
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="guard" x="102" y="-17">x == 1</label>
+			<label kind="assignment" x="102" y="0">x = 0</label>
+			<label kind="comments" x="68" y="34">Just for testing, try this:
+- delete guards here and put t = 4
+- add a guard x == 1 and a reset x = 0 and put t = 7
+In the case without guards can we say that uppaal takes infinite actions in state q4 in a finite amount of time?</label>
+			<nail x="102" y="-25"/>
+			<nail x="102" y="25"/>
+		</transition>
+		<transition id="id6">
+			<source ref="id2"/>
+			<target ref="id4"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-195" y="25">y == 1</label>
+			<label kind="assignment" x="-229" y="42">x = 0, z = 0</label>
+		</transition>
+		<transition id="id8">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-102" y="8">x &gt; 5</label>
+			<label kind="assignment" x="-68" y="34">y = 0</label>
+		</transition>
+		<transition id="id9">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-76" y="-59">y &lt;= 3</label>
+		</transition>
+		<transition id="id10">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-178" y="-59">x &lt;= 1</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Process = Template(4);
+// List one or more processes to be composed into a system.
+system Process;
+</system>
+	<queries>
+		<query>
+			<formula>E[](Process.z &lt;= Process.t)</formula>
+			<comment/>
+			<option key="--diagnostic" value="0"/>
+			<result outcome="failure" type="quality" timestamp="2023-09-19 13:41:37 +0200">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+	</queries>
+</nta>

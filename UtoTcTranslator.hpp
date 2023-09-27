@@ -7,6 +7,8 @@
 #include "xml2json.hpp"
 #include <nlohmann/json.hpp>
 #include <utility>
+#include <string>
+#include <algorithm>
 
 using json = nlohmann::json;
 
@@ -14,6 +16,39 @@ class Translator {
 
 private:
     const std::string outFilePath;
+
+    /**
+     * Method used to write the clocks declarations in tChecker syntax.
+     * Up to now, we consider only single clocks (not arrays of clocks).
+     * @param declaration the string coming from the UPPAAL .xml file containing the list of clocks.
+     * @param out the stream where we write our output file.
+     */
+    static void writeClocksDeclarations(std::string declaration, std::ofstream &out) {
+        size_t clockPos = declaration.find("clock");
+        if (clockPos != std::string::npos) {
+            // We keep only the portion of string after the "clock" word.
+            declaration = declaration.substr(clockPos + 6);
+            // We remove the trailing semicolon ';'.
+            declaration.pop_back();
+
+            // Remove all whitespaces from the string.
+            declaration.erase(std::remove_if(declaration.begin(), declaration.end(), ::isspace), declaration.end());
+
+            std::stringstream ss(declaration);
+            std::vector<std::string> clocks;
+            std::string s;
+
+            // We now split the string for each encountered ',' storing the resulting token in a vector.
+            while (getline(ss, s, ','))
+                clocks.push_back(s);
+
+            for (auto &clock: clocks)
+                out << "clock:1:" << clock << std::endl;
+
+            out << "\n";
+            out.flush();
+        }
+    }
 
     /**
     * Method used to write the locations declarations in tChecker syntax.
@@ -131,8 +166,9 @@ public:
         std::string processName = "P";
 
         out << "system:" + systemName + "\n\n";
-        // TODO you still have to implement clock declarations
-        out << "QUI CI VANNO I CLOCK\n\n";
+
+        writeClocksDeclarations(static_cast<std::string>(inFile.at("nta").at("template").at("declaration")), out);
+
         out << "event:a\n\n"; // Up to now we only use one event named a (also check in writeTransitionsDeclarations).
         out << "process:" + processName + "\n";
 

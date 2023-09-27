@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<parameter>int t, int p</parameter>
+		<declaration>// Place local declarations here.
+clock x, y, z;</declaration>
+		<location id="id0" x="-238" y="-34">
+			<name x="-248" y="-68">q0</name>
+			<label kind="invariant" x="-297" y="-25">x &lt;= 1</label>
+			<label kind="comments" x="-442" y="-272">PER P == 1 (ma anche per ogni p tale per cui non si arrivi mai a q3)
+In questo automa se si cerca di arrivare a mano
+nello stato finale con il symbolic simulator
+uppaal lancia una bellissima eccezione della gui</label>
+		</location>
+		<location id="id1" x="-102" y="-34">
+			<name x="-112" y="-68">q1</name>
+			<label kind="invariant" x="-93" y="-25">y &lt;= 1</label>
+			<label kind="comments" x="-442" y="-195">Inoltre qui E[](P.z &lt;= P.t) è vera anche se in realtà 
+non si può raggiungere lo stato finale
+Non andrebbe bene nemmeno E[](P.q3 imply (P.z &lt;= P.t))
+in quanto P.q3 sarebbe sempre falsa rendendo quindi
+la formula una tautologia</label>
+		</location>
+		<location id="id2" x="102" y="-34">
+			<name x="92" y="-68">q2</name>
+			<label kind="invariant" x="76" y="-17">y &lt;= p</label>
+			<label kind="comments" x="-442" y="136">Si potrebbe avere una fase preliminare dove si controlla la reachability degli stati finali?
+Nel senso, prima dallo stato iniziale controlliamo che effettivamente in uno stato finale ci 
+arriviamo e poi usiamo la formula con l'implicazione?
+In questo caso sarebbe:
+1) E&lt;&gt;(P.q3)
+Se no allora ti fermi, altrimenti
+2) E[](P.q3 imply (P.z &lt;= P.t))
+Generalizzando si potrebbe avere una formula E&lt;&gt;(e qui ci metti una disgiunzione di tutti gli
+stati finali). Avrebbe poi senso tenere conto solo degli stati finali raggiungibili
+per usarli nella query che dovrebbe trovare la emptiness?</label>
+		</location>
+		<location id="id3" x="204" y="-34" color="#ffa500">
+			<name x="194" y="-68">q3</name>
+		</location>
+		<location id="id4" x="0" y="-34">
+			<name x="-8" y="-25">qq</name>
+			<label kind="invariant" x="-25" y="-68">x &lt;= 3</label>
+			<label kind="comments" x="-442" y="42">Però secondo il teorema con uno XI &gt; 2C (qui ad esempio XI = 8) 
+riusciremmo ad andare nello stato finale ed il linguaggio sarebbe non vuoto.
+
+Però okkio che se consideri un automa senza parametro dove p ad 
+esempio è 1 non so se il metodo del clock da resettare regge ancora</label>
+		</location>
+		<init ref="id0"/>
+		<transition id="id5">
+			<source ref="id4"/>
+			<target ref="id2"/>
+			<label kind="guard" x="25" y="-34">x == 3</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id4"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="127" y="-34">y == p</label>
+		</transition>
+		<transition id="id8">
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<label kind="assignment" x="246" y="-42">z = 0</label>
+			<nail x="238" y="-59"/>
+			<nail x="238" y="-8"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-195" y="0">y &lt;= 1</label>
+			<label kind="assignment" x="-195" y="17">x = 0</label>
+			<nail x="-170" y="0"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-195" y="-102">x &lt;= 1</label>
+			<label kind="assignment" x="-195" y="-85">y = 0</label>
+			<nail x="-170" y="-68"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+P = Template(4, 1);
+// List one or more processes to be composed into a system.
+system P;
+</system>
+	<queries>
+		<query>
+			<formula>E[](P.z &lt;= P.t)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2023-09-19 17:15:18 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>E[](P.q3 imply (P.z &lt;= P.t))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2023-09-19 17:15:22 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>P.q0 --&gt; P.q3</formula>
+			<comment>L'avevo pensata come query per la reachability ma la semantica del leads to non si addice a questo scopo</comment>
+			<option key="--diagnostic" value="0"/>
+			<result outcome="failure" type="quality" timestamp="2023-09-19 17:14:07 +0200">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt;(P.q3)</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2023-09-19 17:15:09 +0200">
+			</result>
+		</query>
+	</queries>
+</nta>

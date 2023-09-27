@@ -11,14 +11,14 @@ using json = nlohmann::json;
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
-// TODO devi gestire il caso in cui hai un solo stato oppure una sola transizione (come esempio vedi first.xml nella cartella uppaalexamples)
 
 // Conventions to follow:
 // In UPPAAL you have to mark final  states by giving them a color
-// Write the invariants like x<2&&y==1
-// Write the guards like x<2&&y>1
+// Clock declarations must be written like: clock x, y, z;
+// Write the invariants like: x<2&&y==1
+// Write the guards like: x<2&&y>1
 int main(int argc, char *argv[]) {
-    if (argc <= 3) {
+    if (argc <= 4) {
         int idTA = 0;
         std::string currentDirPath = XSTRING(SOURCE_ROOT);
         std::string inputDirPath = (argc == 1) ? (currentDirPath + "/inputFiles") : argv[1];
@@ -41,10 +41,11 @@ int main(int argc, char *argv[]) {
                         const char *xml_str = tmp.c_str();
 
                         std::string nameTA = "ta" + std::to_string(idTA);
-                        std::string outputFileName = nameTA + "_out.txt";
+                        std::string outputFileName = nameTA + "_out.tck";
 
                         json j = json::parse(xml2json(xml_str));
-                        std::cout << "\n" << "----- " << nameTA << " -----" << "\n" << std::setw(4) << j << "\n\n" << std::endl;
+                        if (argc > 3 && !strcmp(argv[3], "-j"))
+                            std::cout << "\n" << "----- " << nameTA << " -----" << "\n" << std::setw(4) << j << "\n\n" << std::endl;
 
                         Translator translator(outputDirPath + "/" += outputFileName);
                         translator.translateTA(nameTA, j);

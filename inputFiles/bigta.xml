@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<parameter>int t</parameter>
+		<declaration>// Place local declarations here.
+clock x, y, z;</declaration>
+		<location id="id0" x="136" y="102">
+			<name x="127" y="119">q0</name>
+		</location>
+		<location id="id1" x="-136" y="68">
+			<name x="-146" y="34">q1</name>
+		</location>
+		<location id="id2" x="-204" y="-34">
+			<name x="-214" y="-68">q2</name>
+		</location>
+		<location id="id3" x="-136" y="-136">
+			<name x="-144" y="-119">q3</name>
+			<label kind="invariant" x="-119" y="-144">y &lt;= 2</label>
+		</location>
+		<location id="id4" x="-68" y="-34">
+			<name x="-78" y="-68">q4</name>
+		</location>
+		<location id="id5" x="68" y="-102" color="#ffa500">
+			<name x="58" y="-136">q6</name>
+		</location>
+		<location id="id6" x="68" y="-238">
+			<name x="58" y="-272">q5</name>
+		</location>
+		<location id="id7" x="136" y="-34">
+			<name x="126" y="-68">q7</name>
+		</location>
+		<location id="id8" x="272" y="-34" color="#ffa500">
+			<name x="262" y="-68">q8</name>
+		</location>
+		<location id="id9" x="-306" y="-34">
+			<name x="-316" y="-68">q9</name>
+			<label kind="comments" x="-476" y="-323">Anche qui se si lascia lo stato q9 senza altre aggiunte e si prova un t basso (es 5) sarà comunque vero (zenoness?).
+Invece provando la formula con disgiunzione ed implicazione le cose dovrebbero sistemarsi</label>
+		</location>
+		<init ref="id0"/>
+		<transition id="id10">
+			<source ref="id9"/>
+			<target ref="id2"/>
+			<nail x="-255" y="0"/>
+		</transition>
+		<transition id="id11">
+			<source ref="id2"/>
+			<target ref="id9"/>
+			<nail x="-255" y="-68"/>
+		</transition>
+		<transition id="id12">
+			<source ref="id0"/>
+			<target ref="id7"/>
+			<label kind="guard" x="59" y="34">x == 1000</label>
+			<label kind="assignment" x="68" y="51">y = 0</label>
+		</transition>
+		<transition id="id13">
+			<source ref="id4"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-8" y="-51">x &gt; 50</label>
+			<label kind="assignment" x="-8" y="-34">y = 0</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="guard" x="178" y="-17">x == 3</label>
+			<label kind="assignment" x="153" y="0">y = 0, z = 0</label>
+			<nail x="238" y="0"/>
+			<nail x="170" y="0"/>
+		</transition>
+		<transition id="id15">
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="guard" x="178" y="-85">y == 3</label>
+			<label kind="assignment" x="178" y="-68">x = 0</label>
+			<nail x="170" y="-68"/>
+			<nail x="238" y="-68"/>
+		</transition>
+		<transition id="id16">
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-42" y="-187">x == 2</label>
+			<label kind="assignment" x="-68" y="-170">x = 0, z = 0</label>
+			<nail x="34" y="-136"/>
+			<nail x="34" y="-204"/>
+		</transition>
+		<transition id="id17">
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="110" y="-187">y == 2</label>
+			<label kind="assignment" x="110" y="-170">x = 0</label>
+			<nail x="102" y="-204"/>
+			<nail x="102" y="-136"/>
+		</transition>
+		<transition id="id18">
+			<source ref="id3"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-195" y="-212">x &gt; 200</label>
+			<label kind="assignment" x="-195" y="-195">y = 0</label>
+			<nail x="-136" y="-238"/>
+		</transition>
+		<transition id="id19">
+			<source ref="id4"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-85" y="-8">x &lt;= 200</label>
+			<label kind="assignment" x="-93" y="8">y = 0</label>
+		</transition>
+		<transition id="id20">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-102" y="-102">y == 2</label>
+		</transition>
+		<transition id="id21">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-229" y="-119">x &lt;= 200</label>
+			<label kind="assignment" x="-221" y="-102">y = 0</label>
+		</transition>
+		<transition id="id22">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-229" y="8">y == 2</label>
+		</transition>
+		<transition id="id23">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-93" y="85">x &lt;= 1</label>
+			<nail x="-136" y="102"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+P = Template(205);
+// List one or more processes to be composed into a system.
+system P;
+</system>
+	<queries>
+		<query>
+			<formula>E[]((P.q5 or P.q6 or P.q7 or P.q8) imply (P.z &lt;= P.t))</formula>
+			<comment/>
+			<option key="--diagnostic" value="2"/>
+			<result outcome="success" type="quality" timestamp="2023-09-19 14:11:48 +0200">
+				<option key="--diagnostic" value="2"/>
+			</result>
+		</query>
+	</queries>
+</nta>

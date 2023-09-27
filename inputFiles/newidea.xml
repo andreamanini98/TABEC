@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<declaration>// Place local declarations here.
+clock x, y, z;</declaration>
+		<location id="id0" x="-510" y="34">
+			<name x="-518" y="51">q0</name>
+			<label kind="comments" x="-365" y="-374">Solo per dare un'idea:
+e se invece di cercare tutti
+i cicli semplicemente si
+inserisse un nuovo stato
+dove in ingresso e in uscita
+z viene resettato e tramite
+l'invariante z &lt;= 0 si fa
+in modo che la semantica del
+ta venga preservata?
+Probabilmente l'effetto che
+si ottiene è lo stesso di
+quello che si avrebbe con la
+costruzione vista negli altri
+esempi</label>
+		</location>
+		<location id="id1" x="-510" y="-238" color="#ffa500">
+		</location>
+		<location id="id2" x="-646" y="-102">
+		</location>
+		<location id="id3" x="-374" y="-102">
+		</location>
+		<location id="id4" x="34" y="34">
+		</location>
+		<location id="id5" x="-102" y="-102">
+		</location>
+		<location id="id6" x="170" y="-102">
+		</location>
+		<location id="id7" x="34" y="-238" color="#ffa500">
+		</location>
+		<location id="id8" x="-34" y="-170">
+			<label kind="invariant" x="-102" y="-178">z &lt;= 0</label>
+		</location>
+		<location id="id9" x="102" y="-170">
+			<label kind="invariant" x="119" y="-178">z &lt;= 0</label>
+		</location>
+		<init ref="id0"/>
+		<transition id="id10">
+			<source ref="id6"/>
+			<target ref="id4"/>
+		</transition>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id6"/>
+			<label kind="assignment" x="144" y="-144">z = 0</label>
+		</transition>
+		<transition id="id12">
+			<source ref="id7"/>
+			<target ref="id9"/>
+			<label kind="assignment" x="76" y="-212">z = 0</label>
+		</transition>
+		<transition id="id13">
+			<source ref="id5"/>
+			<target ref="id4"/>
+		</transition>
+		<transition id="id14">
+			<source ref="id8"/>
+			<target ref="id5"/>
+			<label kind="assignment" x="-119" y="-144">z = 0</label>
+		</transition>
+		<transition id="id15">
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="assignment" x="-51" y="-212">z = 0</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id4"/>
+			<target ref="id7"/>
+		</transition>
+		<transition id="id17">
+			<source ref="id3"/>
+			<target ref="id0"/>
+		</transition>
+		<transition id="id18">
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="assignment" x="-434" y="-178">z = 0</label>
+		</transition>
+		<transition id="id19">
+			<source ref="id2"/>
+			<target ref="id0"/>
+		</transition>
+		<transition id="id20">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="assignment" x="-629" y="-178">z = 0</label>
+		</transition>
+		<transition id="id21">
+			<source ref="id0"/>
+			<target ref="id1"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+P = Template();
+// List one or more processes to be composed into a system.
+system P;
+</system>
+	<queries>
+	</queries>
+</nta>
