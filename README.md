@@ -10,6 +10,14 @@ Furthermore, when designing TAs in UPPAAL, the following conventions has to be r
 * Invariants must be written like this: `x<2&&y==1`
 * Guards must be written like this: `x<2&&y>1`
 
+Once cloned, in order to get the executable, navigate inside the corresponding folder and perform the following commands:
+```
+mkdir build
+cd build
+cmake ..
+make
+```
+
 In order to start the tool, one can decide to simply launch the executable:
 ```
 ./utotparser
