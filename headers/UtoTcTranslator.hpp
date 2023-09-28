@@ -26,24 +26,9 @@ private:
      * @param declaration the string coming from the UPPAAL .xml file containing the list of clocks.
      * @param out the stream where we write our output file.
      */
-    static void writeClocksDeclarations(std::string declaration, std::ofstream &out) {
-        size_t clockPos = declaration.find("clock");
-        if (clockPos != std::string::npos) {
-            // We keep only the portion of string after the "clock" word.
-            declaration = declaration.substr(clockPos + 6);
-            // We remove the trailing semicolon ';'.
-            declaration.pop_back();
-
-            // Remove all whitespaces from the string.
-            declaration.erase(std::remove_if(declaration.begin(), declaration.end(), ::isspace), declaration.end());
-
-            std::stringstream ss(declaration);
-            std::vector<std::string> clocks;
-            std::string s;
-
-            // We now split the string for each encountered ',' storing the resulting token in a vector.
-            while (getline(ss, s, ','))
-                clocks.push_back(s);
+    static void writeClocksDeclarations(const std::string &declaration, std::ofstream &out) {
+        if (declaration.find("clock") != std::string::npos) {
+            std::vector<std::string> clocks = getClocks(declaration);
 
             for (auto &clock: clocks)
                 out << "clock:1:" << clock << std::endl;
@@ -51,6 +36,33 @@ private:
             out << "\n";
             out.flush();
         }
+    }
+
+    /**
+     * Method used to retrieve the identifiers of the clocks used in the UPPAAL TA.
+     * @param declaration the string containing the clocks declaration.
+     * @param clockKeywordPos the position in the declaration parameter of the keyword "clock".
+     * @return a vector containing all the TA's clocks.
+     */
+    static std::vector<std::string> getClocks(std::string declaration) {
+        size_t clockPos = declaration.find("clock");
+
+        // We keep only the portion of string after the "clock" word.
+        declaration = declaration.substr(clockPos + 6);
+        // We remove the trailing semicolon ';'.
+        declaration.pop_back();
+        // Remove all whitespaces from the string.
+        declaration.erase(std::remove_if(declaration.begin(), declaration.end(), ::isspace), declaration.end());
+
+        std::stringstream ss(declaration);
+        std::vector<std::string> clocks;
+        std::string s;
+
+        // We now split the string for each encountered ',' storing the resulting token in a vector.
+        while (getline(ss, s, ','))
+            clocks.push_back(s);
+
+        return clocks;
     }
 
     /**
@@ -184,6 +196,40 @@ public:
         writeTransitionsDeclarations(processName, getJsonAsArray(transitions), out);
 
         out.close();
+    }
+
+    /**
+     * Method used to tell if a given TA in json format is nrt or not.
+     * @param inFile the json representation of the TA to check.
+     * @return true if the given TA is nrt, false otherwise.
+     */
+    static bool isNRT(json inFile) {
+        bool isNRT = true;
+        std::vector<json> transitions = getJsonAsArray(inFile.at("nta").at("template").at("transition"));
+        std::vector<std::string> clocks = getClocks(static_cast<std::string>(inFile.at("nta").at("template").at("declaration")));
+
+        // For each transition we check if the nrt condition holds.
+        for (auto &transition: transitions) {
+            if (transition.contains("label")) {
+                std::vector<json> labels = getJsonAsArray(transition.at("label"));
+
+                // We check if the transition has exactly two labels and if they correspond to an assignment and a reset.
+                if (labels.size() == 2) {
+                    if ((static_cast<std::string>(labels[0].at("@kind")) == "guard" &&
+                         static_cast<std::string>(labels[1].at("@kind")) == "assignment") ||
+                        (static_cast<std::string>(labels[1].at("@kind")) == "guard" &&
+                         static_cast<std::string>(labels[0].at("@kind")) == "assignment")) {
+                        // If it is the case, for each clock we check if it is used both in an assignment and in a reset.
+                        for (auto &clock: clocks) {
+                            if ((static_cast<std::string>(labels[0].at("#text")).find(clock) != std::string::npos) &&
+                                (static_cast<std::string>(labels[1].at("#text")).find(clock) != std::string::npos))
+                                return false;
+                        }
+                    }
+                }
+            }
+        }
+        return isNRT;
     }
 
 };

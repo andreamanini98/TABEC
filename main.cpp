@@ -49,15 +49,27 @@ int main(int argc, char *argv[]) {
                             std::cout << std::setw(4) << j << std::endl;
 
                         Translator translator(outputDirPath + "/" += outputFileName);
-                        translator.translateTA(nameTA, j);
 
+                        if (argc > 3 && !strcmp(argv[3], "-nrt")) {
+                            if (Translator::isNRT(j)) {
+                                translator.translateTA(nameTA, j);
+                                std::cout << "Conversion successful\n";
+                                std::cout << "---------------------\n\n";
+                            }
+                            else {
+                                std::cerr << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << std::endl;
+                                std::cout << "---------------------\n\n";
+                            }
+                        } else {
+                            translator.translateTA(nameTA, j);
+                            std::cout << "Conversion successful\n";
+                            std::cout << "---------------------\n\n";
+                        }
                         idTA++;
                     } else {
                         std::cerr << "Failed to open file: " << entry.path() << std::endl;
                     }
                 }
-                std::cout << "Conversion successful\n";
-                std::cout << "---------------------\n\n";
             }
         } catch (const std::filesystem::filesystem_error &e) {
             std::cerr << "Error while reading directory: " << e.what() << std::endl;

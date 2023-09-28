@@ -11,6 +11,9 @@ FetchContent_MakeAvailable(json)
 
 set(CMAKE_CXX_STANDARD 17)
 
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/inputFiles)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputFiles)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(${PROJECT_NAME} "main.cpp")
 
