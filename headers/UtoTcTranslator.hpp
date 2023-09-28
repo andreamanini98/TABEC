@@ -4,13 +4,16 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include "xml2json.hpp"
-#include <nlohmann/json.hpp>
+#include "XMLtoJSONInclude/xml2json.hpp"
+#include "nlohmann/json.hpp"
 #include <utility>
 #include <string>
 #include <algorithm>
 
+#include "jsonHelper.hpp"
+
 using json = nlohmann::json;
+
 
 class Translator {
 
@@ -107,15 +110,7 @@ private:
 
             if (transition.contains("label")) {
                 json labels = transition.at("label");
-                // We have to put this since, if a transition only have either
-                // a guard or a reset (not both), then labels is not a vector.
-                if (labels.is_array())
-                    writeTransitionsDeclarations_helper(outString, labels, putColon);
-                else {
-                    json labelsToArray = json::array();
-                    labelsToArray.push_back(labels);
-                    writeTransitionsDeclarations_helper(outString, labelsToArray, putColon);
-                }
+                writeTransitionsDeclarations_helper(outString, getJsonAsArray(labels), putColon);
             }
 
             outString.append("}\n");
@@ -181,26 +176,12 @@ public:
         std::cout << "Starting locations declaration\n";
         std::string initialLocation = inFile.at("nta").at("template").at("init").at("@ref");
         json locations = inFile.at("nta").at("template").at("location");
-        // We have to put this since, if we have only one location, then locations is not a vector.
-        if (locations.is_array())
-            writeLocationsDeclarations(processName, initialLocation, locations, out);
-        else {
-            json locationsToArray = json::array();
-            locationsToArray.push_back(locations);
-            writeLocationsDeclarations(processName, initialLocation, locationsToArray, out);
-        }
+        writeLocationsDeclarations(processName, initialLocation, getJsonAsArray(locations), out);
 
         //Transitions declarations.
         std::cout << "Starting transitions declaration\n";
         json transitions = inFile.at("nta").at("template").at("transition");
-        // We have to put this since, if we have only one transition, then transitions is not a vector.
-        if (transitions.is_array())
-            writeTransitionsDeclarations(processName, transitions, out);
-        else {
-            json transitionsToArray = json::array();
-            transitionsToArray.push_back(transitions);
-            writeTransitionsDeclarations(processName, transitionsToArray, out);
-        }
+        writeTransitionsDeclarations(processName, getJsonAsArray(transitions), out);
 
         out.close();
     }

@@ -14,6 +14,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(${PROJECT_NAME} "main.cpp")
 
-target_include_directories(${PROJECT_NAME} PUBLIC XMLtoJSONInclude)
+target_include_directories(${PROJECT_NAME} PUBLIC headers)
 
 target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
