@@ -1,9 +1,10 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include "XMLtoJSONInclude/xml2json.hpp"
 #include <nlohmann/json.hpp>
 
+#include "XMLtoJSONInclude/xml2json.hpp"
+#include "ANSI-color-codes.h"
 #include "UtoTcTranslator.hpp"
 
 using json = nlohmann::json;
@@ -54,29 +55,28 @@ int main(int argc, char *argv[]) {
                         if ((argc > 3 || argc == 2) && !strcmp(argv[(argc == 2) ? 1 : 3], "-nrt")) {
                             if (Translator::isNRT(j)) {
                                 translator.translateTA(nameTA, j);
-                                std::cout << "Conversion successful\n";
+                                std::cout << BHGRN << "Conversion successful\n" << reset;
                                 std::cout << "---------------------\n\n";
-                            }
-                            else {
-                                std::cerr << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << std::endl;
+                            } else {
+                                std::cerr << HRED << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << reset << std::endl;
                                 std::cout << "---------------------\n\n";
                             }
                         } else {
                             translator.translateTA(nameTA, j);
-                            std::cout << "Conversion successful\n";
+                            std::cout << BHGRN << "Conversion successful\n" << reset;
                             std::cout << "---------------------\n\n";
                         }
                         idTA++;
                     } else {
-                        std::cerr << "Failed to open file: " << entry.path() << std::endl;
+                        std::cerr << RED << "Failed to open file: " << entry.path() << reset << std::endl;
                     }
                 }
             }
         } catch (const std::filesystem::filesystem_error &e) {
-            std::cerr << "Error while reading directory: " << e.what() << std::endl;
+            std::cerr << RED << "Error while reading directory: " << e.what() << reset << std::endl;
         }
     } else {
-        std::cerr << "The maximum number of allowed command line arguments is 3!" << std::endl;
+        std::cerr << RED << "The maximum number of allowed command line arguments is 4!" << reset << std::endl;
     }
 
     return 0;

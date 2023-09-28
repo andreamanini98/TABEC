@@ -4,12 +4,12 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include "XMLtoJSONInclude/xml2json.hpp"
-#include "nlohmann/json.hpp"
 #include <utility>
 #include <string>
 #include <algorithm>
+#include <nlohmann/json.hpp>
 
+#include "XMLtoJSONInclude/xml2json.hpp"
 #include "jsonHelper.hpp"
 
 using json = nlohmann::json;
