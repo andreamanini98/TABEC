@@ -41,6 +41,15 @@ The option `-nrt` can be included to translate only nrtTAs:
 ./utotparser /path/to/source/directory /path/to/destination/directory -nrt
 ```
 
+Please note that options can be used even when custom paths are specified:
+```
+./utotparser -j
+```
+```
+./utotparser -nrt
+```
+
+
 When launched, all .xml files in the chosen source directory will be converted in .tck files in the chosen output directory.
 
 Please stick to these executions options, no side-checks are done if different command-line arguments are given (in type or number!).
