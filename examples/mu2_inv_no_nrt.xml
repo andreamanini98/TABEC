@@ -9,9 +9,11 @@
 clock x, y;</declaration>
 		<location id="id0" x="-34" y="136">
 			<name x="-59" y="110">q0</name>
+			<label kind="invariant" x="-93" y="144">x &lt;= 2</label>
 		</location>
 		<location id="id1" x="136" y="136" color="#ffa500">
 			<name x="144" y="110">q1</name>
+			<label kind="invariant" x="144" y="144">y &lt;= 2</label>
 		</location>
 		<location id="id2" x="306" y="136">
 		</location>
@@ -30,7 +32,7 @@ clock x, y;</declaration>
 		<transition id="id5">
 			<source ref="id1"/>
 			<target ref="id0"/>
-			<label kind="guard" x="25" y="153">y == 2 && x == 2</label>
+			<label kind="guard" x="25" y="153">y == 2</label>
 			<label kind="assignment" x="25" y="170">x = 0</label>
 			<nail x="136" y="170"/>
 			<nail x="-34" y="170"/>
@@ -38,7 +40,7 @@ clock x, y;</declaration>
 		<transition id="id6">
 			<source ref="id0"/>
 			<target ref="id1"/>
-			<label kind="guard" x="25" y="85">x == 2</label>
+			<label kind="guard" x="-8" y="85">x == 2 &amp;&amp; y &lt; 3</label>
 			<label kind="assignment" x="25" y="102">y = 0</label>
 			<nail x="-34" y="102"/>
 			<nail x="136" y="102"/>

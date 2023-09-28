@@ -9,11 +9,11 @@
 clock x, y;</declaration>
 		<location id="id0" x="-34" y="136">
 			<name x="-59" y="110">q0</name>
-			<label kind="invariant" x="-76" y="153">x&lt;=2</label>
+			<label kind="invariant" x="-93" y="144">x &lt;= 2</label>
 		</location>
 		<location id="id1" x="136" y="136" color="#ffa500">
 			<name x="144" y="110">q1</name>
-			<label kind="invariant" x="144" y="153">y&lt;=2</label>
+			<label kind="invariant" x="144" y="144">y &lt;= 2</label>
 		</location>
 		<location id="id2" x="306" y="136">
 		</location>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<declaration>// Place local declarations here.
+clock x, y;</declaration>
+		<location id="id0" x="-238" y="-34">
+			<name x="-248" y="-68">q0</name>
+		</location>
+		<location id="id1" x="-102" y="-34">
+			<name x="-112" y="-68">q1</name>
+		</location>
+		<location id="id2" x="102" y="-34">
+			<name x="92" y="-68">q2</name>
+		</location>
+		<location id="id3" x="204" y="-34" color="#ffa500">
+			<name x="194" y="-68">q3</name>
+		</location>
+		<location id="id4" x="0" y="-34">
+			<name x="-8" y="-25">qq</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id5">
+			<source ref="id4"/>
+			<target ref="id2"/>
+			<label kind="guard" x="25" y="-34">x == 3</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id4"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="127" y="-34">y == 1</label>
+		</transition>
+		<transition id="id8">
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<nail x="238" y="-59"/>
+			<nail x="238" y="-8"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-195" y="0">y &lt;= 1</label>
+			<label kind="assignment" x="-195" y="17">x = 0</label>
+			<nail x="-170" y="0"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-195" y="-102">x &lt;= 1</label>
+			<label kind="assignment" x="-195" y="-85">y = 0</label>
+			<nail x="-170" y="-68"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+P = Template();
+// List one or more processes to be composed into a system.
+system P;
+</system>
+	<queries>
+		<query>
+			<formula>E[](P.z &lt;= P.t)</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2023-09-19 17:15:18 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>E[](P.q3 imply (P.z &lt;= P.t))</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2023-09-19 17:15:22 +0200">
+			</result>
+		</query>
+		<query>
+			<formula>P.q0 --&gt; P.q3</formula>
+			<comment>L'avevo pensata come query per la reachability ma la semantica del leads to non si addice a questo scopo</comment>
+			<option key="--diagnostic" value="0"/>
+			<result outcome="failure" type="quality" timestamp="2023-09-19 17:14:07 +0200">
+				<option key="--diagnostic" value="0"/>
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt;(P.q3)</formula>
+			<comment/>
+			<result outcome="failure" type="quality" timestamp="2023-09-19 17:15:09 +0200">
+			</result>
+		</query>
+	</queries>
+</nta>
