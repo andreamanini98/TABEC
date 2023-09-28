@@ -7,8 +7,10 @@ Furthermore, when designing TAs in UPPAAL, the following conventions has to be r
 * UPPAAL files must be saved with the .xml extension
 * In UPPAAL final states must have a color (all states with a color will be marked as final)
 * Clock declarations must be written like this: `clock x, y, z;`
-* Invariants must be written like this: `x<2&&y==1`
-* Guards must be written like this: `x<2&&y>1`
+* Invariants must be written like this: `x < 2 && y == 1`
+* Guards must be written like this: `x < 2 && y > 1`
+
+Please remember to keep blank spaces between clocks and other symbols if you then want to perform nrt condition detection.
 
 Once cloned, in order to get the executable, navigate inside the corresponding folder and perform the following commands:
 ```
@@ -29,9 +31,14 @@ Additionally, one can also specify the paths where source files are located, as 
 ./utotparser /path/to/source/directory /path/to/destination/directory
 ```
 
-Finally, the option `-j` can also be included to output the json files obtained during the conversion:
+Finally, different options can further be specified: <br>
+The option `-j` can be included to output the json files obtained during the conversion:
 ```
 ./utotparser /path/to/source/directory /path/to/destination/directory -j
+```
+The option `-nrt` can be included to translate only nrtTAs:
+```
+./utotparser /path/to/source/directory /path/to/destination/directory -nrt
 ```
 
 When launched, all .xml files in the chosen source directory will be converted in .tck files in the chosen output directory.
