@@ -16,8 +16,8 @@ int main(int argc, char *argv[]) {
     if (argc <= 4) {
         int idTA = 0;
         std::string currentDirPath = XSTRING(SOURCE_ROOT);
-        std::string inputDirPath = (argc == 1) ? (currentDirPath + "/inputFiles") : argv[1];
-        std::string outputDirPath = (argc == 1) ? (currentDirPath + "/outputFiles") : argv[2];
+        std::string inputDirPath = (argc <= 2) ? (currentDirPath + "/inputFiles") : argv[1];
+        std::string outputDirPath = (argc <= 2) ? (currentDirPath + "/outputFiles") : argv[2];
 
         try {
             for (const auto &entry: std::filesystem::directory_iterator(inputDirPath)) {
@@ -45,12 +45,13 @@ int main(int argc, char *argv[]) {
                                   std::endl << "in dest directory: " << outputDirPath << std::endl;
 
                         json j = json::parse(xml2json(xml_str));
-                        if (argc > 3 && !strcmp(argv[3], "-j"))
+
+                        if ((argc > 3 || argc == 2) && !strcmp(argv[(argc == 2) ? 1 : 3], "-j"))
                             std::cout << std::setw(4) << j << std::endl;
 
                         Translator translator(outputDirPath + "/" += outputFileName);
 
-                        if (argc > 3 && !strcmp(argv[3], "-nrt")) {
+                        if ((argc > 3 || argc == 2) && !strcmp(argv[(argc == 2) ? 1 : 3], "-nrt")) {
                             if (Translator::isNRT(j)) {
                                 translator.translateTA(nameTA, j);
                                 std::cout << "Conversion successful\n";
@@ -76,7 +77,6 @@ int main(int argc, char *argv[]) {
         }
     } else {
         std::cerr << "The maximum number of allowed command line arguments is 3!" << std::endl;
-        return 1;
     }
 
     return 0;
