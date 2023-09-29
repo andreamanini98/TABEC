@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
                                 std::cout << BHGRN << "Conversion successful\n" << reset;
                                 std::cout << "---------------------\n\n";
                             } else {
-                                std::cerr << HRED << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << reset << std::endl;
+                                std::cerr << BHRED << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << reset << std::endl;
                                 std::cout << "---------------------\n\n";
                             }
                         } else {
@@ -68,15 +68,15 @@ int main(int argc, char *argv[]) {
                         }
                         idTA++;
                     } else {
-                        std::cerr << RED << "Failed to open file: " << entry.path() << reset << std::endl;
+                        std::cerr << BHRED << "Failed to open file: " << entry.path() << reset << std::endl;
                     }
                 }
             }
         } catch (const std::filesystem::filesystem_error &e) {
-            std::cerr << RED << "Error while reading directory: " << e.what() << reset << std::endl;
+            std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
         }
     } else {
-        std::cerr << RED << "The maximum number of allowed command line arguments is 4!" << reset << std::endl;
+        std::cerr << BHRED << "The maximum number of allowed command line arguments is 4!" << reset << std::endl;
     }
 
     return 0;
