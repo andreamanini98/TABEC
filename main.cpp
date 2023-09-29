@@ -6,6 +6,7 @@
 #include "XMLtoJSONInclude/xml2json.hpp"
 #include "ANSI-color-codes.h"
 #include "TAHeaders/UtoTcTranslator.hpp"
+#include "printUtilities.hpp"
 
 using json = nlohmann::json;
 
@@ -16,6 +17,8 @@ using json = nlohmann::json;
 int main(int argc, char *argv[]) {
     if (argc <= 4) {
         int idTA = 0;
+        std::vector<std::pair<std::string, bool>> translationsResults;
+
         std::string currentDirPath = XSTRING(SOURCE_ROOT);
         std::string inputDirPath = (argc <= 2) ? (currentDirPath + "/inputFiles") : argv[1];
         std::string outputDirPath = (argc <= 2) ? (currentDirPath + "/outputFiles") : argv[2];
@@ -57,14 +60,17 @@ int main(int argc, char *argv[]) {
                                 translator.translateTA(nameTA, j);
                                 std::cout << BHGRN << "Conversion successful\n" << reset;
                                 std::cout << "---------------------\n\n";
+                                translationsResults.emplace_back(nameTA, true);
                             } else {
                                 std::cerr << BHRED << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << reset << std::endl;
                                 std::cout << "---------------------\n\n";
+                                translationsResults.emplace_back(nameTA, false);
                             }
                         } else {
                             translator.translateTA(nameTA, j);
                             std::cout << BHGRN << "Conversion successful\n" << reset;
                             std::cout << "---------------------\n\n";
+                            translationsResults.emplace_back(nameTA, true);
                         }
                         idTA++;
                     } else {
@@ -72,6 +78,7 @@ int main(int argc, char *argv[]) {
                     }
                 }
             }
+            printResultsDashboard(translationsResults);
         } catch (const std::filesystem::filesystem_error &e) {
             std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
         }

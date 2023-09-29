@@ -4,7 +4,7 @@ using json = nlohmann::json;
 
 
 /**
- * Method used to ensure the given json parameter is returned as an Array.
+ * Function used to ensure the given json parameter is returned as an Array.
  * This is useful for: locations, transitions, labels.
  * @param inFile the json parameter we want to return as an array.
  * @return the array version of the given json parameter.
