@@ -1,5 +1,5 @@
-#ifndef TA_TRANSLATOR
-#define TA_TRANSLATOR
+#ifndef UTOTPARSER_UTOTCTRANSLATOR_HPP
+#define UTOTPARSER_UTOTCTRANSLATOR_HPP
 
 #include <iostream>
 #include <sstream>
@@ -7,11 +7,12 @@
 #include <utility>
 #include <string>
 #include <algorithm>
-#include <nlohmann/json.hpp>
+#include "nlohmann/json.hpp"
 
 #include "XMLtoJSONInclude/xml2json.hpp"
 #include "jsonHelper.hpp"
 #include "UPPAALxmlAttributes.h"
+#include "TAContentExtractor.hpp"
 
 using json = nlohmann::json;
 
@@ -29,7 +30,7 @@ private:
      */
     static void writeClocksDeclarations(const std::string &declaration, std::ofstream &out) {
         if (declaration.find(CLOCK) != std::string::npos) {
-            std::vector<std::string> clocks = getClocks(declaration);
+            std::vector<std::string> clocks = TAContentExtractor::getClocks(declaration);
 
             for (auto &clock: clocks)
                 out << "clock:1:" << clock << std::endl;
@@ -37,33 +38,6 @@ private:
             out << "\n";
             out.flush();
         }
-    }
-
-    /**
-     * Method used to retrieve the identifiers of the clocks used in the UPPAAL TA.
-     * @param declaration the string containing the clocks declaration.
-     * @param clockKeywordPos the position in the declaration parameter of the keyword "clock".
-     * @return a vector containing all the TA's clocks.
-     */
-    static std::vector<std::string> getClocks(std::string declaration) {
-        size_t clockPos = declaration.find(CLOCK);
-
-        // We keep only the portion of string after the "clock" word.
-        declaration = declaration.substr(clockPos + 6);
-        // We remove the trailing semicolon ';'.
-        declaration.pop_back();
-        // Remove all whitespaces from the string.
-        declaration.erase(std::remove_if(declaration.begin(), declaration.end(), ::isspace), declaration.end());
-
-        std::stringstream ss(declaration);
-        std::vector<std::string> clocks;
-        std::string s;
-
-        // We now split the string for each encountered ',' storing the resulting token in a vector.
-        while (getline(ss, s, ','))
-            clocks.push_back(s);
-
-        return clocks;
     }
 
     /**
@@ -166,7 +140,7 @@ public:
     * @param systemName the name of the system to translate.
     * @param inFile the json file containing the UPPAAL representation to convert.
     */
-    void translateTA(const std::string &systemName, json inFile) {
+    void translateTA(const std::string &systemName, const json &inFile) {
         std::ofstream out;
         out.open(outFilePath, std::ofstream::out | std::ofstream::trunc);
 
@@ -177,7 +151,7 @@ public:
         out << "system:" + systemName + "\n\n";
 
         std::cout << "Starting clocks declaration\n";
-        writeClocksDeclarations(static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION)), out);
+        writeClocksDeclarations(TAContentExtractor::getClocksDeclaration(inFile), out);
 
         std::cout << "Starting event declaration\n";
         out << "event:a\n\n"; // Up to now we only use one event named a (also check in writeTransitionsDeclarations).
@@ -187,13 +161,13 @@ public:
 
         // Locations declaration.
         std::cout << "Starting locations declaration\n";
-        std::string initialLocation = inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF);
-        json locations = inFile.at(NTA).at(TEMPLATE).at(LOCATION);
+        std::string initialLocation = TAContentExtractor::getInitialLocationName(inFile);
+        json locations = TAContentExtractor::getLocations(inFile);
         writeLocationsDeclarations(processName, initialLocation, getJsonAsArray(locations), out);
 
         //Transitions declarations.
         std::cout << "Starting transitions declaration\n";
-        json transitions = inFile.at(NTA).at(TEMPLATE).at(TRANSITION);
+        json transitions = TAContentExtractor::getTransitions(inFile);
         writeTransitionsDeclarations(processName, getJsonAsArray(transitions), out);
 
         out.close();
@@ -206,8 +180,8 @@ public:
      */
     static bool isNRT(json inFile) {
         bool isNRT = true;
-        std::vector<json> transitions = getJsonAsArray(inFile.at(NTA).at(TEMPLATE).at(TRANSITION));
-        std::vector<std::string> clocks = getClocks(static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION)));
+        std::vector<json> transitions = getJsonAsArray(TAContentExtractor::getTransitions(inFile));
+        std::vector<std::string> clocks = TAContentExtractor::getClocks(static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION)));
 
         // For each transition we check if the nrt condition holds.
         for (auto &transition: transitions) {
@@ -235,4 +209,4 @@ public:
 
 };
 
-#endif
+#endif // UTOTPARSER_UTOTCTRANSLATOR_HPP
