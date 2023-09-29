@@ -3,6 +3,7 @@
 
 
 class TAContentExtractor {
+
 public:
     /**
      * Method used to retrieve the identifiers of the clocks used in the UPPAAL TA.
@@ -31,22 +32,41 @@ public:
         return clocks;
     }
 
+    /**
+     * Method used to return the clocks declarations in the given TA.
+     * @param inFile the json representation of the TA.
+     * @return a string containing the clocks declaration.
+     */
     static std::string getClocksDeclaration(json inFile) {
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF));
     }
 
+    /**
+     * Method used to return the initial location name in the given TA.
+     * @param inFile the json representation of the TA.
+     * @return a string containing the initial location name.
+     */
     static std::string getInitialLocationName(json inFile) {
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF));
     }
 
+    /**
+     * Method used to return the locations declarations in the given TA.
+     * @param inFile the json representation of the TA.
+     * @return a json containing the locations declaration.
+     */
     static json getLocations(json inFile) {
         return inFile.at(NTA).at(TEMPLATE).at(LOCATION);
     }
 
+    /**
+     * Method used to return the transitions declarations in the given TA.
+     * @param inFile the json representation of the TA.
+     * @return a json containing the transitions declaration.
+     */
     static json getTransitions(json inFile) {
         return inFile.at(NTA).at(TEMPLATE).at(TRANSITION);
     }
-
 
 };
 
