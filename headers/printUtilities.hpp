@@ -13,10 +13,11 @@ void printResultsDashboard(const std::vector<std::pair<std::string, bool>> &tran
               "\n--- Results of conversion ---" <<
               std::endl <<
               "Legend: " <<
-              std::endl << BHGRN << "\u25CF" << reset << " = success" <<
               std::endl <<
-              BHRED << "\u25CF" << reset << " = failure"
-              << std::endl;
+              BHGRN << "\u25CF" << reset << " = success" <<
+              std::endl <<
+              BHRED << "\u25CF" << reset << " = failure" <<
+              std::endl;
     std::cout << std::string(RESULTS_PADDING + 1, '-') << std::endl;
     for (auto &result: translationsResults) {
         std::cout << result.first <<
