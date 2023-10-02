@@ -16,7 +16,7 @@
 #define LOCATION "location"
 #define TRANSITION "transition"
 #define CLOCK "clock"
-#define COLOR "color"
+#define COLOR "@color"
 #define INVARIANT "invariant"
 
 
