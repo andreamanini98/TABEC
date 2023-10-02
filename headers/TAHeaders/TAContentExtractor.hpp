@@ -38,7 +38,7 @@ public:
      * @return a string containing the clocks declaration.
      */
     static std::string getClocksDeclaration(json inFile) {
-        return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF));
+        return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION));
     }
 
     /**
