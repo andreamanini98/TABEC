@@ -49,30 +49,29 @@ private:
     */
     static void writeLocationsDeclarations(const std::string &processName, const std::string &initialLocation, std::vector<json> locations, std::ofstream &out) {
         for (auto &location: locations) {
-            bool putColon = false;
+            bool isInitial = false, hasInvariant = false;
             std::string outString = "location:" + processName + ":" + static_cast<std::string>(location.at(ID)) + "{";
 
             if (static_cast<std::string>(location.at(ID)) == initialLocation) {
                 outString.append("initial:");
-                putColon = true;
+                isInitial = true;
             }
 
             // Here we check if the location has some invariants.
             if (location.contains(LABEL) && location.at(LABEL).contains(KIND)) {
-                (putColon) ? outString.append(" : ") : outString;
+                (isInitial) ? outString.append(" : ") : outString;
                 std::string labelKind = static_cast<std::string>(location.at(LABEL).at(KIND));
                 if (labelKind == INVARIANT) {
                     outString.append(labelKind + ": ");
                     outString.append(static_cast<std::string>(location.at(LABEL).at(TEXT)));
-                    putColon = true;
+                    hasInvariant = true;
                 }
-            } else
-                putColon = false;
+            }
 
             // We use the convention where a color in a state means that the state is final.
             // For this reason, only final states must have a color when designed in UPPAAL.
             if (location.contains(COLOR)) {
-                (putColon) ? outString.append(" : ") : outString;
+                (isInitial || hasInvariant) ? outString.append(" : ") : outString;
                 outString.append("labels: final");
             }
 
@@ -156,7 +155,7 @@ public:
         std::cout << "Starting event declaration\n";
         out << "event:a\n\n"; // Up to now we only use one event named a (also check in writeTransitionsDeclarations).
 
-        std::cout << "Starting process declaration";
+        std::cout << "Starting process declaration\n";
         out << "process:" + processName + "\n";
 
         // Locations declaration.
