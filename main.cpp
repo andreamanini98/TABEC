@@ -15,7 +15,7 @@ using json = nlohmann::json;
 #define XSTRING(x) STRING(x)
 
 // Used only in CLion
-#define tChecker_bin "/Users/echo/Desktop/PoliPrograms/tchecker-0.8/bin"
+//#define tChecker_bin "/Users/echo/Desktop/PoliPrograms/tchecker-0.8/bin"
 
 
 int main(int argc, char *argv[]) {
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
                         TAChecker::checkMuGreaterThan2C(scriptsDirPath,
                                                         outputDirPath + "/" += outputFileName,
                                                         outputDirForCheckingPath + "/gt2C_" += outputFileName,
-                                                        tChecker_bin);
+                                                        tCheckerBinPath);
                 if (isThereAnAcceptanceCondition)
                     std::cout << BHGRN << outputFileName << "'s language is not empty!\n" << reset;
                 else {
