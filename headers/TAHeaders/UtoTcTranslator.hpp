@@ -13,6 +13,7 @@
 #include "jsonHelper.hpp"
 #include "UPPAALxmlAttributes.h"
 #include "TAContentExtractor.hpp"
+#include "Utils.hpp"
 
 using json = nlohmann::json;
 
@@ -21,6 +22,10 @@ class Translator {
 
 private:
     const std::string outFilePath;
+    // The number of states of the TA.
+    int Q;
+    // The maximum value appearing in TA's guards and invariants.
+    int C;
 
     /**
      * Method used to write the clocks declarations in tChecker syntax.
@@ -47,7 +52,10 @@ private:
     * @param locations a vector of locations saved in json format.
     * @param out the stream where we write our output file.
     */
-    static void writeLocationsDeclarations(const std::string &processName, const std::string &initialLocation, std::vector<json> locations, std::ofstream &out) {
+    void writeLocationsDeclarations(const std::string &processName, const std::string &initialLocation, std::vector<json> locations, std::ofstream &out) {
+        // We get the number of states.
+        Q = static_cast<int>(locations.size());
+
         for (auto &location: locations) {
             bool isInitial = false, hasInvariant = false;
             std::string outString = "location:" + processName + ":" + static_cast<std::string>(location.at(ID)) + "{";
@@ -62,8 +70,12 @@ private:
                 (isInitial) ? outString.append(" : ") : outString;
                 std::string labelKind = static_cast<std::string>(location.at(LABEL).at(KIND));
                 if (labelKind == INVARIANT) {
+                    std::string labelText = static_cast<std::string>(location.at(LABEL).at(TEXT));
+                    // We have to check if C will eventually be updated due to the invariant's constant.
+                    int newMax = getMaxIntFromStr(labelText);
+                    C = (C < newMax) ? newMax : C;
                     outString.append(labelKind + ": ");
-                    outString.append(static_cast<std::string>(location.at(LABEL).at(TEXT)));
+                    outString.append(labelText);
                     hasInvariant = true;
                 }
             }
@@ -87,7 +99,7 @@ private:
      * @param transitions a vector of transitions saved in json format.
      * @param out the stream where we write our output file.
      */
-    static void writeTransitionsDeclarations(const std::string &processName, std::vector<json> transitions, std::ofstream &out) {
+    void writeTransitionsDeclarations(const std::string &processName, std::vector<json> transitions, std::ofstream &out) {
         for (auto &transition: transitions) {
             bool putColon = false;
             std::string outString =
@@ -111,20 +123,23 @@ private:
      * @param labels a vector containing all the labels of a transition (if any).
      * @param putColon a boolean used to determine if in the tChecker translation we have to put a colon.
      */
-    static void writeTransitionsDeclarations_helper(std::string &outString, std::vector<json> labels, bool &putColon) {
+    void writeTransitionsDeclarations_helper(std::string &outString, std::vector<json> labels, bool &putColon) {
         for (auto &label: labels) {
+            std::string labelText = static_cast<std::string>(label.at(TEXT));
             if (static_cast<std::string>(label.at(KIND)) == GUARD) {
+                // We have to check if C will eventually be updated due to the transition's guard.
+                int newMax = getMaxIntFromStr(labelText);
+                C = (C < newMax) ? newMax : C;
                 (putColon) ? outString.append(" : ") : outString;
                 outString.append("provided: ");
-                outString.append(static_cast<std::string>(label.at(TEXT)));
+                outString.append(labelText);
                 putColon = true;
             }
             if (static_cast<std::string>(label.at(KIND)) == ASSIGNMENT) {
                 (putColon) ? outString.append(" : ") : outString;
                 outString.append("do: ");
-                std::string resetString = static_cast<std::string>(label.at(TEXT));
-                std::replace(resetString.begin(), resetString.end(), ',', ';');
-                outString.append(resetString);
+                std::replace(labelText.begin(), labelText.end(), ',', ';');
+                outString.append(labelText);
                 putColon = true;
             }
         }
@@ -132,7 +147,7 @@ private:
 
 
 public:
-    explicit Translator(std::string outFilePath) : outFilePath(std::move(outFilePath)) {}
+    explicit Translator(std::string outFilePath, int C = 0, int Q = 0) : outFilePath(std::move(outFilePath)), C(C), Q(Q) {}
 
     /**
     * This method performs the translation from UPPAAL syntax to tChecker syntax.
@@ -164,10 +179,15 @@ public:
         json locations = TAContentExtractor::getLocations(inFile);
         writeLocationsDeclarations(processName, initialLocation, getJsonAsArray(locations), out);
 
-        //Transitions declarations.
+        // Transitions declarations.
         std::cout << "Starting transitions declaration\n";
         json transitions = TAContentExtractor::getTransitions(inFile);
         writeTransitionsDeclarations(processName, getJsonAsArray(transitions), out);
+
+        // Writing additional information that will be used in the checking procedure.
+        // Please note that, although tChecker accepts comments starting with #, the :: syntax has been chosen by ourselves.
+        out << "\n# Q :: " << Q << std::endl;
+        out << "\n# C :: " << C << std::endl;
 
         out.close();
     }

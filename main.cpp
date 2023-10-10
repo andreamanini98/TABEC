@@ -6,6 +6,7 @@
 #include "XMLtoJSONInclude/xml2json.hpp"
 #include "ANSI-color-codes.h"
 #include "TAHeaders/UtoTcTranslator.hpp"
+#include "TAHeaders/TAChecker.hpp"
 #include "printUtilities.hpp"
 
 using json = nlohmann::json;
@@ -13,8 +14,12 @@ using json = nlohmann::json;
 #define STRING(x) #x
 #define XSTRING(x) STRING(x)
 
+// Used only in CLion
+#define tChecker_bin "/Users/echo/Desktop/PoliPrograms/tchecker-0.8/bin"
+
 
 int main(int argc, char *argv[]) {
+    // TODO find a better way to handle the command line parameters
     if (argc <= 4) {
         // An integer that will grow at each conversion leading to unique TA names.
         int idTA = 0;
@@ -24,6 +29,14 @@ int main(int argc, char *argv[]) {
         std::string currentDirPath = XSTRING(SOURCE_ROOT);
         std::string inputDirPath = (argc <= 2) ? (currentDirPath + "/inputFiles") : argv[1];
         std::string outputDirPath = (argc <= 2) ? (currentDirPath + "/outputFiles") : argv[2];
+        std::string outputFileName = std::string();
+
+        // Path to the directory containing shell scripts.
+        std::string scriptsDirPath = currentDirPath + "/scriptsForChecks";
+        // Path to the directory containing TA descriptions where parameters have been substituted with appropiate values.
+        std::string outputDirForCheckingPath = currentDirPath + "/outputFilesForChecking";
+        // Path to the bin folder of the installed tChecker tool (set during build with cmake -D).
+        std::string tCheckerBinPath = XSTRING(TCHECKER_BIN);
 
         try {
             for (const auto &entry: std::filesystem::directory_iterator(inputDirPath)) {
@@ -42,7 +55,7 @@ int main(int argc, char *argv[]) {
                         const char *xml_str = tmp.c_str();
 
                         std::string nameTA = "ta" + std::to_string(idTA);
-                        std::string outputFileName = nameTA + "_out.tck";
+                        outputFileName = nameTA + "_out.tck";
 
                         std::cout << "-------- " << nameTA << " --------\n";
                         std::cout << "Starting conversion of file: " <<
@@ -75,13 +88,26 @@ int main(int argc, char *argv[]) {
                             // The normal translation (without any option enabled) is carried out.
                             translator.translateTA(nameTA, j);
                             std::cout << BHGRN << "Conversion successful\n" << reset;
-                            std::cout << "---------------------\n\n";
+                            std::cout << "---------------------\n";
                             translationsResults.emplace_back(nameTA, true);
                         }
                         idTA++;
                     } else {
                         std::cerr << BHRED << "Failed to open file: " << entry.path() << reset << std::endl;
                     }
+                }
+
+                // TODO maybe find a better place and manner to do this
+                bool isThereAnAcceptanceCondition =
+                        TAChecker::checkMuGreaterThan2C(scriptsDirPath,
+                                                        outputDirPath + "/" += outputFileName,
+                                                        outputDirForCheckingPath + "/gt2C_" += outputFileName,
+                                                        tChecker_bin);
+                if (isThereAnAcceptanceCondition)
+                    std::cout << BHGRN << outputFileName << "'s language is not empty!\n" << reset;
+                else {
+                    // TODO replace this with actual implementation of the other verification case.
+                    std::cout << BHRED << outputFileName << "may be empty, just wait for a new release of utotparser!\n" << reset;
                 }
             }
             // At the end we print a convenient dashboard to quickly check the translations results.
