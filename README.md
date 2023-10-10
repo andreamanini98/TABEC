@@ -1,5 +1,5 @@
 # utotparser
-This tool aims at providing a conversion from UPPAAL to tChecker syntax.
+This tool aims at providing a way of checking the emptiness of non-reset-test Timed Automata, as well as serving as a conversion tool from UPPAAL to tChecker syntax.
 Due to the limited scope of our usage, the tool can convert a limited set of the possible TAs one can create in UPPAAL.
 
 Furthermore, when designing TAs in UPPAAL, the following conventions has to be respected:
@@ -16,9 +16,10 @@ Once cloned, in order to get the executable, navigate inside the corresponding f
 ```
 mkdir build
 cd build
-cmake ..
+cmake -DTCHECKER_BIN_PATH="/path/to/tChecker/bin" ..
 make
 ```
+Please be careful when performing the above commands, since the path to the tChecker executabe will be retrieved by the path given during the build process.  Here, `"/path/to/tChecker/bin"` is the path to the bin folder of your actual tChecker installation (the folder containing the four tools provided by tChecker).
 
 In order to start the tool, one can decide to simply launch the executable:
 ```
