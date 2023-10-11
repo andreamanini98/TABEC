@@ -33,4 +33,13 @@ static int getMaxIntFromStr(const std::string &str) {
     return (!tmp.empty()) ? *max_element(tmp.begin(), tmp.end()) : 0;
 }
 
+/**
+ * Function used to delete all contents of a given directory.
+ * @param dir the path to the directory to clear.
+ */
+void deleteDirectoryContents(const std::filesystem::path &dir) {
+    for (const auto &entry: std::filesystem::directory_iterator(dir))
+        std::filesystem::remove_all(entry.path());
+}
+
 #endif //UTOTPARSER_UTILS_H
