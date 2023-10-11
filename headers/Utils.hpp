@@ -42,4 +42,17 @@ void deleteDirectoryContents(const std::filesystem::path &dir) {
         std::filesystem::remove_all(entry.path());
 }
 
+/**
+ * Function used to check if an element is contained inside a vector.
+ * @tparam T the type of the vector and of the element to find.
+ * @param vec the vector in which the element may be contained.
+ * @param elem the element to find.
+ * @return true if elem is contained inside vec, false otherwise.
+ */
+template<typename T>
+bool isElementInVector(const std::vector<T> &vec, const T &elem) {
+    auto iter = std::find(vec.begin(), vec.end(), elem);
+    return (iter != vec.end());
+}
+
 #endif //UTOTPARSER_UTILS_H

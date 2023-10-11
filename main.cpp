@@ -17,7 +17,7 @@ using json = nlohmann::json;
 #define XSTRING(x) STRING(x)
 
 // Used only in CLion.
-#define tChecker_bin "/Users/echo/Desktop/PoliPrograms/tchecker-0.8/bin"
+//#define tChecker_bin "/Users/echo/Desktop/PoliPrograms/tchecker-0.8/bin"
 
 
 /**
@@ -38,6 +38,8 @@ int main(int argc, char *argv[]) {
     if (argc <= 4) {
         // An integer that will grow at each conversion leading to unique TA names.
         int idTA = 0;
+
+        std::vector<std::string> cliArguments(argv + 1, argv + argc);
 
         std::vector<DashBoardEntry> dashboardResults;
         DashBoardEntry d_entry;
@@ -63,8 +65,7 @@ int main(int argc, char *argv[]) {
                 if (std::filesystem::is_regular_file(entry)) {
                     std::ifstream file(entry.path());
 
-                    if (static_cast<std::string>(entry.path()).find(".xml") == std::string::npos)
-                        continue;
+                    if (static_cast<std::string>(entry.path()).find(".xml") == std::string::npos) continue;
 
                     if (file.is_open()) {
                         std::stringstream buffer;
@@ -85,10 +86,10 @@ int main(int argc, char *argv[]) {
 
                         Translator translator(outputDirPath + "/" += outputFileName);
 
-                        if ((argc > 3 || argc == 2) && !strcmp(argv[(argc == 2) ? 1 : 3], "-j"))
+                        if (isElementInVector<std::string>(cliArguments, "-j"))
                             std::cout << std::setw(4) << j << std::endl;
 
-                        if ((argc > 3 || argc == 2) && !strcmp(argv[(argc == 2) ? 1 : 3], "-nrt")) {
+                        if (isElementInVector<std::string>(cliArguments, "-nrt")) {
                             if (Translator::isNRT(j)) {
                                 // If -nrt option is enabled and the TA is actually a nrt, we proceed in its translation.
                                 startTranslation(translator, nameTA, j, d_entry);
@@ -101,6 +102,7 @@ int main(int argc, char *argv[]) {
                             // The normal translation (without any option enabled) is carried out.
                             startTranslation(translator, nameTA, j, d_entry);
                         }
+
                         idTA++;
                     } else {
                         std::cerr << BHRED << "Failed to open file: " << entry.path() << reset << std::endl;
@@ -112,7 +114,7 @@ int main(int argc, char *argv[]) {
                         TAChecker::checkMuGreaterThan2C(scriptsDirPath,
                                                         outputDirPath + "/" += outputFileName,
                                                         outputDirForCheckingPath + "/gt2C_" += outputFileName,
-                                                        tChecker_bin);
+                                                        tCheckerBinPath);
                 if (isThereAnAcceptanceCondition)
                     std::cout << BHGRN << outputFileName << "'s language is not empty!\n" << reset;
                 else {
