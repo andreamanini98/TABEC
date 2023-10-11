@@ -2,7 +2,7 @@
 This tool aims at providing a way of checking the emptiness of non-reset-test Timed Automata, as well as serving as a conversion tool from UPPAAL to tChecker syntax.
 Due to the limited scope of our usage, the tool can convert a limited set of the possible TAs one can create in UPPAAL.
 
-Furthermore, when designing TAs in UPPAAL, the following conventions has to be respected:
+Furthermore, when designing TAs in UPPAAL, the following conventions have to be respected:
 * Do not add any comment to locations or transitions
 * UPPAAL files must be saved with the .xml extension
 * In UPPAAL final states must have a color (all states with a color will be marked as final)
@@ -27,31 +27,27 @@ In order to start the tool, one can decide to simply launch the executable:
 ```
 Notice that in this way, the source .xml files must be inserted in the `inputFiles` folder, while relatives outputs will be found in the `outputFiles` folder (the ones located in the utotparser directory).
 
-Additionally, one can also specify the paths where source files are located, as well as the output destination, by passing them as command-line argments:
+Additionally, one can also specify the paths where source files are located, as well as the output destination, by passing them as command-line arguments:
 ```
-./utotparser /path/to/source/directory /path/to/destination/directory
+./utotparser -src /path/to/source/directory -dst /path/to/destination/directory
 ```
 
 Finally, different options can further be specified: <br>
-The option `-j` can be included to output the json files obtained during the conversion:
+The option `-jsn` can be included to output the json files obtained during the conversion:
 ```
-./utotparser /path/to/source/directory /path/to/destination/directory -j
+./utotparser -jsn
 ```
 The option `-nrt` can be included to translate only nrtTAs:
-```
-./utotparser /path/to/source/directory /path/to/destination/directory -nrt
-```
-
-Please note that options can be used even when custom paths are specified:
-```
-./utotparser -j
-```
 ```
 ./utotparser -nrt
 ```
 
+The above options can be specified in any order, e.g. one could write for example:
+```
+./utotparser -nrt -src /path/to/source/directory -jsn
+```
+**IMPORTANT**: altough options can be specified in any order, always keep in mind that paths for specifying input and output directories must be specified right after their respective option. Thus, something like `./utotparser -src /path/to/source/directory` is correct, while  `./utotparser -src -nrt /path/to/source/directory` will not work.
 
 When launched, all .xml files in the chosen source directory will be converted in .tck files in the chosen output directory.
 
-Please stick to these executions options, no side-checks are done if different command-line arguments are given (in type or number!).
-Parameters are not yet supported, so they will be translated "as-is", but they're not accepted in tChecker's syntax.
+Please stick to these executions options, no side-checks are done if different command-line arguments are given.
