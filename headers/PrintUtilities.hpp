@@ -1,6 +1,6 @@
 #define COLUMN_WIDTH 12
 
-#include "structs.h"
+#include "Structs.h"
 
 
 /**

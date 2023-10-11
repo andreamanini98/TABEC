@@ -1,7 +1,7 @@
 #ifndef UTOTPARSER_TACHECKER_H
 #define UTOTPARSER_TACHECKER_H
 
-#include "commandReader.h"
+#include "CommandReader.h"
 
 #define liveness "/tck-liveness"
 #define gt2C "/gt2C.sh"
@@ -40,6 +40,5 @@ public:
     }
 
 };
-
 
 #endif //UTOTPARSER_TACHECKER_H

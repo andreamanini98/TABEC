@@ -10,7 +10,7 @@
 #include "nlohmann/json.hpp"
 
 #include "XMLtoJSONInclude/xml2json.hpp"
-#include "jsonHelper.hpp"
+#include "JsonHelper.hpp"
 #include "UPPAALxmlAttributes.h"
 #include "TAContentExtractor.hpp"
 #include "Utils.hpp"

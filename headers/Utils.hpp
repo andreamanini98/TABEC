@@ -43,16 +43,19 @@ void deleteDirectoryContents(const std::filesystem::path &dir) {
 }
 
 /**
- * Function used to check if an element is contained inside a vector.
+ * Function used to check if an element is contained inside a vector and to get its position inside such vector.
  * @tparam T the type of the vector and of the element to find.
  * @param vec the vector in which the element may be contained.
  * @param elem the element to find.
- * @return true if elem is contained inside vec, false otherwise.
+ * @return a pair containing: (1) true if elem is contained inside vec and (2) its position, otherwise (1) false and (2) -1 as sentinel value.
  */
 template<typename T>
-bool isElementInVector(const std::vector<T> &vec, const T &elem) {
+std::pair<bool, int> isElementInVector(const std::vector<T> &vec, const T &elem) {
     auto iter = std::find(vec.begin(), vec.end(), elem);
-    return (iter != vec.end());
+    if (iter != vec.end())
+        return {true, std::distance(vec.begin(), iter)};
+    else
+        return {false, -1};
 }
 
 #endif //UTOTPARSER_UTILS_H
