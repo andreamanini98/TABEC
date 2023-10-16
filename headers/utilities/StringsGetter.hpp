@@ -30,10 +30,6 @@ private:
 public:
     explicit StringsGetter(CliHandler cliHandler) : cliHandler(std::move(cliHandler)) {}
 
-    [[nodiscard]] const std::string &getCurrentDirPath() const {
-        return currentDirPath;
-    }
-
     [[nodiscard]] const std::string &getInputDirPath() const {
         return inputDirPath;
     }

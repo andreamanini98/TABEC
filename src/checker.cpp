@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
                         TAChecker::checkMuGreaterThan2C(stringsGetter.getScriptsDirPath(),
                                                         stringsGetter.getOutputDirPath() + "/" += outputFileName,
                                                         stringsGetter.getOutputDirForCheckingPath() + "/gt2C_" += outputFileName,
-                                                        stringsGetter.getTChecker_bin());
+                                                        stringsGetter.getTCheckerBinPath());
                 if (isThereAnAcceptanceCondition)
                     std::cout << BHGRN << outputFileName << "'s language is not empty!\n" << reset << std::endl;
                 else {
