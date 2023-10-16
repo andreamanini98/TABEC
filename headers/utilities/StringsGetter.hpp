@@ -12,13 +12,13 @@
 class StringsGetter {
 
 private:
-    CliHandler cliHandler;
+    CliHandler &cliHandler;
 
     std::string tChecker_bin = "/Users/echo/Desktop/PoliPrograms/tchecker-0.8/bin";
 
     std::string currentDirPath = XSTRING(SOURCE_ROOT);
-    std::string inputDirPath = cliHandler.isCmd(src) ? (*(cliHandler.getArgv_p())[cliHandler.getPos(src) + 1]) : (currentDirPath + "/inputFiles");
-    std::string outputDirPath = cliHandler.isCmd(dst) ? (*(cliHandler.getArgv_p())[cliHandler.getPos(dst) + 1]) : (currentDirPath + "/outputFiles");
+    std::string inputDirPath = cliHandler.isCmd(src) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(src) + 1]) : (currentDirPath + "/inputFiles");
+    std::string outputDirPath = cliHandler.isCmd(dst) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(dst) + 1]) : (currentDirPath + "/outputFiles");
 
     // Path to the directory containing shell scripts.
     std::string scriptsDirPath = currentDirPath + "/scriptsForChecks";
@@ -28,7 +28,7 @@ private:
     std::string tCheckerBinPath = XSTRING(TCHECKER_BIN);
 
 public:
-    explicit StringsGetter(CliHandler cliHandler) : cliHandler(std::move(cliHandler)) {}
+    explicit StringsGetter(CliHandler &cliHandler) : cliHandler(cliHandler) {}
 
     [[nodiscard]] const std::string &getInputDirPath() const {
         return inputDirPath;

@@ -29,7 +29,7 @@ void startTranslation(Translator translator, const std::string &nameTA, const js
 }
 
 int main(int argc, char *argv[]) {
-    CliHandler cliHandler(&argc, &argv, true);
+    CliHandler cliHandler(&argc, &argv, false);
     StringsGetter stringsGetter(cliHandler);
 
     std::vector<DashBoardEntry> dashboardResults;

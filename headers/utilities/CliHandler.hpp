@@ -25,6 +25,12 @@ private:
 
 
 public:
+    /**
+     * Default parametric constructor.
+     * @param argc_p a pointer to the main's argc.
+     * @param argv_p a pointer to the main's argv.
+     * @param debug true if some debug information has to be printed, false otherwise.
+     */
     CliHandler(int *argc_p, char ***argv_p, bool debug) : argc_p(argc_p), argv_p(argv_p) {
         commandsAndPositions.clear();
         // We transform the triple pointer ***arv_p in a vector of strings.
@@ -62,6 +68,10 @@ public:
         return (commandsAndPositions.find(cmd)->second).second;
     }
 
+    /**
+     * returns a pointer to the main's argv.
+     * @return a pointer to the main's argv.
+     */
     char ***getArgv_p() {
         return argv_p;
     }
