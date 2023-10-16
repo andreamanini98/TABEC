@@ -1,7 +1,7 @@
 #ifndef UTOTPARSER_TACHECKER_H
 #define UTOTPARSER_TACHECKER_H
 
-#include "CommandReader.h"
+#include "utilities/CommandReader.hpp"
 
 #define liveness "/tck-liveness"
 #define gt2C "/gt2C.sh"
@@ -28,8 +28,7 @@ public:
         // We first use this script to substitute all occurrences of a parameter keyword inside the TA translation.
         system(std::string(shellScriptPath + gt2C + " " + inputFilePath + " " + outputFilePath).c_str());
         // Then we call tChecker and collect the result of the liveness analysis.
-        std::string tCheckerResult =
-                Command::exec(std::string(shellScriptPath + tckLiveness + " " + outputFilePath + " " + tCheckerBinPath + liveness));
+        std::string tCheckerResult = Command::exec(std::string(shellScriptPath + tckLiveness + " " + outputFilePath + " " + tCheckerBinPath + liveness));
         // We get rid of '\n' characters to compare the result with the string "true".
         tCheckerResult.erase(std::remove(tCheckerResult.begin(), tCheckerResult.end(), '\n'), tCheckerResult.cend());
 

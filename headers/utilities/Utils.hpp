@@ -58,4 +58,36 @@ std::pair<bool, int> isElementInVector(const std::vector<T> &vec, const T &elem)
         return {false, -1};
 }
 
+/**
+ * Function that, given a string containing some symbols, returns the last word after the last occurrence of such symbol.
+ * @param str the string in which we look for the last word.
+ * @param symbol the token appearing in the string.
+ * @return the last word following the last occurrence of symbol.
+ */
+std::string getWordAfterLastSymbol(const std::string &str, char symbol) {
+    size_t lastSlashPos = str.find_last_of(symbol);
+    if (lastSlashPos != std::string::npos)
+        return str.substr(lastSlashPos + 1);
+    else
+        return "";
+}
+
+/**
+ * Function used to get a specific string obtained by splitting the original one.
+ * @param str the string to split.
+ * @param symbol the token used for splitting the string.
+ * @param pos the position of the string to return. The position is considered on the result of the splitting operation.
+ * @return the string at position pos in the split original string.
+ */
+std::string getStringGivenPosAndToken(const std::string &str, char symbol, int pos) {
+    std::istringstream stream(str);
+    std::string token;
+    std::vector<std::string> tokens;
+
+    while (std::getline(stream, token, symbol))
+        tokens.push_back(token);
+
+    return tokens[pos];
+}
+
 #endif //UTOTPARSER_UTILS_H

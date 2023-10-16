@@ -10,10 +10,10 @@
 #include "nlohmann/json.hpp"
 
 #include "XMLtoJSONInclude/xml2json.hpp"
-#include "JsonHelper.hpp"
-#include "UPPAALxmlAttributes.h"
+#include "utilities/JsonHelper.hpp"
+#include "defines/UPPAALxmlAttributes.h"
 #include "TAContentExtractor.hpp"
-#include "Utils.hpp"
+#include "utilities/Utils.hpp"
 
 using json = nlohmann::json;
 

@@ -25,7 +25,9 @@ void printTitle(const std::string &nameTA, const std::string &path, const std::s
  * - Red ball: failure.
  * @param dashboardResults a vector of structs containing useful information for the table printing.
  */
-void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults) {
+ // TODO adjust the way the printing is done
+ //      also adjust the method documentation
+void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool onlyConversion = false, bool onlyEmptiness = false) {
     std::cout <<
               "\n--- Results of conversion ---" <<
               std::endl <<
@@ -40,8 +42,10 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults) {
     for (auto &d_entry: dashboardResults) {
         std::cout << "| " << d_entry.nameTA <<
                   std::string(COLUMN_WIDTH - d_entry.nameTA.length() - 1, ' ') <<
-                  "| " << std::string(COLUMN_WIDTH - 3, ' ') << (d_entry.translationResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset) <<
-                  " |" << std::string(COLUMN_WIDTH - 2, ' ') << (d_entry.emptinessResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset) <<
+                  "| " << std::string(COLUMN_WIDTH - 3, ' ') <<
+                  (onlyEmptiness ? " " : (d_entry.translationResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset)) <<
+                  " |" << std::string(COLUMN_WIDTH - 2, ' ') <<
+                  (onlyConversion ? " " : (d_entry.emptinessResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset)) <<
                   " |" << std::endl;
     }
     for (int i = 0; i < 40; i++) std::cout << "\u203E";

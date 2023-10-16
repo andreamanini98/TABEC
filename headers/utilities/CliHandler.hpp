@@ -62,6 +62,10 @@ public:
         return (commandsAndPositions.find(cmd)->second).second;
     }
 
+    char ***getArgv_p() {
+        return argv_p;
+    }
+
 };
 
 #endif //UTOTPARSER_CLIHANDLER_H

@@ -19,13 +19,17 @@ set(CMAKE_CXX_STANDARD 17)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/inputFiles)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputFiles)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputFilesForChecking)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-add_executable(${PROJECT_NAME} "main.cpp")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
 
-target_include_directories(${PROJECT_NAME} PUBLIC headers)
-
-target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+set(SOURCES src/converter.cpp src/checker.cpp)
+foreach (source IN LISTS SOURCES)
+    get_filename_component(executable_name ${source} NAME_WE)
+    add_executable(${executable_name} ${source})
+    target_include_directories(${executable_name} PUBLIC headers)
+    target_link_libraries(${executable_name} nlohmann_json::nlohmann_json)
+endforeach ()
 
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/gt2C.sh)
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/tCheckerLiveness.sh)
