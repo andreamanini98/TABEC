@@ -57,7 +57,7 @@ private:
             // As we assume that in UPPAAL a colored location is also final, also here we mark a final location with a color.
             if (location.contains(COLOR)) {
                 (isInitial) ? outString.append(", ") : outString;
-                outString.append("color=blue");
+                outString.append("color=red");
                 isFinal = true;
             }
 
@@ -82,9 +82,10 @@ public:
         std::ofstream out;
         out.open(outFilePath, std::ofstream::out | std::ofstream::trunc);
 
-        std::cout << "Writing heading" << std::endl;
+        std::cout << "Writing heading." << std::endl;
         writeHeading(systemName, out);
 
+        std::cout << "Writing locations." << std::endl;
         json locations = TAContentExtractor::getLocations(inFile);
         writeLocations(getJsonAsArray(locations), TAContentExtractor::getInitialLocationName(inFile), out);
 
