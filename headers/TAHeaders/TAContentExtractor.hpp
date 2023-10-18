@@ -1,6 +1,13 @@
 #ifndef UTOTPARSER_TACONTENTEXTRACTOR_HPP
 #define UTOTPARSER_TACONTENTEXTRACTOR_HPP
 
+#include <sstream>
+#include "nlohmann/json.hpp"
+
+#include "defines/UPPAALxmlAttributes.h"
+
+using json = nlohmann::json;
+
 
 class TAContentExtractor {
 

@@ -20,10 +20,12 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/inputFiles)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputFiles)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputFilesForChecking)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputPDFs)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputDOTs)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
 
-set(SOURCES src/converter.cpp src/checker.cpp)
+set(SOURCES src/converter.cpp src/checker.cpp src/grapher.cpp)
 foreach (source IN LISTS SOURCES)
     get_filename_component(executable_name ${source} NAME_WE)
     add_executable(${executable_name} ${source})

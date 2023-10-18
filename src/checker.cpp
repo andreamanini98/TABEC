@@ -1,15 +1,15 @@
 #include <iostream>
-#include <sstream>
 #include <fstream>
 #include "nlohmann/json.hpp"
 
-#include "XMLtoJSONInclude/xml2json.hpp"
 #include "defines/ANSI-color-codes.h"
 #include "TAHeaders/TAChecker.hpp"
 #include "utilities/PrintUtilities.hpp"
 #include "utilities/CliHandler.hpp"
 #include "utilities/StringsGetter.hpp"
 #include "utilities/Utils.hpp"
+
+using json = nlohmann::json;
 
 
 int main(int argc, char *argv[]) {
