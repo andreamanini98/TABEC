@@ -24,7 +24,7 @@ private:
         out << "fontname=\"Helvetica,Arial,sans-serif\"" << std::endl;
         out << "node [fontname=\"Helvetica,Arial,sans-serif\"]" << std::endl;
         out << "edge [fontname=\"Helvetica,Arial,sans-serif\"]" << std::endl;
-        out << "node [shape = circle];" << std::endl;
+        out << "node [shape=circle, width=1, height=1];" << std::endl;
         out.flush();
     }
 
@@ -41,7 +41,7 @@ private:
             std::string locationID = static_cast<std::string>(location.at(ID));
             std::string outString = "P_" + locationID + "[";
             // This is the 'label' attribute used in a typical .dot file.
-            std::string dotLabel = "label=" + locationID;
+            std::string dotLabel = "label=\"" + locationID;
 
             // If the location is initial we mark it with a double circle.
             if (locationID == initialLocation) {
@@ -57,10 +57,11 @@ private:
             // As we assume that in UPPAAL a colored location is also final, also here we mark a final location with a color.
             if (location.contains(COLOR)) {
                 (isInitial) ? outString.append(", ") : outString;
-                outString.append("color=red");
+                outString.append("style=filled, fillcolor=\"#FF00004C\"");
                 isFinal = true;
             }
 
+            dotLabel.append("\"");
             (isInitial || isFinal) ? outString.append(", " + dotLabel) : outString.append(dotLabel);
 
             outString.append("]\n");
