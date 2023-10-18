@@ -42,7 +42,7 @@ The above options can be specified in any order, e.g. one could write for exampl
 ```
 ./converter -nrt -src /path/to/source/directory -jsn
 ```
-**IMPORTANT**: altough options can be specified in any order, always keep in mind that paths for specifying input and output directories must be specified right after their respective option. Thus, something like `./converter -src /path/to/source/directory` is correct, while  `./converter -src -nrt /path/to/source/directory` will not work.
+**IMPORTANT:** altough options can be specified in any order, always keep in mind that paths for specifying input and output directories must be specified right after their respective option. Thus, something like `./converter -src /path/to/source/directory` is correct, while  `./converter -src -nrt /path/to/source/directory` will not work.
 
 When launched, all .xml files in the chosen source directory will be converted in .tck files in the chosen output directory.
 
@@ -78,6 +78,16 @@ In addition, one can also manually specify the path to tChecker's bin directory 
 ```
 ./checker -lns /path/to/tChecker/bin
 ```
+
+<h2>Using the grapher</h2>
+
+This tool offers graphical capabilities for showing the TAs under analysis.<br>
+In order to produce a pdf view of the TAs, the grapher tool can be called with the following command:
+```
+./grapher
+```
+With this command, all the `.dot` files contained in the `outputDOTs` directory will be translated into `.pdf` files inside the `outputPDFs` directory.<br>
+**IMPORTANT:** the tool uses graphviz in order to carry out the translation from `.dot` to `.pdf` file format. Please be sure to have graphviz installed on your system before calling the grapher.
 
 <h2>Minor things</h2>
 
