@@ -1,6 +1,6 @@
 # utotparser
-This tool aims at providing a way of checking the emptiness of Timed Automata (one can restrict the checking only to non-reset-test TAs, see below), as well as serving as a conversion tool from UPPAAL to tChecker syntax.
-Due to the limited scope of our usage, the tool can convert a limited set of the possible TAs one can create in UPPAAL.
+This tool aims at providing a way of checking the emptiness of Timed Automata (TA) (one can restrict the checking only to non-reset-test TAs, see below), as well as serving as a conversion tool from UPPAAL to tChecker syntax.
+Due to the limited scope of our usage, the tool can convert only a limited set of the possible TAs one can create in UPPAAL.
 
 <h2>How to install</h2>
 
@@ -11,8 +11,9 @@ cd build
 cmake -DTCHECKER_BIN_PATH="/path/to/tChecker/bin" ..
 make
 ```
-Please be careful when performing the above commands, since the path to the tChecker executable will be retrieved by the path given during the build process.  Here, `"/path/to/tChecker/bin"` is the path to the bin folder of your actual tChecker installation (the folder containing the four tools provided by tChecker).<br>
-Once the steps above have been completed, exit from the build directory by using the `cd ..` command. You can find the executables in the `executables` directory.
+Please be careful when performing the above commands, since the path to the tChecker executable will be retrieved by the path given during the build process (however, it is still possible to specify it afterwards, see "Using the checker" section for more details). <br>
+Here, `"/path/to/tChecker/bin"` is the path to the bin folder of your actual tChecker installation (the folder containing the four tools provided by tChecker, so to speak).<br>
+Once the steps above have been completed, exit from the build directory by using the `cd ..` command. You will find the executables in the `executables` directory.
 
 <h2>Using the converter</h2>
 
@@ -66,15 +67,22 @@ In order to see if a TA's language is empty or not, you can call the checker too
 ```
 ./checker
 ```
-It is possible also in this case to specify the directory from which to take the TAs to check have to be taken. This can be done by adding the following option:
+It is possible also in this case to specify the directory from which to take the TAs to check. This can be done by adding the following option:
 ```
 ./checker -dst /path/to/tck_files/directory
 ```
 In this case we still use the `-dst` option since, normally, files by the checker will be taken from the destination directory of the converter.<br>
 Please note that the checker will work only with `.tck` files.
 
+In addition, one can also manually specify the path to tChecker's bin directory while calling the checker by means of the following option:
+```
+./checker -lns /path/to/tChecker/bin
+```
+
 <h2>Minor things</h2>
 
 Other little things one may be aware of:
 * Since the program uses colors in the cli, if you want to see them, please use a compatible terminal.<br>
-* Testing have been done on MacOS Sononma 14.0 only. Should work also on other Unix-based OSs. Not tested under Windows.
+* Testing have been done on MacOS Sonoma 14.0 only. Should work also on other Unix-based OSs.
+* If on Unix systems the tool doesn't work, try launching it from a zsh terminal (instead of a bash or other default terminals).
+* If using this tool on Windows, please consider launching it from a Unix virtual machine or by using WSL (Windows Subsystem for Linux).
