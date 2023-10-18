@@ -89,6 +89,13 @@ In order to produce a pdf view of the TAs, the grapher tool can be called with t
 With this command, all the `.dot` files contained in the `outputDOTs` directory will be translated into `.pdf` files inside the `outputPDFs` directory.<br>
 **IMPORTANT:** the tool uses graphviz in order to carry out the translation from `.dot` to `.pdf` file format. Please be sure to have graphviz installed on your system before calling the grapher.
 
+<h3>Graph legend</h3>
+
+The following conventions have been followed while generating `.pdf` files:
+* Initial states are identified by a double circle.
+* Invariants are contained in the relative location.
+* Final nodes are colored.
+
 <h2>Minor things</h2>
 
 Other little things one may be aware of:
