@@ -90,4 +90,24 @@ std::string getStringGivenPosAndToken(const std::string &str, char symbol, int p
     return tokens[pos];
 }
 
+/**
+ * Function used to get all the entries in a directory sorted in alphabetical order.
+ * @param directory_path the path to the directory in which to collect all entries.
+ * @return a vector containing the alphabetically ordered entries.
+ */
+std::vector<std::filesystem::directory_entry> getEntriesInAlphabeticalOrder(const std::filesystem::path &directory_path) {
+    std::vector<std::filesystem::directory_entry> entries;
+
+    // Iterate over the directory and collect the entries.
+    for (const auto &entry: std::filesystem::directory_iterator(directory_path))
+        entries.push_back(entry);
+
+    // Sort the entries alphabetically.
+    std::sort(entries.begin(), entries.end(), [](const auto &a, const auto &b) {
+        // We have to provide sort a sorting criterion by using return sorting_criterion.
+        return a.path().filename() < b.path().filename();
+    });
+    return entries;
+}
+
 #endif //UTOTPARSER_UTILS_H

@@ -14,8 +14,6 @@ class StringsGetter {
 private:
     CliHandler &cliHandler;
 
-    std::string tChecker_bin = "/Users/echo/Desktop/PoliPrograms/tchecker-0.8/bin";
-
     std::string currentDirPath = XSTRING(SOURCE_ROOT);
     std::string inputDirPath = cliHandler.isCmd(src) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(src) + 1]) : (currentDirPath + "/inputFiles");
     std::string outputDirPath = cliHandler.isCmd(dst) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(dst) + 1]) : (currentDirPath + "/outputFiles");
@@ -25,7 +23,7 @@ private:
     // Path to the directory containing TA descriptions where parameters have been substituted with appropriate values.
     std::string outputDirForCheckingPath = currentDirPath + "/outputFilesForChecking";
     // Path to the bin folder of the installed tChecker tool (set during build with cmake -D).
-    std::string tCheckerBinPath = XSTRING(TCHECKER_BIN);
+    std::string tCheckerBinPath = cliHandler.isCmd(lns) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(lns) + 1]) : XSTRING(TCHECKER_BIN);
 
 public:
     explicit StringsGetter(CliHandler &cliHandler) : cliHandler(cliHandler) {}
@@ -48,10 +46,6 @@ public:
 
     [[nodiscard]] const std::string &getTCheckerBinPath() const {
         return tCheckerBinPath;
-    }
-
-    [[nodiscard]] const std::string &getTChecker_bin() const {
-        return tChecker_bin;
     }
 
 };

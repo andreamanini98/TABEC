@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Shell script that, given an input file, substitutes all the occurrences of a parameter keyword with the appropriate
 # integer value, producing the result in the file specified as output.
@@ -14,13 +14,13 @@ C_pattern="# C :: [0-9]+"
 param_keyword="param"
 
 # Check if the correct number of arguments is provided.
-if [ $# -ne 2 ]; then
+if [[ $# -ne 2 ]]; then
   echo "Error: arguments required: 2, arguments provided: $#."
   exit 1
 fi
 
 # Check if the input file exists.
-if [ ! -e "$input_file" ]; then
+if [[ ! -e "$input_file" ]]; then
   echo "Error: Input file does not exist."
   exit 1
 fi
@@ -30,7 +30,7 @@ Q=$(grep -oE "$Q_pattern" "$input_file" | awk '{print $NF}')
 C=$(grep -oE "$C_pattern" "$input_file" | awk '{print $NF}')
 
 # Check if an integer was found.
-if [ -z "$Q" ] || [ -z "$C" ]; then
+if [[ -z "$Q" ]] || [[ -z "$C" ]]; then
   echo "Error: No integer found in the input file."
   exit 1
 fi

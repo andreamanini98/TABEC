@@ -32,4 +32,6 @@ foreach (source IN LISTS SOURCES)
 endforeach ()
 
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/gt2C.sh)
+execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/lt2CCycle.sh)
+execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/lt2CScale.sh)
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/tCheckerLiveness.sh)

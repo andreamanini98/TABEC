@@ -19,4 +19,5 @@
 #define COLOR "@color"
 #define INVARIANT "invariant"
 
-
+// This is not a real attribute used in UPPAAL, but is used by us for computations involving TA parameters
+#define ALPHA_MAG 10000

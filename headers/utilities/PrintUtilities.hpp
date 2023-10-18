@@ -11,8 +11,7 @@
  * @param outputDirPath the directory in which the output file will be located.
  */
 void printTitle(const std::string &nameTA, const std::string &path, const std::string &outputFileName, const std::string &outputDirPath) {
-    std::cout << std::endl;
-    std::cout << "-------- " << nameTA << " --------\n";
+    std::cout << "\n-------- " << nameTA << " --------\n";
     std::cout << "Starting conversion of file: " <<
               std::endl << path <<
               std::endl << "as " << outputFileName <<
@@ -25,8 +24,8 @@ void printTitle(const std::string &nameTA, const std::string &path, const std::s
  * - Red ball: failure.
  * @param dashboardResults a vector of structs containing useful information for the table printing.
  */
- // TODO adjust the way the printing is done
- //      also adjust the method documentation
+// TODO adjust the way the printing is done
+//      also adjust the method documentation
 void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool onlyConversion = false, bool onlyEmptiness = false) {
     std::cout <<
               "\n--- Results of conversion ---" <<

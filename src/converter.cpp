@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     deleteDirectoryContents(stringsGetter.getOutputDirPath());
 
     try {
-        for (const auto &entry: std::filesystem::directory_iterator(stringsGetter.getInputDirPath())) {
+        for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputDirPath())) {
             if (std::filesystem::is_regular_file(entry)) {
                 std::ifstream file(entry.path());
 
@@ -91,6 +91,7 @@ int main(int argc, char *argv[]) {
                 }
             }
             dashboardResults.emplace_back(d_entry);
+            std::cout << std::string(21, '-') << std::endl;
         }
         // At the end we print a convenient dashboard to quickly check the results.
         printDashBoard(dashboardResults, true, false);

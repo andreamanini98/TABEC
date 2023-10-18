@@ -7,6 +7,7 @@
 #include <utility>
 #include <string>
 #include <algorithm>
+#include <cmath>
 #include "nlohmann/json.hpp"
 
 #include "XMLtoJSONInclude/xml2json.hpp"
@@ -188,6 +189,8 @@ public:
         // Please note that, although tChecker accepts comments starting with #, the :: syntax has been chosen by ourselves.
         out << "\n# Q :: " << Q << std::endl;
         out << "\n# C :: " << C << std::endl;
+        // Computing alpha as seen in Theorem 5.
+        out << "\n# Alpha :: " << std::round(std::pow(4 * (1 + C * std::max(Q, 4 * C)), -1) * ALPHA_MAG) << std::endl;
 
         out.close();
     }
