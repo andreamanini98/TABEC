@@ -127,7 +127,9 @@ private:
     void writeTransitionsDeclarations_helper(std::string &outString, std::vector<json> labels, bool &putColon) {
         for (auto &label: labels) {
             std::string labelText = static_cast<std::string>(label.at(TEXT));
-            if (static_cast<std::string>(label.at(KIND)) == GUARD) {
+            std::string labelKind = static_cast<std::string>(label.at(KIND));
+
+            if (labelKind == GUARD) {
                 // We have to check if C will eventually be updated due to the transition's guard.
                 int newMax = getMaxIntFromStr(labelText);
                 C = (C < newMax) ? newMax : C;
@@ -136,7 +138,7 @@ private:
                 outString.append(labelText);
                 putColon = true;
             }
-            if (static_cast<std::string>(label.at(KIND)) == ASSIGNMENT) {
+            if (labelKind == ASSIGNMENT) {
                 (putColon) ? outString.append(" : ") : outString;
                 outString.append("do: ");
                 std::replace(labelText.begin(), labelText.end(), ',', ';');
