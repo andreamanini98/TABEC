@@ -94,7 +94,9 @@ With this command, all the `.dot` files contained in the `outputDOTs` directory 
 The following conventions have been followed while generating `.pdf` files:
 * Initial states are identified by a double circle.
 * Invariants are contained in the relative location.
-* Final nodes are colored.
+* Final locations are colored.
+* Guards are green.
+* Updates are purple.
 
 <h2>Minor things</h2>
 
