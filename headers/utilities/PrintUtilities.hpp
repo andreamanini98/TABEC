@@ -1,6 +1,9 @@
-#define COLUMN_WIDTH 20
-
 #include "Structs.h"
+
+// Used to create columns for 'Conversion' and 'Emptiness'.
+#define FIXED_COL_WIDTH 12
+// Used to add a padding to the maximum width found scanning the names of the TAs to show.
+#define TA_NAME_COL_WIDTH_PADDING 2
 
 
 /**
@@ -23,13 +26,21 @@ void printTitle(const std::string &nameTA, const std::string &path, const std::s
  * - Green ball: success.
  * - Red ball: failure.
  * @param dashboardResults a vector of structs containing useful information for the table printing.
+ * @param onlyConversion used to print only conversion results.
+ * @param onlyEmptiness used to print only emptiness results.
  */
-// TODO adjust the way the printing is done
-//      also adjust the method documentation
-//      Find a way to get COLUMN_WIDTH from the maximum width of what you want to print otherwise an error occurs.
 void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool onlyConversion = false, bool onlyEmptiness = false) {
+    // Getting the column width for 'TA name' from the longest name we have to display in the dashboard.
+    // By default, columnWidth has a minimum value of FIXED_COL_WIDTH.
+    int nameColumnWidth = FIXED_COL_WIDTH;
+    for (auto &dEntry: dashboardResults)
+        nameColumnWidth = (dEntry.nameTA.length() > nameColumnWidth) ? static_cast<int>(dEntry.nameTA.length()) : nameColumnWidth;
+    // We add a padding only if we have a width greater than the minimum required.
+    nameColumnWidth += (nameColumnWidth == FIXED_COL_WIDTH) ? 0 : TA_NAME_COL_WIDTH_PADDING;
+
+    // Printing the legend and name columns' names.
     std::cout <<
-              "\n--- Results of conversion ---" <<
+              "\n--- Dashboard ---" <<
               std::endl <<
               "Legend: " <<
               std::endl <<
@@ -37,17 +48,19 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool on
               std::endl <<
               BHRED << "\u25CF" << reset << " = failure" <<
               std::endl;
-    std::cout << std::string(40, '_') << std::endl;
-    std::cout << "| TA name    | Conversion | Emptiness  |" << std::endl;
+    std::cout << std::string(nameColumnWidth + 2 * FIXED_COL_WIDTH + 4, '_') << std::endl;
+    std::cout << "| TA name    " + std::string(nameColumnWidth - FIXED_COL_WIDTH, ' ') + "| Conversion | Emptiness  |" << std::endl;
+
+    // For each entry we print the name and, based on the boolean parameters, the wanted results.
     for (auto &d_entry: dashboardResults) {
         std::cout << "| " << d_entry.nameTA <<
-                  std::string(COLUMN_WIDTH - d_entry.nameTA.length() - 1, ' ') <<
-                  "| " << std::string(COLUMN_WIDTH - 3, ' ') <<
+                  std::string(nameColumnWidth - d_entry.nameTA.length() - 1, ' ') <<
+                  "| " << std::string(FIXED_COL_WIDTH - 3, ' ') <<
                   (onlyEmptiness ? " " : (d_entry.translationResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset)) <<
-                  " |" << std::string(COLUMN_WIDTH - 2, ' ') <<
+                  " |" << std::string(FIXED_COL_WIDTH - 2, ' ') <<
                   (onlyConversion ? " " : (d_entry.emptinessResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset)) <<
                   " |" << std::endl;
     }
-    for (int i = 0; i < 40; i++) std::cout << "\u203E";
+    for (int i = 0; i < nameColumnWidth + 2 * FIXED_COL_WIDTH + 4; i++) std::cout << "\u203E";
     std::cout << std::endl;
 }
