@@ -98,6 +98,23 @@ The following conventions have been followed while generating `.pdf` files:
 * Guards are green.
 * Updates are purple.
 
+<h2>Summary on outputs</h2>
+
+It is convenient to give a description of the output tree structure (useful when everything is left as default).<br>
+All the outputs can be found in the `outputs` directory, which have the following tree structure:
+```
+outputs
+├── outputDOTs
+├── outputFiles
+├── outputFilesForChecking
+└── outputPDFs
+```
+The content of such sub-directories will be:
+* `outputDOTs`: the `.dot` representation of the original TAs.
+* `outputFiles`: the `.tck` representation of the origina TAs.
+* `outputFilesForChecking`: some `.tck` files used by the tool in order to check the emptiness by varying the TAs' parameter.
+* `outputPDFs`: the `.pdf` representation of the original TAs.
+
 <h2>Minor things</h2>
 
 Other little things one may be aware of:
