@@ -19,19 +19,19 @@ private:
     // Path to the input directory where files are going to be taken.
     std::string inputDirPath = cliHandler.isCmd(src) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(src) + 1]) : (currentDirPath + "/inputFiles");
     // Path to the output directory where files are going to be written.
-    std::string outputDirPath = cliHandler.isCmd(dst) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(dst) + 1]) : (currentDirPath + "/outputFiles");
+    std::string outputDirPath = cliHandler.isCmd(dst) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(dst) + 1]) : (currentDirPath + "/outputs/outputFiles");
 
     // Path to the directory containing shell scripts.
     std::string scriptsDirPath = currentDirPath + "/scriptsForChecks";
     // Path to the directory containing TA descriptions where parameters have been substituted with appropriate values.
-    std::string outputDirForCheckingPath = currentDirPath + "/outputFilesForChecking";
+    std::string outputDirForCheckingPath = currentDirPath + "/outputs/outputFilesForChecking";
     // Path to the bin folder of the installed tChecker tool (set during build with cmake -D).
     std::string tCheckerBinPath = cliHandler.isCmd(lns) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(lns) + 1]) : XSTRING(TCHECKER_BIN);
 
     // Path to the directory where PDF files will be generated starting from a .dot representation.
-    std::string outputPDFsDirPath = currentDirPath + "/outputPDFs";
+    std::string outputPDFsDirPath = currentDirPath + "/outputs/outputPDFs";
     // Path to the directory where the .dot files will be written.
-    std::string outputDOTsDirPath = currentDirPath + "/outputDOTs";
+    std::string outputDOTsDirPath = currentDirPath + "/outputs/outputDOTs";
 
 public:
     explicit StringsGetter(CliHandler &cliHandler) : cliHandler(cliHandler) {}
