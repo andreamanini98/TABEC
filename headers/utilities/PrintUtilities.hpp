@@ -1,4 +1,4 @@
-#define COLUMN_WIDTH 12
+#define COLUMN_WIDTH 20
 
 #include "Structs.h"
 
@@ -26,6 +26,7 @@ void printTitle(const std::string &nameTA, const std::string &path, const std::s
  */
 // TODO adjust the way the printing is done
 //      also adjust the method documentation
+//      Find a way to get COLUMN_WIDTH from the maximum width of what you want to print otherwise an error occurs.
 void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool onlyConversion = false, bool onlyEmptiness = false) {
     std::cout <<
               "\n--- Results of conversion ---" <<

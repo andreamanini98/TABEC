@@ -1,5 +1,5 @@
-#ifndef UTOTPARSER_UTOTCTRANSLATOR_HPP
-#define UTOTPARSER_UTOTCTRANSLATOR_HPP
+#ifndef UTOTPARSER_TAUTOTTRANSLATOR_HPP
+#define UTOTPARSER_TAUTOTTRANSLATOR_HPP
 
 #include <iostream>
 #include <sstream>
@@ -27,6 +27,11 @@ private:
     int Q;
     // The maximum value appearing in TA's guards and invariants.
     int C;
+    // A clock used to make the time increase strictly monotonically.
+    // The behaviour of this clock is as follows:
+    // - It is reset in input to a location.
+    // - It is checked as a guard (> 0) in output to a location.
+    std::string fictitiousClock;
 
     /**
      * Method used to write the clocks declarations in tChecker syntax.
@@ -34,12 +39,16 @@ private:
      * @param declaration the string coming from the UPPAAL .xml file containing the list of clocks.
      * @param out the stream where we write our output file.
      */
-    static void writeClocksDeclarations(const std::string &declaration, std::ofstream &out) {
+    void writeClocksDeclarations(const std::string &declaration, std::ofstream &out) {
         if (declaration.find(CLOCK) != std::string::npos) {
             std::vector<std::string> clocks = TAContentExtractor::getClocks(declaration);
 
-            for (auto &clock: clocks)
+            for (auto &clock: clocks) {
                 out << "clock:1:" << clock << std::endl;
+                // The fictitious clock's name is obtained by concatenation of the other clocks in order to avoid name clashes.
+                fictitiousClock.append(clock);
+            }
+            out << "clock:1:" << fictitiousClock << std::endl;
 
             out << "\n";
             out.flush();
@@ -110,6 +119,9 @@ private:
             if (transition.contains(LABEL)) {
                 json labels = transition.at(LABEL);
                 writeTransitionsDeclarations_helper(outString, getJsonAsArray(labels), putColon);
+            } else {
+                // If no guards or assignments are present, we still have to preserve the strictly monotonic time.
+                outString.append("provided: " + fictitiousClock + " > 0 : do: " + fictitiousClock + " = 0");
             }
 
             outString.append("}\n");
@@ -135,14 +147,16 @@ private:
                 C = (C < newMax) ? newMax : C;
                 (putColon) ? outString.append(" : ") : outString;
                 outString.append("provided: ");
-                outString.append(labelText);
+                // We add the condition 'fictitiousClock > 0' to ensure the transition takes some time to fire.
+                outString.append(labelText + " && " + fictitiousClock + " > 0");
                 putColon = true;
             }
             if (labelKind == ASSIGNMENT) {
                 (putColon) ? outString.append(" : ") : outString;
                 outString.append("do: ");
                 std::replace(labelText.begin(), labelText.end(), ',', ';');
-                outString.append(labelText);
+                // We add the condition 'fictitiousClock = 0' to ensure the next transition will take some time to fire.
+                outString.append(labelText + "; " + fictitiousClock + " = 0");
                 putColon = true;
             }
         }
@@ -170,8 +184,9 @@ public:
         std::cout << "Starting clocks declaration\n";
         writeClocksDeclarations(TAContentExtractor::getClocksDeclaration(inFile), out);
 
+        // Up to now we only use one event named a (also check in writeTransitionsDeclarations).
         std::cout << "Starting event declaration\n";
-        out << "event:a\n\n"; // Up to now we only use one event named a (also check in writeTransitionsDeclarations).
+        out << "event:a\n\n";
 
         std::cout << "Starting process declaration\n";
         out << "process:" + processName + "\n";
@@ -233,4 +248,4 @@ public:
 
 };
 
-#endif // UTOTPARSER_UTOTCTRANSLATOR_HPP
+#endif // UTOTPARSER_TAUTOTTRANSLATOR_HPP

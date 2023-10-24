@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
                     continue;
 
                 std::string outputFileName = getWordAfterLastSymbol(entry.path(), '/');
-                std::string nameTA = getStringGivenPosAndToken(outputFileName, '_', 0);
+                std::string nameTA = getStringGivenPosAndToken(outputFileName, '.', 0);
                 d_entry.nameTA = nameTA;
 
                 std::cout << "\n-------- " << nameTA << " --------\n";

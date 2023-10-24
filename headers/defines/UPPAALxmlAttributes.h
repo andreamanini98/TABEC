@@ -19,5 +19,7 @@
 #define COLOR "@color"
 #define INVARIANT "invariant"
 
-// This is not a real attribute used in UPPAAL, but is used by us for computations involving TA parameters
+// This is not a real attribute used in UPPAAL, but is used by us for computations involving TA parameters.
+// TODO alpha can be 0 as we compute it right now (see bigTA).
+//      If you set ALPHA_MAG too big, scientific notation will be used to write the final result in the .tck file.
 #define ALPHA_MAG 10000
