@@ -104,12 +104,16 @@ It is convenient to give a description of the output tree structure (useful when
 All the outputs can be found in the `outputs` directory, which have the following tree structure:
 ```
 outputs
+├── logs
+│   └── outputFilesForCheckingLogs
 ├── outputDOTs
 ├── outputFiles
 ├── outputFilesForChecking
 └── outputPDFs
 ```
 The content of such sub-directories will be:
+* `logs`: this directory contains subdirectories for logging purposes. In particular:
+    * `outputFilesForCheckingLogs`: directory containing logs generated when checking various cases of the parameter's value.
 * `outputDOTs`: the `.dot` representation of the original TAs.
 * `outputFiles`: the `.tck` representation of the origina TAs.
 * `outputFilesForChecking`: some `.tck` files used by the tool in order to check the emptiness by varying the TAs' parameter.
