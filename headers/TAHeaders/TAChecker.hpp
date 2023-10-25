@@ -72,15 +72,26 @@ private:
         std::cout << getWordAfterLastSymbol(inputFilePath, '/') << ": trying mu > 2C." << std::endl;
 
         // We first use this script to substitute all occurrences of a parameter keyword inside the TA translation.
-        system((shellScriptPath + gt2C + " " + inputFilePath + " " + gt2COutputFilePath).c_str());
+        system(
+                spaceStr({
+                                 shellScriptPath + gt2C,
+                                 inputFilePath,
+                                 gt2COutputFilePath}
+                ).c_str());
 
         // Then we call tChecker and collect the result of the liveness analysis.
-        std::string tCheckerResult = Command::exec(shellScriptPath + tckLiveness + " " + gt2COutputFilePath + " " + tCheckerBinPath + liveness);
+        std::string tRes =
+                Command::exec(
+                        spaceStr({
+                                         shellScriptPath + tckLiveness,
+                                         gt2COutputFilePath,
+                                         tCheckerBinPath + liveness}
+                        ));
 
         // We get rid of eventual '\n' characters to compare the result with the string "true".
-        tCheckerResult.erase(std::remove(tCheckerResult.begin(), tCheckerResult.end(), '\n'), tCheckerResult.cend());
+        tRes.erase(std::remove(tRes.begin(), tRes.end(), '\n'), tRes.cend());
 
-        return getFinalResult(tCheckerResult);
+        return getFinalResult(tRes);
     }
 
     /**
@@ -96,21 +107,35 @@ private:
         std::string alpha_mag = std::to_string(ALPHA_MAG);
 
         // We first use this script to scale all occurrences of integers constants inside the TA translation.
-        system((shellScriptPath + lt2CScale + " " + inputFilePath + " " + lt2COutputFilePath + " " + alpha_mag.substr(1)).c_str());
+        system(
+                spaceStr({
+                                 shellScriptPath + lt2CScale,
+                                 inputFilePath,
+                                 lt2COutputFilePath,
+                                 alpha_mag.substr(1)}
+                ).c_str());
 
         // Then we call tChecker and collect the result of the liveness analysis. This will end up in a log file with details about the execution.
-        std::string log = Command::exec(shellScriptPath + lt2CCycle + " " + lt2COutputFilePath + " " + tCheckerBinPath + liveness + " " + alpha_mag + " " + outputTmpFilePath);
+        std::string log =
+                Command::exec(
+                        spaceStr({
+                                         shellScriptPath + lt2CCycle,
+                                         lt2COutputFilePath,
+                                         tCheckerBinPath + liveness,
+                                         alpha_mag,
+                                         outputTmpFilePath}
+                        ));
 
         // Log is then written into a file.
         logger.writeLog(log, 2);
 
         // Next, the last line of such log is retrieved in order to get the tChecker's result of the liveness analysis.
-        std::string tCheckerResult = Command::exec("tail -n 1 " + stringsGetter.getOutputDirForCheckingPathLogs() + "/" + nameTA + ".txt");
+        std::string tRes = Command::exec("tail -n 1 " + stringsGetter.getOutputDirForCheckingPathLogs() + "/" + nameTA + ".txt");
 
         // We get rid of eventual '\n' characters to compare the result with the string "true".
-        tCheckerResult.erase(std::remove(tCheckerResult.begin(), tCheckerResult.end(), '\n'), tCheckerResult.cend());
+        tRes.erase(std::remove(tRes.begin(), tRes.end(), '\n'), tRes.cend());
 
-        return getFinalResult(tCheckerResult);
+        return getFinalResult(tRes);
     }
 
 

@@ -143,13 +143,31 @@ std::vector<std::filesystem::directory_entry> getEntriesInAlphabeticalOrder(cons
  * @param replacementString the string with which we want to replace the character.
  * @return a string in which, starting from originalString, we replaced every charToReplace with replacementString.
  */
-std::string substituteCharInString(std::string originalString,  char charToReplace, const std::string &replacementString) {
+std::string substituteCharInString(std::string originalString, char charToReplace, const std::string &replacementString) {
     size_t pos = 0;
     while ((pos = originalString.find(charToReplace, pos)) != std::string::npos) {
         originalString.replace(pos, 1, replacementString);
         pos += replacementString.length();
     }
     return originalString;
+}
+
+/**
+ * Method used to insert a whitespace between all strings contained in a std::vector.
+ * @param args a vector of strings in which we have to insert whitespaces between them.
+ * @return a string obtained by connecting all the strings in the vector with whitespaces.
+ */
+std::string spaceStr(const std::vector<std::string> &args) {
+    std::string res{};
+
+    for (const std::string &str: args)
+        res += str + " ";
+
+    // Remove the trailing whitespace
+    if (!res.empty())
+        res.pop_back();
+
+    return res;
 }
 
 #endif //UTOTPARSER_UTILS_H
