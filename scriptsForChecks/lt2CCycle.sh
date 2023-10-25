@@ -46,9 +46,15 @@ loop_end=$((4 * C))
 # Variable used to tell at the end if the language is empty or not.
 is_not_empty="false"
 
+echo "Starting loop to check parameter values of the form: (n / 2) + alpha"
+
 for n in $(seq "$loop_start" "$loop_end"); do
   # We calculate the new value of the parameter according to Theorem 5.
   mu=$(((n * alpha_mag / 2) + Alpha))
+
+  # Used for logging purposes.
+  echo "Now trying parameter value: $mu"
+
   # Replace the integer in the input file and save the result in the output file.
   sed "s/$param_keyword/$mu/g" "$input_file" > "$output_tmp_file"
   # Now calling tChecker to test the new substitution.
@@ -59,6 +65,14 @@ for n in $(seq "$loop_start" "$loop_end"); do
     break
   fi
 done
+
+if [[ "$is_not_empty" == "true" ]]; then
+  # Used for logging purposes.
+  echo "Acceptance condition found with parameter value: $mu"
+else
+  # Used for logging purposes.
+  echo "Acceptance condition not found"
+fi
 
 # We echo the result since in the C++ caller function, it will be used to determine the checking result.
 echo "$is_not_empty"

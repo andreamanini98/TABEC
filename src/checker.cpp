@@ -19,6 +19,8 @@ int main(int argc, char *argv[]) {
     std::vector<DashBoardEntry> dashboardResults;
     DashBoardEntry d_entry;
 
+    TAChecker taChecker(stringsGetter);
+
     deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
 
     try {
@@ -34,27 +36,9 @@ int main(int argc, char *argv[]) {
 
                 std::cout << "\n-------- " << nameTA << " --------\n";
 
-                // We first try to see if the TA admits an acceptance condition with a parameter mu > 2C.
-                bool isThereAnAcceptanceCondition =
-                        TAChecker::checkMuGreaterThan2C(stringsGetter.getScriptsDirPath(),
-                                                        stringsGetter.getOutputDirPath() + "/" += outputFileName,
-                                                        stringsGetter.getOutputDirForCheckingPath() + "/gt2C_" += outputFileName,
-                                                        stringsGetter.getTCheckerBinPath());
-                if (isThereAnAcceptanceCondition)
-                    std::cout << BHGRN << outputFileName << "'s language is not empty!" << reset << std::endl;
-                else {
-                    // If the previous check fails, we try to see if the TA admits an acceptance condition with a parameter mu < 2C.
-                    isThereAnAcceptanceCondition =
-                            TAChecker::checkMuLessThan2C(stringsGetter.getScriptsDirPath(),
-                                                         stringsGetter.getOutputDirPath() + "/" += outputFileName,
-                                                         stringsGetter.getOutputDirForCheckingPath() + "/lt2C_" += outputFileName,
-                                                         stringsGetter.getTCheckerBinPath(),
-                                                         stringsGetter.getOutputDirForCheckingPath() + "/lt2C_tmp_" += outputFileName);
-                    if (isThereAnAcceptanceCondition)
-                        std::cout << BHGRN << outputFileName << "'s language is not empty!" << reset << std::endl;
-                    else
-                        std::cout << BHRED << outputFileName << "'s language is empty!" << reset << std::endl;
-                }
+                // We check if the TA admits a Büchi acceptance condition.
+                bool isThereAnAcceptanceCondition = taChecker.checkTA(nameTA, outputFileName);
+
                 d_entry.emptinessResult = isThereAnAcceptanceCondition;
                 dashboardResults.emplace_back(d_entry);
                 std::cout << std::string(21, '-') << std::endl;
