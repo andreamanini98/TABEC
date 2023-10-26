@@ -158,7 +158,7 @@ std::string substituteCharInString(std::string originalString, char charToReplac
  * @return a string obtained by connecting all the strings in the vector with whitespaces.
  */
 std::string spaceStr(const std::vector<std::string> &args) {
-    std::string res{};
+    std::string res {};
 
     for (const std::string &str: args)
         res += str + " ";

@@ -39,7 +39,7 @@ public:
      * If you want stderr, use shell redirection (2&>1).
      */
     static std::string exec(const std::string &command) {
-        std::array<char, BUFFER_SIZE> buffer{};
+        std::array<char, BUFFER_SIZE> buffer {};
         std::string result;
 
 #ifdef _WIN32

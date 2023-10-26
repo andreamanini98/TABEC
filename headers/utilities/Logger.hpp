@@ -11,11 +11,11 @@ class Logger {
 
 private:
     // The path in which the logger will write logs.
-    std::string logDirPath{};
+    std::string logDirPath {};
     // The name of the log file to be written.
-    std::string logFileName{};
+    std::string logFileName {};
     // The combination of logDirPath and logFileName.
-    std::string logPath{};
+    std::string logPath {};
 
     /**
      * Method used to get the current date and time in order to create a timestamp for logs.

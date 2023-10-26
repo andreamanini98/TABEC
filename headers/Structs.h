@@ -6,8 +6,8 @@
  */
 typedef struct de {
     std::string nameTA;
-    bool translationResult{};
-    bool emptinessResult{};
+    bool translationResult {};
+    bool emptinessResult {};
 } DashBoardEntry;
 
 #endif //UTOTPARSER_STRUCTS_H
