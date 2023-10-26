@@ -22,22 +22,22 @@ class TAChecker {
 
 private:
     // A path leading to the shell scripts' folder.
-    std::string shellScriptPath{};
+    std::string shellScriptPath {};
 
     // A path leading to the file that will be used as input.
-    std::string inputFilePath{};
+    std::string inputFilePath {};
 
     // A path leading to the file that will be used as output when checking parameter being < 2C.
-    std::string lt2COutputFilePath{};
+    std::string lt2COutputFilePath {};
 
     // A path leading to the file that will be used as output when checking parameter being > 2C.
-    std::string gt2COutputFilePath{};
+    std::string gt2COutputFilePath {};
 
     // A path leading to the tChecker's bin folder.
-    std::string tCheckerBinPath{};
+    std::string tCheckerBinPath {};
 
     // A path leading to the file that will be used as temporary output when checking parameter being < 2C.
-    std::string outputTmpFilePath{};
+    std::string outputTmpFilePath {};
 
     StringsGetter &stringsGetter;
 
@@ -127,7 +127,7 @@ private:
                         ));
 
         // Log is then written into a file.
-        logger.writeLog(log, 2);
+        logger.writeLog(log, 3);
 
         // Next, the last line of such log is retrieved in order to get the tChecker's result of the liveness analysis.
         std::string tRes = Command::exec("tail -n 1 " + stringsGetter.getOutputDirForCheckingPathLogs() + "/" + nameTA + ".txt");
