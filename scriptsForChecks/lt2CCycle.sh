@@ -3,6 +3,9 @@
 # Shell script that performs a check on TA's emptiness, first trying all parameter values multiple
 # of 0.5 and, in case a solution is not found, uses the alpha value to perform a check as seen in Theorem 5.
 
+# WARNING: up to now, since this script is used to return either true or false based on the value contained in the last line,
+#          the printing of statements should end with a line where the only word contained is either 'true' or 'false'.
+
 # The path of the file to be used as input.
 input_file="$1"
 # The path to the tChecker's bin directory.
@@ -140,5 +143,5 @@ else
 fi
 
 # We print the result since in the C++ caller function, it will be used to determine the checking result.
-printf "\nFinal result of analysis: is the language of the given TA not empty?\n%s" "$is_not_empty"
+printf "\nFinal result of (parameter < 2C) analysis: is the language of the given TA not empty?\n%s" "$is_not_empty"
 rm "$output_tmp_file"

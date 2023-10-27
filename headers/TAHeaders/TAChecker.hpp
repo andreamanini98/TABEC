@@ -55,14 +55,13 @@ private:
 
     /**
      * Method used to print a string representing the result of the analysis.
-     * @param nameTA the name of the TA under analysis.
      * @param isAccepting a boolean value telling if the TA has an accepting condition or not.
      * @return true if the TA has an accepting condition, false otherwise.
      */
-    static bool printAndGetRes(const std::string &nameTA, bool isAccepting) {
+    static bool printAndGetRes(bool isAccepting) {
         std::string color = (isAccepting) ? BHGRN : BHRED;
         std::string acceptance = (isAccepting) ? "not" : "";
-        std::cout << color << nameTA << "'s language is " << acceptance << " empty!" << reset << std::endl;
+        std::cout << color << "Language is " << acceptance << " empty!" << reset << std::endl;
         return isAccepting;
     }
 
@@ -75,7 +74,7 @@ private:
         // This string takes into consideration how many occurrences of parKwd appear inside the TA description.
         // When at least one of them is present, it means that the TA is parametric: thanks to -cm1 grep returns immediately.
         std::string parKwdOccurrences = Command::exec("grep -cm1 \"" + parKwd + "\" " + inputFilePath);
-        // We pop the last element since it is a '\n' character.
+        // We pop the last element since it is a '\n' character (since we used grep before).
         parKwdOccurrences.pop_back();
         // If more than 0 elements have been found, the TA is parametric.
         return parKwdOccurrences != "0";
@@ -92,29 +91,15 @@ private:
         this->outputTmpFilePath = stringsGetter.getOutputDirForCheckingPath() + "/lt2C_tmp_" += outputFileName;
     }
 
-    // TODO you can unify s_gt2C and c_tckLiveness_gt2C in a single script by looking at how you did in the cycle checking.
-
     /**
      * Method used to call the script that will substitute the param keywords occurrences in order to subsequently call another
      * script that will check if the TA admits an acceptance condition in the case where the parameter has a value greater than 2C.
      */
-    void s_gt2C() {
-        system(
+    std::string c_gt2C() {
+        return Command::exec(
                 spaceStr({
                                  shellScriptPath + gt2C,
                                  inputFilePath,
-                                 gt2COutputFilePath
-                         }).c_str());
-    }
-
-    /**
-     * Method used to call tChecker's liveness tool and return it's result when the parameter has a value greater than 2C.
-     * @return the result obtained by tChecker.
-     */
-    std::string c_tckLiveness_gt2C() {
-        return Command::exec(
-                spaceStr({
-                                 shellScriptPath + tckLiveness,
                                  gt2COutputFilePath,
                                  tCheckerBinPath + liveness
                          }));
@@ -164,23 +149,36 @@ private:
     }
 
     /**
-     * Method used to check if the TA admits a Büchi acceptance condition with a parameter which value is mu > 2C.
+     * Method used to write a given log and, gathering it's last line, return either true or false.
+     * @param logger the logger that will write the log.
+     * @param log the log to be written. As a convention, its last line should contain only the word 'true' or 'false'.
      * @param nameTA the name of the TA under analysis.
-     * @return true if the TA admits a Büchi acceptance condition with a parameter which value is mu > 2C, false otherwise.
+     * @return true if the last line of the log is 'true', false if the last line of the log is 'false'.
      */
-    bool checkMuGreaterThan2C(const std::string &nameTA) {
-        std::cout << nameTA << ": trying mu > 2C." << std::endl;
+    bool writeLogAndGetFinalResult(Logger &logger, const std::string &log, const std::string &nameTA) {
+        // Start by writing the log.
+        logger.writeLog(log, 3);
 
-        // We first use this script to substitute all occurrences of a parameter keyword inside the TA translation.
-        s_gt2C();
-
-        // Then we call tChecker and collect the result of the liveness analysis.
-        std::string tRes = c_tckLiveness_gt2C();
+        // TODO find a better way than using tail to get the last line of the log.
+        // Next, the last line of such log is retrieved in order to get the tChecker's result of the liveness analysis.
+        std::string tRes = Command::exec("tail -n 1 " + stringsGetter.getOutputDirForCheckingPathLogs() + "/" + nameTA + ".txt");
 
         // We get rid of eventual '\n' characters to compare the result with the string "true".
-        tRes.erase(std::remove(tRes.begin(), tRes.end(), '\n'), tRes.cend());
+        tRes = deleteTrailingNewlines(tRes);
 
+        // At the end, return the result of the analysis from the last word of the log as obtained above.
         return getFinalResult(tRes);
+    }
+
+    /**
+     * Method used to check if the TA admits a Büchi acceptance condition with a parameter which value is mu > 2C.
+     * @param nameTA the name of the TA under analysis.
+     * @param logger a logger that will write some notes about the analysis.
+     * @return true if the TA admits a Büchi acceptance condition with a parameter which value is mu > 2C, false otherwise.
+     */
+    bool checkMuGreaterThan2C(const std::string &nameTA, Logger &logger) {
+        std::cout << "Trying mu > 2C." << std::endl;
+        return writeLogAndGetFinalResult(logger, c_gt2C(), nameTA);
     }
 
     /**
@@ -190,45 +188,29 @@ private:
      * @return true if the TA admits a Büchi acceptance condition with a parameter which value is mu < 2C, false otherwise.
      */
     bool checkMuLessThan2C(const std::string &nameTA, Logger &logger) {
-        std::cout << nameTA << ": language may be empty, now trying mu < 2C." << std::endl;
-
+        std::cout << "Language may be empty, now trying mu < 2C." << std::endl;
         // We first use this script to scale all occurrences of integers constants inside the TA translation.
         s_lt2CScale();
-
-        // Then we call tChecker and collect the result of the liveness analysis.
-        // This will end up in a log file with details about the execution.
-        std::string log = c_lt2CCycle();
-
-        // Log is then written into a file.
-        logger.writeLog(log, 3);
-
-        // Next, the last line of such log is retrieved in order to get the tChecker's result of the liveness analysis.
-        std::string tRes = Command::exec("tail -n 1 " + stringsGetter.getOutputDirForCheckingPathLogs() + "/" + nameTA + ".txt");
-
-        // We get rid of eventual '\n' characters to compare the result with the string "true".
-        tRes.erase(std::remove(tRes.begin(), tRes.end(), '\n'), tRes.cend());
-
-        return getFinalResult(tRes);
+        return writeLogAndGetFinalResult(logger, c_lt2CCycle(), nameTA);
     }
 
     /**
      * Method used to check if the TA admits an acceptance condition when it is not parametric.
-     * @param nameTA the name of the TA under analysis
      * @return true if the TA admits an acceptance condition, false otherwise.
      */
-    bool noParCheck(const std::string &nameTA) {
+    bool noParCheck() {
         // We simply call tChecker and get its result.
         std::cout << "Simply calling tChecker since the TA is not parametric.\n";
 
         std::string tRes = c_tckLiveness_noPar();
+
         // We get rid of eventual '\n' characters to compare the result with the string "true".
-        // Since we're calling directly tChecker, pop_back() would suffice.
-        tRes.pop_back();
+        tRes = deleteTrailingNewlines(tRes);
 
         if (getFinalResult(tRes))
-            return printAndGetRes(nameTA, true);
+            return printAndGetRes(true);
         else
-            return printAndGetRes(nameTA, false);
+            return printAndGetRes(false);
     }
 
     /**
@@ -241,18 +223,18 @@ private:
         Logger logger(stringsGetter.getOutputDirForCheckingPathLogs(), nameTA + ".txt");
 
         // We first try to see if the TA admits an acceptance condition with a parameter mu > 2C.
-        bool isAccepting = checkMuGreaterThan2C(nameTA);
+        bool isAccepting = checkMuGreaterThan2C(nameTA, logger);
 
         if (isAccepting) {
-            return printAndGetRes(nameTA, true);
+            return printAndGetRes(true);
         } else {
             // If the previous check fails, we try to see if the TA admits an acceptance condition with a parameter mu < 2C.
             isAccepting = checkMuLessThan2C(nameTA, logger);
 
             if (isAccepting)
-                return printAndGetRes(nameTA, true);
+                return printAndGetRes(true);
             else
-                return printAndGetRes(nameTA, false);
+                return printAndGetRes(false);
         }
     }
 
@@ -275,7 +257,7 @@ public:
         if (isTAParametric("param"))
             return parCheck(nameTA);
         else
-            return noParCheck(nameTA);
+            return noParCheck();
     }
 
 };

@@ -170,4 +170,14 @@ std::string spaceStr(const std::vector<std::string> &args) {
     return res;
 }
 
+/**
+ * Function used to remove all trailing '\n' characters at the end of a string.
+ * @param str the string in which we have to delete all the trailing '\n' characters.
+ * @return a string without trailing '\n' characters.
+ */
+std::string deleteTrailingNewlines(std::string str) {
+    str.erase(std::remove(str.begin(), str.end(), '\n'), str.cend());
+    return str;
+}
+
 #endif //UTOTPARSER_UTILS_H
