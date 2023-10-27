@@ -30,16 +30,17 @@ int main(int argc, char *argv[]) {
                 if (static_cast<std::string>(entry.path()).find(".tck") == std::string::npos)
                     continue;
 
-                std::string outputFileName = getWordAfterLastSymbol(entry.path(), '/');
-                std::string nameTA = getStringGivenPosAndToken(outputFileName, '.', 0);
+                std::string nameTA = getStringGivenPosAndToken(
+                        getWordAfterLastSymbol(entry.path(), '/'),
+                        '.', 0);
                 d_entry.nameTA = nameTA;
 
                 std::cout << "\n-------- " << nameTA << " --------\n";
 
                 // We check if the TA admits a Büchi acceptance condition.
-                bool isThereAnAcceptanceCondition = taChecker.checkTA(nameTA, outputFileName);
+                bool isAccepting = taChecker.checkTA(nameTA);
 
-                d_entry.emptinessResult = isThereAnAcceptanceCondition;
+                d_entry.emptinessResult = isAccepting;
                 dashboardResults.emplace_back(d_entry);
                 std::cout << std::string(21, '-') << std::endl;
             }
