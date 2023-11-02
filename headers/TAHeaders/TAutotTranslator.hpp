@@ -117,8 +117,23 @@ private:
                     ":" + static_cast<std::string>(transition.at(TARGET).at(REF)) + ":" + "a" + "{";
 
             if (transition.contains(LABEL)) {
-                json labels = transition.at(LABEL);
-                writeTransitionsDeclarations_helper(outString, getJsonAsArray(labels), putColon);
+                std::vector<json> labels = getJsonAsArray(transition.at(LABEL));
+                std::string labelKind = static_cast<std::string>(labels.front().at(KIND));
+
+                // The following checks are used to insert the fictitious clock based on the content of the transition.
+                if (labels.size() == 1 && labelKind == GUARD) {
+                    // We have only guards and no assignments in a transition.
+                    writeTransitionsDeclarations_helper(outString, labels, putColon);
+                    outString.append(" : do: " + fictitiousClock + " = 0");
+                } else if (labels.size() == 1 && labelKind == ASSIGNMENT) {
+                    // We have only assignments and no guards in a transition.
+                    outString.append("provided: " + fictitiousClock + " > 0");
+                    putColon = true;
+                    writeTransitionsDeclarations_helper(outString, labels, putColon);
+                } else if (labels.size() == 2) {
+                    // We have both guards and assignments in a transition.
+                    writeTransitionsDeclarations_helper(outString, labels, putColon);
+                }
             } else {
                 // If no guards or assignments are present, we still have to preserve the strictly monotonic time.
                 outString.append("provided: " + fictitiousClock + " > 0 : do: " + fictitiousClock + " = 0");
