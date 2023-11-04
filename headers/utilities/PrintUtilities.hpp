@@ -35,8 +35,8 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool on
     int nameColumnWidth = FIXED_COL_WIDTH;
     for (auto &dEntry: dashboardResults)
         nameColumnWidth = (dEntry.nameTA.length() > nameColumnWidth) ? static_cast<int>(dEntry.nameTA.length()) : nameColumnWidth;
-    // We add a padding only if we have a width greater than the minimum required.
-    nameColumnWidth += (nameColumnWidth == FIXED_COL_WIDTH) ? 0 : TA_NAME_COL_WIDTH_PADDING;
+    // We add a padding only if we have a width greater than or equal to the minimum required.
+    nameColumnWidth += (nameColumnWidth >= FIXED_COL_WIDTH) ? TA_NAME_COL_WIDTH_PADDING : 0;
 
     // Printing the legend and name columns' names.
     std::cout <<
