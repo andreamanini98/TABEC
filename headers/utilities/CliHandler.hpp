@@ -39,7 +39,8 @@ public:
      * @param argv_p a pointer to the main's argv.
      * @param debug true if some debug information has to be printed, false otherwise.
      */
-    CliHandler(int *argc_p, char ***argv_p, bool debug) : argc_p(argc_p), argv_p(argv_p) {
+    CliHandler(int *argc_p, char ***argv_p, bool debug) : argc_p(argc_p), argv_p(argv_p)
+    {
         commandsAndPositions.clear();
         // We transform the triple pointer ***arv_p in a vector of strings.
         std::vector<std::string> cliArguments(*(this->argv_p), *(this->argv_p) + *(this->argc_p));
@@ -63,7 +64,8 @@ public:
      * @param cmd the command to know if it has been inserted or not.
      * @return true if the command has been inserted, false otherwise.
      */
-    bool isCmd(const std::string &cmd) {
+    bool isCmd(const std::string &cmd)
+    {
         return (commandsAndPositions.find(cmd)->second).first;
     }
 
@@ -72,7 +74,8 @@ public:
      * @param cmd the command to get the position.
      * @return the position of the command if present, a sentinel value otherwise.
      */
-    int getPos(const std::string &cmd) {
+    int getPos(const std::string &cmd)
+    {
         return (commandsAndPositions.find(cmd)->second).second;
     }
 
@@ -80,7 +83,8 @@ public:
      * returns a pointer to the main's argv.
      * @return a pointer to the main's argv.
      */
-    char ***getArgv_p() {
+    char ***getArgv_p()
+    {
         return argv_p;
     }
 

@@ -14,7 +14,8 @@ using json = nlohmann::json;
  * @param file the file from which to get a json representation.
  * @return a json representation of the given file.
  */
-json getJsonFromFileStream(std::ifstream &file, bool isXml = true) {
+json getJsonFromFileStream(std::ifstream &file, bool isXml = true)
+{
     if (isXml) {
         std::stringstream buffer;
         buffer << file.rdbuf();
@@ -33,7 +34,8 @@ json getJsonFromFileStream(std::ifstream &file, bool isXml = true) {
  * @param str the string into which we're looking for integers occurrences.
  * @return a vector containing all integer numbers present in the string parameter.
  */
-static std::vector<int> extractIntegersFromString(const std::string &str) {
+static std::vector<int> extractIntegersFromString(const std::string &str)
+{
     std::vector<int> result;
     std::stringstream ss(str);
     std::string temp;
@@ -54,7 +56,8 @@ static std::vector<int> extractIntegersFromString(const std::string &str) {
  * @param str the string into which we're looking for integers occurrences.
  * @return the maximum integer value appearing in the string parameter.
  */
-static int getMaxIntFromStr(const std::string &str) {
+static int getMaxIntFromStr(const std::string &str)
+{
     std::vector<int> tmp = extractIntegersFromString(str);
     return (!tmp.empty()) ? *max_element(tmp.begin(), tmp.end()) : 0;
 }
@@ -63,7 +66,8 @@ static int getMaxIntFromStr(const std::string &str) {
  * Function used to delete all contents of a given directory.
  * @param dir the path to the directory to clear.
  */
-void deleteDirectoryContents(const std::filesystem::path &dir) {
+void deleteDirectoryContents(const std::filesystem::path &dir)
+{
     for (const auto &entry: std::filesystem::directory_iterator(dir))
         std::filesystem::remove_all(entry.path());
 }
@@ -76,7 +80,8 @@ void deleteDirectoryContents(const std::filesystem::path &dir) {
  * @return a pair containing: (1) true if elem is contained inside vec and (2) its position, otherwise (1) false and (2) -1 as sentinel value.
  */
 template<typename T>
-std::pair<bool, int> isElementInVector(const std::vector<T> &vec, const T &elem) {
+std::pair<bool, int> isElementInVector(const std::vector<T> &vec, const T &elem)
+{
     auto iter = std::find(vec.begin(), vec.end(), elem);
     if (iter != vec.end())
         return {true, std::distance(vec.begin(), iter)};
@@ -90,7 +95,8 @@ std::pair<bool, int> isElementInVector(const std::vector<T> &vec, const T &elem)
  * @param symbol the token appearing in the string.
  * @return the last word following the last occurrence of symbol.
  */
-std::string getWordAfterLastSymbol(const std::string &str, char symbol) {
+std::string getWordAfterLastSymbol(const std::string &str, char symbol)
+{
     size_t lastSlashPos = str.find_last_of(symbol);
     if (lastSlashPos != std::string::npos)
         return str.substr(lastSlashPos + 1);
@@ -105,7 +111,8 @@ std::string getWordAfterLastSymbol(const std::string &str, char symbol) {
  * @param pos the position of the string to return. The position is considered on the result of the splitting operation.
  * @return the string at position pos in the split original string.
  */
-std::string getStringGivenPosAndToken(const std::string &str, char symbol, int pos) {
+std::string getStringGivenPosAndToken(const std::string &str, char symbol, int pos)
+{
     std::istringstream stream(str);
     std::string token;
     std::vector<std::string> tokens;
@@ -121,7 +128,8 @@ std::string getStringGivenPosAndToken(const std::string &str, char symbol, int p
  * @param directory_path the path to the directory in which to collect all entries.
  * @return a vector containing the alphabetically ordered entries.
  */
-std::vector<std::filesystem::directory_entry> getEntriesInAlphabeticalOrder(const std::filesystem::path &directory_path) {
+std::vector<std::filesystem::directory_entry> getEntriesInAlphabeticalOrder(const std::filesystem::path &directory_path)
+{
     std::vector<std::filesystem::directory_entry> entries;
 
     // Iterate over the directory and collect the entries.
@@ -143,7 +151,8 @@ std::vector<std::filesystem::directory_entry> getEntriesInAlphabeticalOrder(cons
  * @param replacementString the string with which we want to replace the character.
  * @return a string in which, starting from originalString, we replaced every charToReplace with replacementString.
  */
-std::string substituteCharInString(std::string originalString, char charToReplace, const std::string &replacementString) {
+std::string substituteCharInString(std::string originalString, char charToReplace, const std::string &replacementString)
+{
     size_t pos = 0;
     while ((pos = originalString.find(charToReplace, pos)) != std::string::npos) {
         originalString.replace(pos, 1, replacementString);
@@ -157,7 +166,8 @@ std::string substituteCharInString(std::string originalString, char charToReplac
  * @param args a vector of strings in which we have to insert whitespaces between them.
  * @return a string obtained by connecting all the strings in the vector with whitespaces.
  */
-std::string spaceStr(const std::vector<std::string> &args) {
+std::string spaceStr(const std::vector<std::string> &args)
+{
     std::string res {};
 
     for (const std::string &str: args)
@@ -175,7 +185,8 @@ std::string spaceStr(const std::vector<std::string> &args) {
  * @param str the string in which we have to delete all the trailing '\n' characters.
  * @return a string without trailing '\n' characters.
  */
-std::string deleteTrailingNewlines(std::string str) {
+std::string deleteTrailingNewlines(std::string str)
+{
     str.erase(std::remove(str.begin(), str.end(), '\n'), str.cend());
     return str;
 }

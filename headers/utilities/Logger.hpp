@@ -21,7 +21,8 @@ private:
      * Method used to get the current date and time in order to create a timestamp for logs.
      * @return the current date and time.
      */
-    static std::string getCurDateTime() {
+    static std::string getCurDateTime()
+    {
         // Get the current time point.
         auto now = std::chrono::system_clock::now();
         // Convert the time point to a time_t (C-style time).
@@ -33,7 +34,8 @@ private:
 
 
 public:
-    Logger(std::string logDirPath, std::string logFileName) : logDirPath(std::move(logDirPath)), logFileName(std::move(logFileName)) {
+    Logger(std::string logDirPath, std::string logFileName) : logDirPath(std::move(logDirPath)), logFileName(std::move(logFileName))
+    {
         this->logPath = this->logDirPath + "/" + this->logFileName;
         clearLogs();
         writeLog("Default logger created as: " + logPath);
@@ -42,7 +44,8 @@ public:
     /**
      * Method used to clear the log file written by the logger.
      */
-    void clearLogs() {
+    void clearLogs()
+    {
         // In order to clean logging files, we open them in truncating mode.
         std::ofstream file(logPath, std::ofstream::out | std::ofstream::trunc);
         file.close();
@@ -53,7 +56,8 @@ public:
      * @param log the log that has to be written.
      * @param spacing additional spacing to add before writing the log.
      */
-    void writeLog(const std::string &log, uint16_t spacing = 0) {
+    void writeLog(const std::string &log, uint16_t spacing = 0)
+    {
         std::ofstream out;
         out.open(logPath, std::ofstream::out | std::ofstream::app);
 

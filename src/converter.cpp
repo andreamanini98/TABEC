@@ -20,13 +20,15 @@ using json = nlohmann::json;
  * @param inFile the input json file containing the description of the TA.
  * @param d_entry a DashBoardEntry to keep track of the translation results.
  */
-void startTranslation(Translator translator, const std::string &nameTA, const json &inFile, DashBoardEntry &d_entry) {
+void startTranslation(Translator translator, const std::string &nameTA, const json &inFile, DashBoardEntry &d_entry)
+{
     translator.translateTA(nameTA, inFile);
     std::cout << BHGRN << "Conversion successful" << reset << std::endl;
     d_entry.translationResult = true;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     CliHandler cliHandler(&argc, &argv, false);
     StringsGetter stringsGetter(cliHandler);
 

@@ -9,7 +9,8 @@ using json = nlohmann::json;
  * @param inFile the json parameter we want to return as an array.
  * @return the array version of the given json parameter.
  */
-static json getJsonAsArray(json inFile) {
+static json getJsonAsArray(json inFile)
+{
     if (inFile.is_array())
         return inFile;
     else {

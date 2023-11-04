@@ -21,7 +21,8 @@ private:
      * @param stringToSanitize the string to sanitize.
      * @return a string where the specified html characters are escaped.
      */
-    static std::string htmlSanitize(std::string stringToSanitize) {
+    static std::string htmlSanitize(std::string stringToSanitize)
+    {
         // Remember to first replace the '&' since otherwise the others derived
         // from subsequent replacements will be substituted as well.
         std::vector<std::pair<char, std::string>> symbolsAndStrings = {{'&', "&amp;"},
@@ -37,7 +38,8 @@ private:
      * @param systemName the name of the system.
      * @param out the stream in which to write the file.
      */
-    static void writeHeading(const std::string &systemName, std::ofstream &out) {
+    static void writeHeading(const std::string &systemName, std::ofstream &out)
+    {
         out << "digraph " << systemName << " {" << std::endl;
         out << "fontname=\"" << FONT_NAME << "\"" << std::endl;
         out << "node [fontname=\"" << FONT_NAME << "\"]" << std::endl;
@@ -53,7 +55,8 @@ private:
      * @param initialLocation the name of the initial location.
      * @param out the stream in which to write the file.
      */
-    static void writeLocations(std::vector<json> locations, const std::string &initialLocation, std::ofstream &out) {
+    static void writeLocations(std::vector<json> locations, const std::string &initialLocation, std::ofstream &out)
+    {
         for (auto &location: locations) {
             bool isInitial = false, isFinal = false;
 
@@ -94,7 +97,8 @@ private:
      * @param transitions a vector containing a json representation of transitions.
      * @param out the stream in which to write the file.
      */
-    static void writeTransitions(std::vector<json> transitions, std::ofstream &out) {
+    static void writeTransitions(std::vector<json> transitions, std::ofstream &out)
+    {
         for (auto &transition: transitions) {
             std::string outString =
                     "P_" + static_cast<std::string>(transition.at(SOURCE).at(REF)) + " -> " +
@@ -119,7 +123,8 @@ private:
      * @param labels the transition's labels which content will be written in the graphviz .dot file.
      * @return a string which contains a properly formatted text according to the labels content.
      */
-    static std::string writeTransitions_helper(std::vector<json> labels) {
+    static std::string writeTransitions_helper(std::vector<json> labels)
+    {
         std::string dotLabelAddition;
 
         for (auto &label: labels) {
@@ -136,14 +141,16 @@ private:
 
 
 public:
-    explicit TADotConverter(std::string outFilePath) : outFilePath(std::move(outFilePath)) {}
+    explicit TADotConverter(std::string outFilePath) : outFilePath(std::move(outFilePath))
+    {}
 
     /**
      * Method used to translate a TA from .xml format to .dot format.
      * @param systemName the name of the system to translate.
      * @param inFile a json representation of the TA.
      */
-    void translateTAtoDot(const std::string &systemName, const json &inFile) {
+    void translateTAtoDot(const std::string &systemName, const json &inFile)
+    {
         std::ofstream out;
         out.open(outFilePath, std::ofstream::out | std::ofstream::trunc);
 

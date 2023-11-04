@@ -13,7 +13,8 @@
  * @param outputFileName the name of the output file.
  * @param outputDirPath the directory in which the output file will be located.
  */
-void printTitle(const std::string &nameTA, const std::string &path, const std::string &outputFileName, const std::string &outputDirPath) {
+void printTitle(const std::string &nameTA, const std::string &path, const std::string &outputFileName, const std::string &outputDirPath)
+{
     std::cout << "\n-------- " << nameTA << " --------\n";
     std::cout << "Starting conversion of file: " <<
               std::endl << path <<
@@ -29,7 +30,8 @@ void printTitle(const std::string &nameTA, const std::string &path, const std::s
  * @param onlyConversion used to print only conversion results.
  * @param onlyEmptiness used to print only emptiness results.
  */
-void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool onlyConversion = false, bool onlyEmptiness = false) {
+void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool onlyConversion = false, bool onlyEmptiness = false)
+{
     // Getting the column width for 'TA name' from the longest name we have to display in the dashboard.
     // By default, columnWidth has a minimum value of FIXED_COL_WIDTH.
     int nameColumnWidth = FIXED_COL_WIDTH;

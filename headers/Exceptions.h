@@ -4,10 +4,14 @@
 
 class NotXMLFormatException : public std::exception {
 public:
-    explicit NotXMLFormatException(const char *message) : message_(message) {}
-    [[nodiscard]] const char *what() const noexcept override {
+    explicit NotXMLFormatException(const char *message) : message_(message)
+    {}
+
+    [[nodiscard]] const char *what() const noexcept override
+    {
         return message_.c_str();
     }
+
 private:
     std::string message_;
 };

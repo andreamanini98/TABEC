@@ -18,7 +18,8 @@ public:
      * @param clockKeywordPos the position in the declaration parameter of the keyword "clock".
      * @return a vector containing all the TA's clocks.
      */
-    static std::vector<std::string> getClocks(std::string declaration) {
+    static std::vector<std::string> getClocks(std::string declaration)
+    {
         size_t clockPos = declaration.find(CLOCK);
 
         // We keep only the portion of string after the "clock" word.
@@ -44,7 +45,8 @@ public:
      * @param inFile the json representation of the TA.
      * @return a string containing the clocks declaration.
      */
-    static std::string getClocksDeclaration(json inFile) {
+    static std::string getClocksDeclaration(json inFile)
+    {
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION));
     }
 
@@ -53,7 +55,8 @@ public:
      * @param inFile the json representation of the TA.
      * @return a string containing the initial location name.
      */
-    static std::string getInitialLocationName(json inFile) {
+    static std::string getInitialLocationName(json inFile)
+    {
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF));
     }
 
@@ -62,7 +65,8 @@ public:
      * @param inFile the json representation of the TA.
      * @return a json containing the locations declaration.
      */
-    static json getLocations(json inFile) {
+    static json getLocations(json inFile)
+    {
         return inFile.at(NTA).at(TEMPLATE).at(LOCATION);
     }
 
@@ -71,7 +75,8 @@ public:
      * @param inFile the json representation of the TA.
      * @return a json containing the transitions declaration.
      */
-    static json getTransitions(json inFile) {
+    static json getTransitions(json inFile)
+    {
         return inFile.at(NTA).at(TEMPLATE).at(TRANSITION);
     }
 

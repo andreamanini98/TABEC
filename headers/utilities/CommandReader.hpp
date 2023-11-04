@@ -38,7 +38,8 @@ public:
      * @return STDOUT (not stderr) output. of command. Empty if command failed (or has no output).
      * If you want stderr, use shell redirection (2&>1).
      */
-    static std::string exec(const std::string &command) {
+    static std::string exec(const std::string &command)
+    {
         std::array<char, BUFFER_SIZE> buffer {};
         std::string result;
 

@@ -46,7 +46,8 @@ private:
      * @param result the string from which to get the result.
      * @return true if the string is equal to "true", false otherwise.
      */
-    static bool getFinalResult(const std::string &result) {
+    static bool getFinalResult(const std::string &result)
+    {
         if (result == "true")
             return true;
         else
@@ -58,7 +59,8 @@ private:
      * @param isAccepting a boolean value telling if the TA has an accepting condition or not.
      * @return true if the TA has an accepting condition, false otherwise.
      */
-    static bool printAndGetRes(bool isAccepting) {
+    static bool printAndGetRes(bool isAccepting)
+    {
         std::string color = (isAccepting) ? BHGRN : BHRED;
         std::string acceptance = (isAccepting) ? "not" : "";
         std::cout << color << "Language is " << acceptance << " empty!" << reset << std::endl;
@@ -70,7 +72,8 @@ private:
      * @param parKwd the keyword that is present in the TA if it is parametric (e.g. a guard like x == parKwd).
      * @return true if the TA is parametric, false otherwise.
      */
-    bool isTAParametric(const std::string &parKwd) {
+    bool isTAParametric(const std::string &parKwd)
+    {
         // This string takes into consideration how many occurrences of parKwd appear inside the TA description.
         // When at least one of them is present, it means that the TA is parametric: thanks to -cm1 grep returns immediately.
         std::string parKwdOccurrences = Command::exec("grep -cm1 \"" + parKwd + "\" " + inputFilePath);
@@ -84,7 +87,8 @@ private:
      * Method used to set the attributes not initialized by the constructor.
      * @param outputFileName the name of the file that is going to be written.
      */
-    void setAttributesForChecking(const std::string &outputFileName) {
+    void setAttributesForChecking(const std::string &outputFileName)
+    {
         this->inputFilePath = stringsGetter.getOutputDirPath() + "/" += outputFileName;
         this->lt2COutputFilePath = stringsGetter.getOutputDirForCheckingPath() + "/lt2C_" += outputFileName;
         this->gt2COutputFilePath = stringsGetter.getOutputDirForCheckingPath() + "/gt2C_" += outputFileName;
@@ -95,7 +99,8 @@ private:
      * Method used to call the script that will substitute the param keywords occurrences in order to subsequently call another
      * script that will check if the TA admits an acceptance condition in the case where the parameter has a value greater than 2C.
      */
-    std::string c_gt2C() {
+    std::string c_gt2C()
+    {
         return Command::exec(
                 spaceStr({
                                  shellScriptPath + gt2C,
@@ -109,7 +114,8 @@ private:
      * Method used to call tChecker's liveness tool and return it's result when the TA is not parametric.
      * @return the result obtained by tChecker.
      */
-    std::string c_tckLiveness_noPar() {
+    std::string c_tckLiveness_noPar()
+    {
         return Command::exec(
                 spaceStr({
                                  shellScriptPath + tckLiveness,
@@ -123,7 +129,8 @@ private:
      * that will check if the TA admits an acceptance condition when the parameter has a value less than 2C.
      * Notice that in this case we take the digits of alpha_mag starting in the second position: thus we consider only its zeros.
      */
-    void s_lt2CScale() {
+    void s_lt2CScale()
+    {
         system(
                 spaceStr({
                                  shellScriptPath + lt2CScale,
@@ -137,7 +144,8 @@ private:
      * Method used to check if the TA admits an acceptance condition in the case of parameter being less than 2C.
      * @return a string containing the result obtained by tChecker.
      */
-    std::string c_lt2CCycle() {
+    std::string c_lt2CCycle()
+    {
         return Command::exec(
                 spaceStr({
                                  shellScriptPath + lt2CCycle,
@@ -155,7 +163,8 @@ private:
      * @param nameTA the name of the TA under analysis.
      * @return true if the last line of the log is 'true', false if the last line of the log is 'false'.
      */
-    bool writeLogAndGetFinalResult(Logger &logger, const std::string &log, const std::string &nameTA) {
+    bool writeLogAndGetFinalResult(Logger &logger, const std::string &log, const std::string &nameTA)
+    {
         // Start by writing the log.
         logger.writeLog(log, 3);
 
@@ -176,7 +185,8 @@ private:
      * @param logger a logger that will write some notes about the analysis.
      * @return true if the TA admits a Büchi acceptance condition with a parameter which value is mu > 2C, false otherwise.
      */
-    bool checkMuGreaterThan2C(const std::string &nameTA, Logger &logger) {
+    bool checkMuGreaterThan2C(const std::string &nameTA, Logger &logger)
+    {
         std::cout << "Trying mu > 2C." << std::endl;
         return writeLogAndGetFinalResult(logger, c_gt2C(), nameTA);
     }
@@ -187,7 +197,8 @@ private:
      * @param logger a logger that will write some notes about the analysis.
      * @return true if the TA admits a Büchi acceptance condition with a parameter which value is mu < 2C, false otherwise.
      */
-    bool checkMuLessThan2C(const std::string &nameTA, Logger &logger) {
+    bool checkMuLessThan2C(const std::string &nameTA, Logger &logger)
+    {
         std::cout << "Language may be empty, now trying mu < 2C." << std::endl;
         // We first use this script to scale all occurrences of integers constants inside the TA translation.
         s_lt2CScale();
@@ -198,7 +209,8 @@ private:
      * Method used to check if the TA admits an acceptance condition when it is not parametric.
      * @return true if the TA admits an acceptance condition, false otherwise.
      */
-    bool noParCheck() {
+    bool noParCheck()
+    {
         // We simply call tChecker and get its result.
         std::cout << "Simply calling tChecker since the TA is not parametric.\n";
 
@@ -218,7 +230,8 @@ private:
      * @param nameTA the name of the TA under analysis.
      * @return true if the TA admits an acceptance condition, false otherwise.
      */
-    bool parCheck(const std::string &nameTA) {
+    bool parCheck(const std::string &nameTA)
+    {
         // Creating logger to save information about TA analysis.
         Logger logger(stringsGetter.getOutputDirForCheckingPathLogs(), nameTA + ".txt");
 
@@ -240,7 +253,8 @@ private:
 
 
 public:
-    explicit TAChecker(StringsGetter &stringsGetter) : stringsGetter(stringsGetter) {
+    explicit TAChecker(StringsGetter &stringsGetter) : stringsGetter(stringsGetter)
+    {
         this->shellScriptPath = stringsGetter.getScriptsDirPath();
         this->tCheckerBinPath = stringsGetter.getTCheckerBinPath();
     }
@@ -251,7 +265,8 @@ public:
      * @param outputFileName the name of the file that is going to be written.
      * @return true if TA's language is not empty, false otherwise.
      */
-    bool checkTA(const std::string &nameTA) {
+    bool checkTA(const std::string &nameTA)
+    {
         setAttributesForChecking(nameTA + ".tck");
 
         if (isTAParametric("param"))

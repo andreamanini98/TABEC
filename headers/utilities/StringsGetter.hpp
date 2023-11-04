@@ -43,37 +43,46 @@ private:
 
 
 public:
-    explicit StringsGetter(CliHandler &cliHandler) : cliHandler(cliHandler) {}
+    explicit StringsGetter(CliHandler &cliHandler) : cliHandler(cliHandler)
+    {}
 
-    [[nodiscard]] const std::string &getInputDirPath() const {
+    [[nodiscard]] const std::string &getInputDirPath() const
+    {
         return inputDirPath;
     }
 
-    [[nodiscard]] const std::string &getOutputDirPath() const {
+    [[nodiscard]] const std::string &getOutputDirPath() const
+    {
         return outputDirPath;
     }
 
-    [[nodiscard]] const std::string &getScriptsDirPath() const {
+    [[nodiscard]] const std::string &getScriptsDirPath() const
+    {
         return scriptsDirPath;
     }
 
-    [[nodiscard]] const std::string &getOutputDirForCheckingPath() const {
+    [[nodiscard]] const std::string &getOutputDirForCheckingPath() const
+    {
         return outputDirForCheckingPath;
     }
 
-    [[nodiscard]] const std::string &getTCheckerBinPath() const {
+    [[nodiscard]] const std::string &getTCheckerBinPath() const
+    {
         return tCheckerBinPath;
     }
 
-    [[nodiscard]] const std::string &getOutputPDFsDirPath() const {
+    [[nodiscard]] const std::string &getOutputPDFsDirPath() const
+    {
         return outputPDFsDirPath;
     }
 
-    [[nodiscard]] const std::string &getOutputDOTsDirPath() const {
+    [[nodiscard]] const std::string &getOutputDOTsDirPath() const
+    {
         return outputDOTsDirPath;
     }
 
-    [[nodiscard]] const std::string &getOutputDirForCheckingPathLogs() const {
+    [[nodiscard]] const std::string &getOutputDirForCheckingPathLogs() const
+    {
         return outputDirForCheckingPathLogs;
     }
 

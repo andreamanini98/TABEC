@@ -39,7 +39,8 @@ private:
      * @param declaration the string coming from the UPPAAL .xml file containing the list of clocks.
      * @param out the stream where we write our output file.
      */
-    void writeClocksDeclarations(const std::string &declaration, std::ofstream &out) {
+    void writeClocksDeclarations(const std::string &declaration, std::ofstream &out)
+    {
         if (declaration.find(CLOCK) != std::string::npos) {
             std::vector<std::string> clocks = TAContentExtractor::getClocks(declaration);
 
@@ -62,7 +63,8 @@ private:
     * @param locations a vector of locations saved in json format.
     * @param out the stream where we write our output file.
     */
-    void writeLocationsDeclarations(const std::string &processName, const std::string &initialLocation, std::vector<json> locations, std::ofstream &out) {
+    void writeLocationsDeclarations(const std::string &processName, const std::string &initialLocation, std::vector<json> locations, std::ofstream &out)
+    {
         // We get the number of states.
         Q = static_cast<int>(locations.size());
 
@@ -109,7 +111,8 @@ private:
      * @param transitions a vector of transitions saved in json format.
      * @param out the stream where we write our output file.
      */
-    void writeTransitionsDeclarations(const std::string &processName, std::vector<json> transitions, std::ofstream &out) {
+    void writeTransitionsDeclarations(const std::string &processName, std::vector<json> transitions, std::ofstream &out)
+    {
         for (auto &transition: transitions) {
             bool putColon = false;
             std::string outString =
@@ -151,7 +154,8 @@ private:
      * @param labels a vector containing all the labels of a transition (if any).
      * @param putColon a boolean used to determine if in the tChecker translation we have to put a colon.
      */
-    void writeTransitionsDeclarations_helper(std::string &outString, std::vector<json> labels, bool &putColon) {
+    void writeTransitionsDeclarations_helper(std::string &outString, std::vector<json> labels, bool &putColon)
+    {
         for (auto &label: labels) {
             std::string labelText = static_cast<std::string>(label.at(TEXT));
             std::string labelKind = static_cast<std::string>(label.at(KIND));
@@ -179,14 +183,16 @@ private:
 
 
 public:
-    explicit Translator(std::string outFilePath, int C = 0, int Q = 0) : outFilePath(std::move(outFilePath)), C(C), Q(Q) {}
+    explicit Translator(std::string outFilePath, int C = 0, int Q = 0) : outFilePath(std::move(outFilePath)), C(C), Q(Q)
+    {}
 
     /**
     * This method performs the translation from UPPAAL syntax to tChecker syntax.
     * @param systemName the name of the system to translate.
     * @param inFile the json file containing the UPPAAL representation to convert.
     */
-    void translateTA(const std::string &systemName, const json &inFile) {
+    void translateTA(const std::string &systemName, const json &inFile)
+    {
         std::ofstream out;
         out.open(outFilePath, std::ofstream::out | std::ofstream::trunc);
 
@@ -232,7 +238,8 @@ public:
      * @param inFile the json representation of the TA to check.
      * @return true if the given TA is nrt, false otherwise.
      */
-    static bool isNRT(json inFile) {
+    static bool isNRT(json inFile)
+    {
         bool isNRT = true;
         std::vector<json> transitions = getJsonAsArray(TAContentExtractor::getTransitions(inFile));
         std::vector<std::string> clocks = TAContentExtractor::getClocks(static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION)));

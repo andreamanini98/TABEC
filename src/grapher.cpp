@@ -17,7 +17,8 @@ using json = nlohmann::json;
  * @param sourceDirPath the directory from which to take the .dot files to translate.
  * @param outputDirPath the directory from which to write the resulting .pdf files.
  */
-void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &outputDirPath) {
+void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &outputDirPath)
+{
     std::cout << "Starting conversion from .dot to .pdf file format." << std::endl;
     std::cout << std::string(50, '-') << std::endl;
 
@@ -31,7 +32,8 @@ void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &output
     }
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     CliHandler cliHandler(&argc, &argv, false);
     StringsGetter stringsGetter(cliHandler);
 

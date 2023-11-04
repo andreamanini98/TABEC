@@ -12,7 +12,8 @@
 using json = nlohmann::json;
 
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     CliHandler cliHandler(&argc, &argv, false);
     StringsGetter stringsGetter(cliHandler);
 
