@@ -2,6 +2,7 @@
 \renewcommand{\figurename}{Fig.}
 
 \usepackage[utf8]{inputenc}
+\usepackage{amssymb}
 \usepackage{anyfontsize}
 \usepackage{lipsum}
 \usepackage{graphicx}
@@ -15,17 +16,47 @@
 
 \usetikzlibrary{automata, positioning, arrows, calc}
 
+\geometry{top      = 2cm,
+		  bottom   = 2cm,
+		  left     = 2cm,
+		  right    = 2cm, 
+		  footskip = 1cm}
+
 
 % ----- STARTING DOCUMENT ----- %
 
 \begin{document}
+
 \pagenumbering{arabic}
-Specify tile interval and other properties here.
+
+\noindent
+In the following, $p$ will be the parameter, $x$ and $y$ will be the clocks, $a$ and $b$ two natural numbers $\in \mathbb{N}$.\\
+
+Tile forcing the following interval: $p \in (0, \frac{a}{2})$.
 
 \input{tiles/tile1}
 
-Specify tile interval and other properties here.
+\bigskip
+
+Tile forcing the following interval: $p \in (\frac{b}{2}, \infty)$.
 
 \input{tiles/tile2}
+
+\noindent
+The above tiles, namely Tile \ref{tile 1} and Tile \ref{tile 2}, can be considered as the basic building blocks for constructing every other interval, thanks to the possibility of chaining them together, hence restricting the interval in which the parameter $p$ will fall.\\
+
+\noindent
+The following one has been obtained by concatenating the aforementioned tiles.\\
+
+Tile forcing the following interval: $p \in (\frac{a}{2}, \frac{b}{2})$.
+
+\input{tiles/tile3}
+
+\noindent
+Please note that Tile \ref{tile 3} can be written more concisely without using concatenation.\\
+
+Tile forcing the following interval: $p \in (\frac{a}{2}, \frac{b}{2})$.
+
+\input{tiles/tile4}
 
 \end{document}

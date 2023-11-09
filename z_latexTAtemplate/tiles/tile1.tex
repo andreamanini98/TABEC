@@ -1,24 +1,34 @@
+% In node, use accepting for initial states.
+% In node, use fill=orange!50 for final states.
+% In edge, use \cguard{} for guards.
+% In edge, use \creset{} for assignments.
+
 \begin{figure}[h!]
+\newcommand{\cguard}{\textcolor{blue}}
+\newcommand{\creset}{\textcolor{green!50!black}}
+
 \begin{center}
-\begin{tikzpicture}
-	[->,
-	 >=stealth',
-	 shorten >=2pt, 
-	 auto,
-     transform shape, 
-     align=center,
-     state/.style={thick, circle, draw, minimum size=1.5cm}] 
+\begin{tikzpicture}[
+	->,
+	>=stealth',
+	shorten >=2pt, 
+	auto,
+    transform shape, 
+    align=center,
+    state/.style={thick, circle, draw, minimum size=1.5cm}
+    ] 
     
-	\node[state, line width = 0.35mm, accepting] (s0) {s0};
-	\node[state, right = 4cm of s0, line width = 0.35mm] (s1) {s1}; 
-	\node[state, right = 4cm of s1, line width = 0.35mm, fill=orange!50] (s2) {s2}; 
+	\node[state] (s0) {s0};
+	\node[state, right = 4cm of s0] (s1) {s1}; 
+	\node[state, right = 4cm of s1] (s2) {s2}; 
 		    
-	\draw [line width=0.35mm, auto]
-	(s0) edge node{\textcolor{blue}{$y == p$} \\ \textcolor{green!50!black}{$x := 0$}}(s1)
-	(s1) edge node{\textcolor{blue}{$x == p \; \&\& \; y > a$}}(s2)
+	\draw [line width=0.35mm]
+	(s0) edge node{\cguard{$y == p$} \\ \creset{$x := 0$}}(s1)
+	(s1) edge node{\cguard{$x == p \; \&\& \; y > a$}} (s2)
     ;
 \end{tikzpicture}
 \end{center}
-\caption{Tile 2}
-\label{tile 2}
+
+\caption{Tile 1}
+\label{tile 1}
 \end{figure}

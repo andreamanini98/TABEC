@@ -19,17 +19,17 @@
     ] 
     
 	\node[state] (s0) {s0};
-	\node[state, right = 4cm of s0] (s1) {s1}; 
-	\node[state, right = 4cm of s1] (s2) {s2}; 
+	\node[state, right = 2cm of s0] (s1) {s1}; 
+	\node[state, right = 6cm of s1] (s2) {s2};  
 		    
 	\draw [line width=0.35mm]
 	(s0) edge node{\cguard{$y == p$} \\ \creset{$x := 0$}}(s1)
-	(s1) edge node{\cguard{$x == p \; \&\& \; y < b$}} (s2)
+	(s1) edge node{\cguard{$x == p \; \&\& \; y > a \; \&\& \; y < b$}} (s2)
     ;
 \end{tikzpicture}
 \end{center}
 
-\caption{Tile 2}
-\label{tile 2}
+\caption{Tile 4}
+\label{tile 4}
 \end{figure}
 
