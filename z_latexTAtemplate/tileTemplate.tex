@@ -32,13 +32,13 @@
 \noindent
 In the following, $p$ will be the parameter, $x$ and $y$ will be the clocks, $a$ and $b$ two natural numbers $\in \mathbb{N}$.\\
 
-Tile forcing the following interval: $p \in (0, \frac{a}{2})$.
+Tile forcing the following interval: $p \in (\frac{a}{2}, \infty)$.
 
 \input{tiles/tile1}
 
 \bigskip
 
-Tile forcing the following interval: $p \in (\frac{b}{2}, \infty)$.
+Tile forcing the following interval: $p \in (0, \frac{b}{2})$.
 
 \input{tiles/tile2}
 
@@ -58,5 +58,26 @@ Please note that Tile \ref{tile 3} can be written more concisely without using c
 Tile forcing the following interval: $p \in (\frac{a}{2}, \frac{b}{2})$.
 
 \input{tiles/tile4}
+
+\newpage
+
+\noindent
+The following tile has 2 output states, giving rise to the ability of choosing one or the other in an OR condition.\\
+
+Tile forcing the following interval: $p \in (0, \frac{a}{2}) \vee p \in [\frac{b}{2}, \frac{b}{2}]$
+
+\input{tiles/tile5}
+
+\noindent
+Please note that in such cases, unless some other previous or subsequent tile forces the parameter in a specific interval, our approach is based on trying all the parameter values starting from $n /2$ (or $n / 2 + \alpha$), so the OR tile isn't really non-deterministic in that sense. For example, testing Tile \ref{tile 5} in tChecker with values $a == 8$ and $b == 4$ the result yielded $p == 0.5$.\\
+
+\noindent
+The following tile has several inputs and outputs, being the most general type of tile we can build (one with $n$ inputs and $m$ outputs).
+
+\input{tiles/tile6}
+
+\noindent
+Understanding whether having multiple input states is useful or not is still under study.
+
 
 \end{document}
