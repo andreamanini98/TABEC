@@ -79,5 +79,58 @@ The following tile has several inputs and outputs, being the most general type o
 \noindent
 Understanding whether having multiple input states is useful or not is still under study.
 
+\newpage
+
+\noindent
+Up to now, we have seen intervals such as these ones: $(0, \frac{b}{2})$ or $(\frac{a}{2}, \frac{b}{2})$, where we can notice a 2 at the denominator of the constants delimiting the interval.\\
+One question that may arise is: \emph{Can such intervals be made arbitrarily small?} That is, is it possible to obtain intervals like $(\frac{a}{n}, \frac{b}{n})$, where $n \in \mathbb{N}-\{0\}$ is an arbitrarily-chosen constant?\\
+Unfortunately, I don't believe this is actually possible without violating our working assumptions.\\
+
+\noindent
+In the following we recap our base assumptions on the TAs we work with:
+\begin{enumerate}
+\item The grammar for clock constrains does not admit algebraic operations, that is, we cannot have a clock constraint like this: $x < a + b$;
+\item TAs are actually nrt-TAs, i.e. a clock cannot be reset and tested in the same transition;
+\item We have only two clocks and one parameter (although the constraint on the parameter is not relevant for these considerations).
+\end{enumerate}
+
+\noindent
+We have to show that it is not possible to construct a tile that is capable of forcing an arbitrarily small interval without violating any of the aforementioned assumptions.\\
+For the sake of simplicity with the drawings, we will show it for the case in which $n = 3$, but a generalization of these concepts is straightforward.\\
+
+\noindent
+The first case study will try to preserve both nrt and two clocks assumptions. However, this would require illegal clock constraints syntax, as can be seen in the following figure.\\
+
+Tile forcing the following interval: $p \in (0, \frac{a}{3})$.
+
+\input{tiles/arbitraryIntervalTiles/tile1}
+
+\noindent
+Since here we let the first transition fire when y is exactly equal to p, the second transition to fire when y is exactly equal to $2p$ and the last transition to fire when x is exactly equal to $p$ and y less than $a$, since y is never reset, in the last transition it must hold that $y == 3p$. But, since we violated condition (1) above, we cannot use this construction in our analysis.\\
+
+\noindent
+Our second case study addresses the nrt nature of the TAs. It is possible to construct arbitrarily small intervals, if we get rid of the nrt property.\\
+
+Tile forcing the following interval: $p \in (0, \frac{a}{3})$.
+
+\input{tiles/arbitraryIntervalTiles/tile2}
+
+\noindent
+Since in this case y is never reset, we can consider x as a sort of counter. At the end, in the last transition y will have a value corresponding to $3p$. The same considerations from the previous case also hold here. But, as mentioned at the beginning, condition (2) is violated, so we cannot use this construction in our analysis.\\
+
+\noindent
+The last case affects the number of clocks: we can get a tile forcing an arbitrarily small interval, but at the expense of adding a new clock for each natural $n \in \mathbb{N}-\{0\}$ we want to use as the denominator.\\
+
+Tile forcing the following interval: $p \in (0, \frac{a}{3})$.
+
+\input{tiles/arbitraryIntervalTiles/tile3}
+
+\noindent
+Similar considerations can be done on why at the end z is equal to $3p$ (it should be trivial to notice at this stage). The tile is nrt, but having more than 2 clocks and thus violating condition (3), we cannot use this construction in our analysis.\\
+
+\noindent
+In conclusion of these considerations, it is worth noticing that, in order to construct the aforementioned illegal tiles, the number of states grows linearly with respect to the natural $n \in \mathbb{N}-\{0\}$ we want to use as the denominator: $T(n) = \Theta(n)$.\\
+The same growth also happens in the case in which we opt for adding more clocks.\\
+Hence, attention should be put when combining them for constructing Tiled TAs, due to the growth of the states set and transitions sets (and anything related to this).
 
 \end{document}
