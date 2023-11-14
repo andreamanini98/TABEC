@@ -29,6 +29,8 @@
 
 \pagenumbering{arabic}
 
+\section{Example tiles}
+
 \noindent
 In the following, $p$ will be the parameter, $x$ and $y$ will be the clocks, $a$ and $b$ two natural numbers $\in \mathbb{N}$.\\
 
@@ -80,6 +82,8 @@ The following tile has several inputs and outputs, being the most general type o
 Understanding whether having multiple input states is useful or not is still under study.
 
 \newpage
+
+\section{Arbitrary intervals}
 
 \noindent
 Up to now, we have seen intervals such as these ones: $(0, \frac{b}{2})$ or $(\frac{a}{2}, \frac{b}{2})$, where we can notice a 2 at the denominator of the constants delimiting the interval.\\
@@ -133,5 +137,27 @@ In conclusion of these considerations, it is worth noticing that, in order to co
 The same growth also happens in the case in which we opt for adding more clocks.\\
 Actually, I just figured out it should be possible to obtain the same effect by using only 3 clocks: two of them are required to alternate in setting and testing the parameter (just like the first two in the example violating condition (3)), while the other clock may be used to force the interval like the z clock did in the same example.\\
 Hence, attention should be put when combining them for constructing Tiled TAs, due to the growth of the states set and transitions sets (and anything related to this).
+
+\newpage
+
+\section{Arbitrary intervals with nrt tiles}
+
+\noindent
+It should be possible to obtain the arbitrary interval restriction while still satisfying assumptions (1), (2) and (3) above by making use of invariants and instantaneous transitions (i.e. transitions that take 0 time units to fire). However, also this construction will not be suitable for our needs, since it violates our hypothesis of time increasing strictly monotonically.\\
+For the sake of completeness, we report in the following figures such construction.\\
+
+Tile forcing the following interval: $p \in (0, \frac{a}{k})$, where $k \in \mathbb{N}-\{0\}$ (here it holds $k = 3$).
+
+\input{tiles/arbitraryIntervalTiles/tile4}
+
+\noindent
+As can be seen in the above figure, we can get an arbitrarily small interval by chaining the following sub-tile k times:
+
+\input{tiles/arbitraryIntervalTiles/tile5}
+
+\noindent
+Notice that this ensures that at the end y (which is never reset) will have a value of $y = kp$ and thus the following holds in the last transition: $y = kp < b => p < \frac{b}{k}$, hence implying the interval mentioned above.\\
+Also, here we make use of invariants in states to enforce steps every p time units, but this implies a model in which istantaneous transitions are admitted, which is not our case.\\
+I have also tried reasoning on obtaining the same result with backward loops, but i fear that in this way we cannot enforce the exact interval we want.
 
 \end{document}
