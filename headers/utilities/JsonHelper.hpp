@@ -1,3 +1,6 @@
+#ifndef UTOTPARSER_JSONHELPER_H
+#define UTOTPARSER_JSONHELPER_H
+
 #include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -19,3 +22,5 @@ static json getJsonAsArray(json inFile)
         return inFileToArray;
     }
 }
+
+#endif // UTOTPARSER_JSONHELPER_H

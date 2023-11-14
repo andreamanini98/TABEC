@@ -1,7 +1,6 @@
 #ifndef UTOTPARSER_EXCEPTIONS_H
 #define UTOTPARSER_EXCEPTIONS_H
 
-
 class NotXMLFormatException : public std::exception {
 public:
     explicit NotXMLFormatException(const char *message) : message_(message)

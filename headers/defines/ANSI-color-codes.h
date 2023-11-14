@@ -1,3 +1,6 @@
+#ifndef UTOTPARSER_ANSI_COLOR_CODES_H
+#define UTOTPARSER_ANSI_COLOR_CODES_H
+
 /*
  * This is free and unencumbered software released into the public domain.
  *
@@ -78,3 +81,5 @@
 #define reset "\e[0m"
 #define CRESET "\e[0m"
 #define COLOR_RESET "\e[0m"
+
+#endif // UTOTPARSER_ANSI_COLOR_CODES_H

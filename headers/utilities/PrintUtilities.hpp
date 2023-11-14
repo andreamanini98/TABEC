@@ -1,3 +1,6 @@
+#ifndef UTOTPARSER_PRINTUTILITIES_H
+#define UTOTPARSER_PRINTUTILITIES_H
+
 #include "Structs.h"
 
 // Used to create columns for 'Conversion' and 'Emptiness'.
@@ -66,3 +69,5 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool on
     for (int i = 0; i < nameColumnWidth + 2 * FIXED_COL_WIDTH + 4; i++) std::cout << "\u203E";
     std::cout << std::endl;
 }
+
+#endif // UTOTPARSER_PRINTUTILITIES_H
