@@ -3,20 +3,33 @@
 # Shell script that, given an input file, substitutes all the occurrences of a parameter keyword with the appropriate
 # integer value, producing the result in the file specified as output.
 
-# WARNING: up to now, since this script is used to return either true or false based on the value contained in the last line,
-#          the printing of statements should end with a line where the only word contained is either 'true' or 'false'.
+# WARNING: up to now, since this script is used to return either true or false based on the value contained in
+#          the last line. For this reason, the last statement printed by the script must be a line where the
+#          only word contained is either 'true' or 'false' based on the existence of an accepting condition or not.
+
+
+# ----- PARAMETERS DEFINITIONS ----- #
 
 # The path of the file to be used as input.
 input_file="$1"
+
 # The path of the file to be written with parameters keyword actually replaced by a value mu > 2C.
 output_file="$2"
+
 # The path to the tChecker's bin directory.
 tChecker_liveness_path="$3"
 
+# ----- PARAMETERS DEFINITIONS ----- #
+
+
+# ----- VARIABLES DEFINITIONS ----- #
+
 # Search for the pattern "# Q :: int" in the input file.
 Q_pattern="# Q :: [0-9]+"
+
 # Search for the pattern "# C :: int" in the input file.
 C_pattern="# C :: [0-9]+"
+
 # The keyword representing the parameters to substitute.
 param_keyword="param"
 
@@ -42,6 +55,11 @@ if [[ -z "$Q" ]] || [[ -z "$C" ]]; then
   exit 1
 fi
 
+# ----- VARIABLES DEFINITIONS ----- #
+
+
+# ----- SCRIPT BODY ----- #
+
 # Compute the value of the parameter we use for checking emptiness.
 integer_gt_2C=$((1 + C * (1 + Q)))
 
@@ -51,11 +69,9 @@ sed "s/$param_keyword/$integer_gt_2C/g" "$input_file" > "$output_file"
 printf "Integer %s replaced and saved in:\n%s\n" "$integer_gt_2C" "$output_file"
 
 # Moving into the right folder for calling other scripts.
-cd .. || exit
-cd scriptsForChecks || exit
+cd ../scriptsForChecks || exit
 
 # Now calling tChecker to test the emptiness.
-
 result=$(./tCheckerLiveness.sh "$output_file" "$tChecker_liveness_path")
 
 if [[ "$result" == "true" ]]; then
@@ -68,5 +84,6 @@ else
 fi
 
 # We print the result since in the C++ caller function, it will be used to determine the checking result.
-printf "\nFinal result of (parameter > 2C) analysis: is the language of the given TA not empty?\n%s" "$is_not_empty"
+printf "\nFinal result of (parameter < 2C) analysis: true == we have an accepting condition, false == the TA's language is empty.\n%s" "$is_not_empty"
 
+# ----- SCRIPT BODY ----- #
