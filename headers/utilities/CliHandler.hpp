@@ -5,22 +5,33 @@
 
 // List of available commands. Remember to update the vector availableCommands below as well.
 // ------------------------------------------------------------------------------------
+
 // Specify source directory path. This will require a path as subsequent argument.
-#define src "-src"
+const std::string src {"-src"};
+
 // Specify destination directory path. This will require a path as subsequent argument.
-#define dst "-dst"
+const std::string dst {"-dst"};
+
 // The analysis will be carried out only on nrtTAs.
-#define nrt "-nrt"
+const std::string nrt {"-nrt"};
+
 // A Json representation of the TAs will be printed in stdout.
-#define jsn "-jsn"
+const std::string jsn {"-jsn"};
+
 // Specify tChecker's liveness tool directory path. This will require a path as subsequent argument.
-#define lns "-lns"
+const std::string lns {"-lns"};
+
+// Prints in the logs all the tests executed with the parameters (it doesn't stop at the first acceptance condition).
+const std::string all {"-all"};
+
+// ------------------------------------------------------------------------------------
 
 
 class CliHandler {
+
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = {src, dst, nrt, jsn, lns};
+    std::vector<std::string> availableCommands = {src, dst, nrt, jsn, lns, all};
 
     // A pointer to main's argc.
     int *argc_p;

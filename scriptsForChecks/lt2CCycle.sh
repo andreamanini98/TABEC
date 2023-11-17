@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Shell script that performs a check on TA's emptiness, first trying all parameter values multiple
 # of 0.5 and, in case a solution is not found, uses the alpha value to perform a check as seen in Theorem 5.
@@ -22,14 +22,17 @@ alpha_mag="$3"
 # Path where a temporary file will be created for performing checks below.
 output_tmp_file="$4"
 
+# Used to either log all values of the parameters (all) or stop at the first acceptance condition found (lla).
+log_all="$5"
+
 # ----- PARAMETERS DEFINITIONS ----- #
 
 
 # ----- VARIABLES DEFINITIONS ----- #
 
 # Check if the correct number of arguments is provided.
-if [[ $# -ne 4 ]]; then
-  echo "Error: arguments required: 4, arguments provided: $#."
+if [[ $# -ne 5 ]]; then
+  echo "Error: arguments required: 5, arguments provided: $#."
   exit 1
 fi
 
@@ -69,18 +72,35 @@ is_not_empty="false"
 
 # ----- FUNCTIONS DEFINITIONS ----- #
 
+# Function used to print information about the final value of the parameter, if an accepting condition has been found.
+# Parameters:
+# $1 : the value of the parameter to be scaled.
+print_scaled_param() {
+  local mu="$1"
+  printf "[[ ACC ]]\nAcceptance condition found with parameter value: %s\n" "$mu"
+
+  # Getting the number of digits inside alpha_mag in order to have the correct amount of decimal digits in the output.
+  local alpha_chars="${#alpha_mag}"
+
+  # Computing and printing the decimal value of the parameter.
+  local scaled_param
+  scaled_param="$(bc <<< "scale=$alpha_chars; $mu / $alpha_mag")"
+  printf "In the original TA, this is equivalent to a parameter value of: %.${alpha_chars}f\n" "$scaled_param"
+}
+
 # Function used to check the emptiness of the TA by repeatedly changing the
 # value of the parameter according to an appropriate parameter update policy.
 # Parameters:
 # $1 : an integer telling the function how to update mu during the loop.
-function check_emptiness {
-  mu_selector="$1"
+check_emptiness() {
+  local mu_selector="$1"
 
-  loop_start=0
-  loop_end=$((4 * C - 1)) # This ensures to try all multiples of 0.5 if we set mu as below.
+  local loop_start=0
+  local loop_end=$((4 * C - 1)) # This ensures to try all multiples of 0.5 if we set mu as below.
 
   echo "Entering cycle: start = $loop_start, end = $loop_end."
 
+  local n
   for n in $(seq "$loop_start" "$loop_end"); do
     # We calculate the new value of the parameter according to Theorem 5.
     printf "\nStarting iteration number: %s\n" "$n"
@@ -103,32 +123,21 @@ function check_emptiness {
     sed "s/$param_keyword/$mu/g" "$input_file" > "$output_tmp_file"
 
     # Now calling tChecker to test the new substitution.
+    local result
     result=$(./tCheckerLiveness.sh "$output_tmp_file" "$tChecker_liveness_path")
 
     # We check if the TA's language is empty or not.
     if [[ "$result" == "true" ]]; then
-      echo "Solution found!"
+      print_scaled_param "$mu"
       is_not_empty="true"
-      break
+
+      if [[ "$log_all" == "lla" ]]; then
+        break
+      fi
     else
-      echo "Solution not found, starting new loop iteration."
+      echo "Solution not found with parameter value: $mu, starting new loop iteration."
     fi
   done
-}
-
-# Function used to print information about the final value of the parameter, if an accepting condition has been found.
-# Parameters:
-# $1 : the value of the parameter to be scaled.
-function print_scaled_param {
-  mu="$1"
-  printf "\nAcceptance condition found with parameter value: %s\n" "$mu"
-
-  # Getting the number of digits inside alpha_mag in order to have the correct amount of decimal digits in the output.
-  alpha_chars="${#alpha_mag}"
-
-  # Computing and printing the decimal value of the parameter.
-  scaled_param="$(bc <<< "scale=$alpha_chars; $mu / $alpha_mag")"
-  printf "In the original TA, this is equivalent to a parameter value of: %.${alpha_chars}f\n" "$scaled_param"
 }
 
 # ----- FUNCTIONS DEFINITIONS ----- #
@@ -151,9 +160,7 @@ else
   # Testing parameter of the form: (n / 2) + alpha.
   check_emptiness 1
 
-  if [[ "$is_not_empty" == "true" ]]; then
-    print_scaled_param "$mu"
-  else
+  if [[ ! "$is_not_empty" == "true" ]]; then
     echo "Acceptance condition not found."
   fi
 fi

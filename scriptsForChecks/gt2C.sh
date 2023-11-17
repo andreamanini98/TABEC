@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Shell script that, given an input file, substitutes all the occurrences of a parameter keyword with the appropriate
 # integer value, producing the result in the file specified as output.
@@ -75,7 +75,7 @@ cd ../scriptsForChecks || exit
 result=$(./tCheckerLiveness.sh "$output_file" "$tChecker_liveness_path")
 
 if [[ "$result" == "true" ]]; then
-  printf "\nAcceptance condition found with parameter value: %s\n" "$integer_gt_2C"
+  printf "[[ ACC ]]\nAcceptance condition found with parameter value: %s\n" "$integer_gt_2C"
   printf "In the original TA, this is equivalent to a parameter value of: %s\n" "$integer_gt_2C"
   is_not_empty="true"
 else

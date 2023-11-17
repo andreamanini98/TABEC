@@ -41,6 +41,8 @@ private:
 
     StringsGetter &stringsGetter;
 
+    CliHandler &cliHandler;
+
     /**
      * Helper method used to conveniently get the result from the given string.
      * @param result the string from which to get the result.
@@ -103,10 +105,10 @@ private:
     {
         return Command::exec(
                 spaceStr({
-                                 shellScriptPath + gt2C,
-                                 inputFilePath,
-                                 gt2COutputFilePath,
-                                 tCheckerBinPath + liveness
+                                 shellScriptPath + gt2C,    // Script name
+                                 inputFilePath,             // $1
+                                 gt2COutputFilePath,        // $2
+                                 tCheckerBinPath + liveness // $3
                          }));
     }
 
@@ -118,9 +120,9 @@ private:
     {
         return Command::exec(
                 spaceStr({
-                                 shellScriptPath + tckLiveness,
-                                 inputFilePath,
-                                 tCheckerBinPath + liveness
+                                 shellScriptPath + tckLiveness, // Script name
+                                 inputFilePath,                 // $1
+                                 tCheckerBinPath + liveness     // $2
                          }));
     }
 
@@ -133,10 +135,10 @@ private:
     {
         system(
                 spaceStr({
-                                 shellScriptPath + lt2CScale,
-                                 inputFilePath,
-                                 lt2COutputFilePath,
-                                 alphaMag.substr(ALPHA_MAG_IGNORE_DIGITS)
+                                 shellScriptPath + lt2CScale,                  // Script name
+                                 inputFilePath,                                // $1
+                                 lt2COutputFilePath,                           // $2
+                                 alphaMag.substr(ALPHA_MAG_IGNORE_DIGITS) // $3
                          }).c_str());
     }
 
@@ -148,11 +150,12 @@ private:
     {
         return Command::exec(
                 spaceStr({
-                                 shellScriptPath + lt2CCycle,
-                                 lt2COutputFilePath,
-                                 tCheckerBinPath + liveness,
-                                 alphaMag,
-                                 outputTmpFilePath
+                                 shellScriptPath + lt2CCycle,               // Script name
+                                 lt2COutputFilePath,                        // $1
+                                 tCheckerBinPath + liveness,                // $2
+                                 alphaMag,                                  // $3
+                                 outputTmpFilePath,                         // $4
+                                 cliHandler.isCmd(all) ? "all" : "lla" // $5
                          }));
     }
 
@@ -253,7 +256,7 @@ private:
 
 
 public:
-    explicit TAChecker(StringsGetter &stringsGetter) : stringsGetter(stringsGetter)
+    TAChecker(StringsGetter &stringsGetter, CliHandler &cliHandler) : stringsGetter(stringsGetter), cliHandler(cliHandler)
     {
         this->shellScriptPath = stringsGetter.getScriptsDirPath();
         this->tCheckerBinPath = stringsGetter.getTCheckerBinPath();

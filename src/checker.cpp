@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     std::vector<DashBoardEntry> dashboardResults;
     DashBoardEntry d_entry;
 
-    TAChecker taChecker(stringsGetter);
+    TAChecker taChecker(stringsGetter, cliHandler);
 
     deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
 
