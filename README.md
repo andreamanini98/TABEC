@@ -79,6 +79,12 @@ In addition, one can also manually specify the path to tChecker's bin directory 
 ./checker -lns /path/to/tChecker/bin
 ```
 
+When using the checker, the `-all` option is available in order to decide whether to log all the parameter values tested during the TAs analysis or to stop at the first acceptance condition found.
+```
+./checker -all
+```
+The above command will force the checker to log all the values tested. Not putting the `-all` option will result in the tool stopping at the first acceptance condition met.
+
 <h2>Using the grapher</h2>
 
 This tool offers graphical capabilities for showing the TAs under analysis.<br>
