@@ -66,7 +66,7 @@ Tile forcing the following interval: $p \in (\frac{a}{2}, \frac{b}{2})$.
 \noindent
 The following tile has 2 output states, giving rise to the ability of choosing one or the other in an OR condition.\\
 
-Tile forcing the following interval: $p \in (0, \frac{a}{2}) \vee p \in [\frac{b}{2}, \frac{b}{2}]$
+Tile forcing the following interval: $p \in (0, \frac{a}{2}) \vee p \in [\frac{b}{2}, \frac{b}{2}]$.
 
 \input{tiles/tile5}
 
@@ -158,6 +158,38 @@ As can be seen in the above figure, we can get an arbitrarily small interval by 
 \noindent
 Notice that this ensures that at the end y (which is never reset) will have a value of $y = kp$ and thus the following holds in the last transition: $y = kp < b => p < \frac{b}{k}$, hence implying the interval mentioned above.\\
 Also, here we make use of invariants in states to enforce steps every p time units, but this implies a model in which istantaneous transitions are admitted, which is not our case.\\
-I have also tried reasoning on obtaining the same result with backward loops, but i fear that in this way we cannot enforce the exact interval we want.
+I have also tried reasoning on obtaining the same result with backward loops, but i fear that in this way we cannot enforce the exact interval we want.\\
+
+\noindent
+False, invariants can also be seen as guards over transitions, so the nrt property is not valid even in this case.
+
+\newpage
+
+\section{Tiles pre-conditions and post-conditions}
+
+\noindent
+Defining pre-conditions (and maybe also post-conditions) over the value of the clocks may be necessary in our case study.\\
+As an example of pre-condition, let's take a look again at the first tile we introduced, here enriched with an extra incoming and outgoing transitions to depict the tile's pre and post-conditions.
+
+\input{tiles/prepostconditions/tile1}
+
+\noindent
+A post-condition, for now, seems useless, since what's really interesting are pre-conditions; for this reason, we're going to focus on the latter.\\
+Pre-conditions are interesting for this fact: if it is guaranteed that a pre-condition is met, then the behaviour of the tile is "deterministic", in the sense that it is sure (we would have to formally prove this for each tile) that, if the pre-condition requirements are met, then the parameter will always fall in the interval forced by that particular tile.\\
+
+\noindent
+Furthermore, if we can ensure that the concatenation of, let's say, Tile A with Tile B in series is such that Tile A, after executing, ensures the satisfaction of Tile B pre-conditions (and viceversa), then those two tiles may be independent from each other (we can arrange them as we want without any influence). This could lead us to formally test all single tiles without having to test the entire automaton. This should also enable us to use additional parameters, provided that we use a different parameter for each independent tile, and provided that all tiles that are used to build the TA are actually really independent.\\
+This however must be formalized and maybe some small mathematical proofs must be carried out.\\
+
+\noindent
+I still am not sure what do we mean by being independent from each other: 
+\begin{itemize}
+\item Does this implies that we still get the same parameter interval no matter how we rearrange these tiles in the resulting TA?
+\item Does this implies that the intervals do not influence each other? (but how could this be possible if for example we chain two tiles together in series?)
+\end{itemize}
+
+
+\noindent
+Must all of this be implemented in utotparser? Maybe not, but for sure is an interesting theoretical concept I really want to include in my thesis.
 
 \end{document}
