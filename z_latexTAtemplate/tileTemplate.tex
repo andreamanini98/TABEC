@@ -192,4 +192,43 @@ I still am not sure what do we mean by being independent from each other:
 \noindent
 Must all of this be implemented in utotparser? Maybe not, but for sure is an interesting theoretical concept I really want to include in my thesis.
 
+\newpage
+
+\section{Tile loops}
+
+\noindent
+Is it useful/necessary to introduce loops inside tiles?\\
+First of all, if we want to perform random testing (concatenating random tiles with tiles where the parameter's interval is known), loops in such random tiles may appear but, in such a case, they would be acceptable, since randomness wouldn't be under our control.\\
+
+\noindent
+In an interval-forcing tile, however, are loops really meaningful? If the tiles' aim is only to force an interval for the parameter, maybe using a loop is redundant and not necessary.\\
+
+\noindent
+The following tile achieves the same interval as the first one introduced in this work; however, here we will use a backward loop in order to make the y clock count p time units at a time.\\
+
+Tile forcing the following interval: $p \in (\frac{a}{2}, \infty)$.
+
+\input{tiles/looptiles/tile1}
+
+\noindent
+As can be seen from the above tile, the use of loops makes guards on transitions shorter. This would be helpful in keeping the nrt condition (for example, the transition from s1 to s2 here only require a guard on y).\\
+
+\noindent
+However, the semantics of timed automata does not impose restrictions on how much time we can stay in a particular state, if an invariant on such a state has not been specified. Hence, here we can jump from s0 to s1 when $x == p$ but, for a suitable value of p ($p < a$), we can then wait in s1 until the condition on y is satisfied ($y > a$) and thus take the final tile transition. This suggests that, with a construction like the one above, it is not guaranteed that the parameter will stay in the pre-computed interval.\\
+
+\noindent
+We could for example take $a == 10$ and $p == 1$: in this case, when at the beginning $x == p == 1$ we would jump from s0 to s1, then wait in s1 until $y > a == 10$ and then take the transition from s1 to s2, without even entering the loop.\\
+This would formally correspond to having a timed $\omega$-word with the following structure:\\
+$(\pi, \tau) = (\pi_{1}, \tau_{1}) (\pi_{2}, \tau_{2}) (\pi_{n}, \tau_{n})^{\omega}$ where: $\pi_{1} = \pi_{2} = a$ and $\tau_{1} = 1, \; \tau_{2} = 11$ and $(\pi_{n}, \tau_{n})^{\omega}$ a general timed $\omega$-word.\\
+
+\noindent
+Of course, it could also happen that the loop is taken until y is of the form $y == kp$, as we proved to be the case at the beginning of this work.\\
+
+\noindent
+Speaking about loops, it is worth recalling that we may avoid loops between tiles themselves, since this could make them interact with each other, since we want to prove tile independence.
+
+
+
+
+
 \end{document}

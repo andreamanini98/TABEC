@@ -24,12 +24,13 @@
 	\node[state, right = 4cm of s1] (s2) {s2}; 
 		    
 	\draw [line width=0.35mm]
-	(s0) edge node{\cguard{$y == p$} \\ \creset{$x := 0$}}(s1)
-	(s1) edge node{\cguard{$x == p \; \&\& \; y > a$}} (s2)
+	(s0) edge[bend left=20] node{\cguard{$x == p$}}(s1)
+	(s1) edge[bend left=20] node{\creset{$x := 0$}} (s0)
+	(s1) edge node{\cguard{$y > a$}} (s2)
     ;
 \end{tikzpicture}
 \end{center}
 
-\caption{Tile 1. Forced interval: $p \in (\frac{a}{2}, \infty)$}
-\label{tile 1}
+\caption{Loop Tile 1. Forced interval: $p \in (\frac{a}{2}, \infty)$}
+\label{looptile 1}
 \end{figure}
