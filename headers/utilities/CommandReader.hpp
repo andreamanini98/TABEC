@@ -31,6 +31,7 @@ class Command {
 public:
     std::string output;
 
+
     /**
      * Execute system command and get STDOUT result.
      * Regular system() only gives back exit status, this gives back output as well.
@@ -51,11 +52,13 @@ public:
         FILE *pipe = popen(command.c_str(), "r");
         if (pipe == nullptr)
             throw std::runtime_error("popen() failed!");
-        try {
+        try
+        {
             std::size_t bytesRead;
             while ((bytesRead = std::fread(buffer.data(), sizeof(buffer.at(0)), sizeof(buffer), pipe)) != 0)
                 result += std::string(buffer.data(), bytesRead);
-        } catch (...) {
+        } catch (...)
+        {
             pclose(pipe);
             throw;
         }

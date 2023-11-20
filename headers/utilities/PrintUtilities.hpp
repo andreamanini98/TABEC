@@ -4,9 +4,10 @@
 #include "Structs.h"
 
 // Used to create columns for 'Conversion' and 'Emptiness'.
-#define FIXED_COL_WIDTH 12
+const int FIXED_COL_WIDTH {12};
+
 // Used to add a padding to the maximum width found scanning the names of the TAs to show.
-#define TA_NAME_COL_WIDTH_PADDING 2
+const int TA_NAME_COL_WIDTH_PADDING {2};
 
 
 /**
@@ -24,6 +25,7 @@ void printTitle(const std::string &nameTA, const std::string &path, const std::s
               std::endl << "as " << outputFileName <<
               std::endl << "in dest directory: " << outputDirPath << std::endl;
 }
+
 
 /**
  * This function is used to print in a tabular manner the results of the process:
@@ -57,7 +59,8 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool on
     std::cout << "| TA name    " + std::string(nameColumnWidth - FIXED_COL_WIDTH, ' ') + "| Conversion | Emptiness  |" << std::endl;
 
     // For each entry we print the name and, based on the boolean parameters, the wanted results.
-    for (auto &d_entry: dashboardResults) {
+    for (auto &d_entry: dashboardResults)
+    {
         std::cout << "| " << d_entry.nameTA <<
                   std::string(nameColumnWidth - d_entry.nameTA.length() - 1, ' ') <<
                   "| " << std::string(FIXED_COL_WIDTH - 3, ' ') <<
@@ -69,5 +72,6 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool on
     for (int i = 0; i < nameColumnWidth + 2 * FIXED_COL_WIDTH + 4; i++) std::cout << "\u203E";
     std::cout << std::endl;
 }
+
 
 #endif // UTOTPARSER_PRINTUTILITIES_H

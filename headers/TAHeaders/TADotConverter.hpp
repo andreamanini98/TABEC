@@ -16,6 +16,7 @@ class TADotConverter {
 private:
     const std::string outFilePath;
 
+
     /**
      * Method use to escape html characters since we're using a graphviz html representation.
      * @param stringToSanitize the string to sanitize.
@@ -25,13 +26,14 @@ private:
     {
         // Remember to first replace the '&' since otherwise the others derived
         // from subsequent replacements will be substituted as well.
-        std::vector<std::pair<char, std::string>> symbolsAndStrings = {{'&', "&amp;"},
-                                                                       {'<', "&lt;"},
-                                                                       {'>', "&gt;"}};
+        std::vector<std::pair<char, std::string>> symbolsAndStrings = {{ '&', "&amp;" },
+                                                                       { '<', "&lt;" },
+                                                                       { '>', "&gt;" }};
         for (auto &sAs: symbolsAndStrings)
             stringToSanitize = substituteCharInString(stringToSanitize, sAs.first, sAs.second);
         return stringToSanitize;
     }
+
 
     /**
      * Method used to write the starting part of the graphviz .dot file.
@@ -49,6 +51,7 @@ private:
         out.flush();
     }
 
+
     /**
      * Method used to write the locations part of the graphviz .dot file.
      * @param locations a vector containing a json representation of locations.
@@ -57,7 +60,8 @@ private:
      */
     static void writeLocations(std::vector<json> locations, const std::string &initialLocation, std::ofstream &out)
     {
-        for (auto &location: locations) {
+        for (auto &location: locations)
+        {
             bool isInitial = false, isFinal = false;
 
             std::string locationID = static_cast<std::string>(location.at(ID));
@@ -66,7 +70,8 @@ private:
             std::string dotLabel = "label=<<FONT>" + locationID;
 
             // If the location is initial we mark it with a double circle.
-            if (locationID == initialLocation) {
+            if (locationID == initialLocation)
+            {
                 isInitial = true;
                 outString.append(INIT_NODE_SHAPE);
             }
@@ -77,7 +82,8 @@ private:
                     dotLabel.append("<BR />" + htmlSanitize(static_cast<std::string>(location.at(LABEL).at(TEXT))));
 
             // As we assume that in UPPAAL a colored location is also final, also here we mark a final location with a color.
-            if (location.contains(COLOR)) {
+            if (location.contains(COLOR))
+            {
                 (isInitial) ? outString.append(", ") : outString;
                 outString.append(FINAL_NODE_STYLE);
                 isFinal = true;
@@ -92,6 +98,7 @@ private:
         out.flush();
     }
 
+
     /**
      * Method used to write the transitions part of the graphviz .dot file.
      * @param transitions a vector containing a json representation of transitions.
@@ -99,7 +106,8 @@ private:
      */
     static void writeTransitions(std::vector<json> transitions, std::ofstream &out)
     {
-        for (auto &transition: transitions) {
+        for (auto &transition: transitions)
+        {
             std::string outString =
                     "P_" + static_cast<std::string>(transition.at(SOURCE).at(REF)) + " -> " +
                     "P_" + static_cast<std::string>(transition.at(TARGET).at(REF)) +
@@ -107,7 +115,8 @@ private:
 
             std::string dotLabel = "label=<<FONT> <FONT COLOR=\"" + std::string(NODE_LABEL_COLOR) + "\">a</FONT>";
 
-            if (transition.contains(LABEL)) {
+            if (transition.contains(LABEL))
+            {
                 json labels = transition.at(LABEL);
                 dotLabel.append(writeTransitions_helper(getJsonAsArray(labels)));
             }
@@ -118,6 +127,7 @@ private:
         out.flush();
     }
 
+
     /**
      * Helper method used to write the text inside a transition.
      * @param labels the transition's labels which content will be written in the graphviz .dot file.
@@ -127,7 +137,8 @@ private:
     {
         std::string dotLabelAddition;
 
-        for (auto &label: labels) {
+        for (auto &label: labels)
+        {
             std::string labelText = static_cast<std::string>(label.at(TEXT));
             std::string labelKind = static_cast<std::string>(label.at(KIND));
 
@@ -143,6 +154,7 @@ private:
 public:
     explicit TADotConverter(std::string outFilePath) : outFilePath(std::move(outFilePath))
     {}
+
 
     /**
      * Method used to translate a TA from .xml format to .dot format.

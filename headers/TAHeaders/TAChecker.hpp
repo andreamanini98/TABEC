@@ -43,6 +43,7 @@ private:
 
     CliHandler &cliHandler;
 
+
     /**
      * Helper method used to conveniently get the result from the given string.
      * @param result the string from which to get the result.
@@ -56,6 +57,7 @@ private:
             return false;
     }
 
+
     /**
      * Method used to print a string representing the result of the analysis.
      * @param isAccepting a boolean value telling if the TA has an accepting condition or not.
@@ -68,6 +70,7 @@ private:
         std::cout << color << "Language is " << acceptance << " empty!" << reset << std::endl;
         return isAccepting;
     }
+
 
     /**
      * Method used to tell if a given TA is parametric or not.
@@ -85,6 +88,7 @@ private:
         return parKwdOccurrences != "0";
     }
 
+
     /**
      * Method used to set the attributes not initialized by the constructor.
      * @param outputFileName the name of the file that is going to be written.
@@ -96,6 +100,7 @@ private:
         this->gt2COutputFilePath = stringsGetter.getOutputDirForCheckingPath() + "/gt2C_" += outputFileName;
         this->outputTmpFilePath = stringsGetter.getOutputDirForCheckingPath() + "/lt2C_tmp_" += outputFileName;
     }
+
 
     /**
      * Method used to call the script that will substitute the param keywords occurrences in order to subsequently call another
@@ -112,6 +117,7 @@ private:
                          }));
     }
 
+
     /**
      * Method used to call tChecker's liveness tool and return it's result when the TA is not parametric.
      * @return the result obtained by tChecker.
@@ -125,6 +131,7 @@ private:
                                  tCheckerBinPath + liveness     // $2
                          }));
     }
+
 
     /**
      * Method used to run a script that will resize the constants inside the TA in order to subsequently call another script
@@ -142,6 +149,7 @@ private:
                          }).c_str());
     }
 
+
     /**
      * Method used to check if the TA admits an acceptance condition in the case of parameter being less than 2C.
      * @return a string containing the result obtained by tChecker.
@@ -158,6 +166,7 @@ private:
                                  cliHandler.isCmd(all) ? "all" : "lla" // $5
                          }));
     }
+
 
     /**
      * Method used to write a given log and, gathering it's last line, return either true or false.
@@ -182,6 +191,7 @@ private:
         return getFinalResult(tRes);
     }
 
+
     /**
      * Method used to check if the TA admits a Büchi acceptance condition with a parameter which value is mu > 2C.
      * @param nameTA the name of the TA under analysis.
@@ -193,6 +203,7 @@ private:
         std::cout << "Trying mu > 2C." << std::endl;
         return writeLogAndGetFinalResult(logger, c_gt2C(), nameTA);
     }
+
 
     /**
      * Method used to check if the TA admits a Büchi acceptance condition with a parameter which value is mu < 2C.
@@ -207,6 +218,7 @@ private:
         s_lt2CScale();
         return writeLogAndGetFinalResult(logger, c_lt2CCycle(), nameTA);
     }
+
 
     /**
      * Method used to check if the TA admits an acceptance condition when it is not parametric.
@@ -228,6 +240,7 @@ private:
             return printAndGetRes(false);
     }
 
+
     /**
      * Method used to check if the TA admits an acceptance condition when it is parametric.
      * @param nameTA the name of the TA under analysis.
@@ -241,9 +254,10 @@ private:
         // We first try to see if the TA admits an acceptance condition with a parameter mu > 2C.
         bool isAccepting = checkMuGreaterThan2C(nameTA, logger);
 
-        if (isAccepting) {
+        if (isAccepting)
             return printAndGetRes(true);
-        } else {
+        else
+        {
             // If the previous check fails, we try to see if the TA admits an acceptance condition with a parameter mu < 2C.
             isAccepting = checkMuLessThan2C(nameTA, logger);
 
@@ -261,6 +275,7 @@ public:
         this->shellScriptPath = stringsGetter.getScriptsDirPath();
         this->tCheckerBinPath = stringsGetter.getTCheckerBinPath();
     }
+
 
     /**
      * Method used to check if the TA has a Büchi acceptance condition or if it is empty.

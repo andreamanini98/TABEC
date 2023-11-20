@@ -22,7 +22,8 @@ void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &output
     std::cout << "Starting conversion from .dot to .pdf file format." << std::endl;
     std::cout << std::string(50, '-') << std::endl;
 
-    for (const auto &entry: getEntriesInAlphabeticalOrder(sourceDirPath)) {
+    for (const auto &entry: getEntriesInAlphabeticalOrder(sourceDirPath))
+    {
         std::string outputFileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0) + "_out.pdf";
 
         std::string outputDirFile = outputDirPath + "/" += outputFileName;
@@ -32,6 +33,7 @@ void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &output
     }
 }
 
+
 int main(int argc, char *argv[])
 {
     CliHandler cliHandler(&argc, &argv, false);
@@ -40,32 +42,39 @@ int main(int argc, char *argv[])
     deleteDirectoryContents(stringsGetter.getOutputDOTsDirPath());
     deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
 
-    try {
-        for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputDirPath())) {
-            if (std::filesystem::is_regular_file(entry)) {
+    try
+    {
+        for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputDirPath()))
+        {
+            if (std::filesystem::is_regular_file(entry))
+            {
                 std::ifstream file(entry.path());
 
                 if (static_cast<std::string>(entry.path()).find(".xml") == std::string::npos)
                     continue;
 
-                if (file.is_open()) {
+                if (file.is_open())
+                {
                     // Computing the name of the .dot file to subsequently translate into PDF format.
                     std::string outputFileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
 
                     std::cout << "Starting translation from .xml to .dot of file:\n" << entry.path() << std::endl;
 
                     TADotConverter taDotConverter(stringsGetter.getOutputDOTsDirPath() + "/" += (outputFileName + ".dot"));
-                    try {
+                    try
+                    {
                         // Converting the .xml file into .dot format.
                         taDotConverter.translateTAtoDot(outputFileName, getJsonFromFileStream(file));
-                    } catch (NotXMLFormatException &e) {
+                    } catch (NotXMLFormatException &e)
+                    {
                         std::cerr << BHRED << e.what() << reset << std::endl;
                     }
                 }
             }
             std::cout << std::endl;
         }
-    } catch (const std::filesystem::filesystem_error &e) {
+    } catch (const std::filesystem::filesystem_error &e)
+    {
         std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
     }
 

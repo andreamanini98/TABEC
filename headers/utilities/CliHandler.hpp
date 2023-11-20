@@ -7,22 +7,22 @@
 // ------------------------------------------------------------------------------------
 
 // Specify source directory path. This will require a path as subsequent argument.
-const std::string src {"-src"};
+const std::string src { "-src" };
 
 // Specify destination directory path. This will require a path as subsequent argument.
-const std::string dst {"-dst"};
+const std::string dst { "-dst" };
 
 // The analysis will be carried out only on nrtTAs.
-const std::string nrt {"-nrt"};
+const std::string nrt { "-nrt" };
 
 // A Json representation of the TAs will be printed in stdout.
-const std::string jsn {"-jsn"};
+const std::string jsn { "-jsn" };
 
 // Specify tChecker's liveness tool directory path. This will require a path as subsequent argument.
-const std::string lns {"-lns"};
+const std::string lns { "-lns" };
 
 // Prints in the logs all the tests executed with the parameters (it doesn't stop at the first acceptance condition).
-const std::string all {"-all"};
+const std::string all { "-all" };
 
 // ------------------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = {src, dst, nrt, jsn, lns, all};
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all };
 
     // A pointer to main's argc.
     int *argc_p;
@@ -60,15 +60,18 @@ public:
         for (std::string &cmd: availableCommands)
             commandsAndPositions.emplace(cmd, isElementInVector<std::string>(cliArguments, cmd));
 
-        if (debug) {
+        if (debug)
+        {
             // Remember that find() on a map returns an iterator, hence to access the actual element we have to access second on it with ->.
-            for (std::string &cmd: availableCommands) {
+            for (std::string &cmd: availableCommands)
+            {
                 std::cout << "Command: " << cmd << " is present " <<
                           (commandsAndPositions.find(cmd)->second).first << " at position " <<
                           (commandsAndPositions.find(cmd)->second).second << std::endl;
             }
         }
     }
+
 
     /**
      * Method used to tell if a given command has been inserted when launching the program.
@@ -80,6 +83,7 @@ public:
         return (commandsAndPositions.find(cmd)->second).first;
     }
 
+
     /**
      * Method used to get the position of the command in the list of arguments.
      * @param cmd the command to get the position.
@@ -89,6 +93,7 @@ public:
     {
         return (commandsAndPositions.find(cmd)->second).second;
     }
+
 
     /**
      * returns a pointer to the main's argv.

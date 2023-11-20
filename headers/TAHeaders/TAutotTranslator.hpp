@@ -33,6 +33,7 @@ private:
     // - It is checked as a guard (> 0) in output to a location.
     std::string fictitiousClock;
 
+
     /**
      * Method used to write the clocks declarations in tChecker syntax.
      * Up to now, we consider only single clocks (not arrays of clocks).
@@ -41,10 +42,12 @@ private:
      */
     void writeClocksDeclarations(const std::string &declaration, std::ofstream &out)
     {
-        if (declaration.find(CLOCK) != std::string::npos) {
+        if (declaration.find(CLOCK) != std::string::npos)
+        {
             std::vector<std::string> clocks = TAContentExtractor::getClocks(declaration);
 
-            for (auto &clock: clocks) {
+            for (auto &clock: clocks)
+            {
                 out << "clock:1:" << clock << std::endl;
                 // The fictitious clock's name is obtained by concatenation of the other clocks in order to avoid name clashes.
                 fictitiousClock.append(clock);
@@ -55,6 +58,7 @@ private:
             out.flush();
         }
     }
+
 
     /**
     * Method used to write the locations declarations in tChecker syntax.
@@ -68,20 +72,24 @@ private:
         // We get the number of states.
         Q = static_cast<int>(locations.size());
 
-        for (auto &location: locations) {
+        for (auto &location: locations)
+        {
             bool isInitial = false, hasInvariant = false;
             std::string outString = "location:" + processName + ":" + static_cast<std::string>(location.at(ID)) + "{";
 
-            if (static_cast<std::string>(location.at(ID)) == initialLocation) {
+            if (static_cast<std::string>(location.at(ID)) == initialLocation)
+            {
                 outString.append("initial:");
                 isInitial = true;
             }
 
             // Here we check if the location has some invariants.
-            if (location.contains(LABEL) && location.at(LABEL).contains(KIND)) {
+            if (location.contains(LABEL) && location.at(LABEL).contains(KIND))
+            {
                 (isInitial) ? outString.append(" : ") : outString;
                 std::string labelKind = static_cast<std::string>(location.at(LABEL).at(KIND));
-                if (labelKind == INVARIANT) {
+                if (labelKind == INVARIANT)
+                {
                     std::string labelText = static_cast<std::string>(location.at(LABEL).at(TEXT));
                     // We have to check if C will eventually be updated due to the invariant's constant.
                     int newMax = getMaxIntFromStr(labelText);
@@ -94,7 +102,8 @@ private:
 
             // We use the convention where a color in a state means that the state is final.
             // For this reason, only final states must have a color when designed in UPPAAL.
-            if (location.contains(COLOR)) {
+            if (location.contains(COLOR))
+            {
                 (isInitial || hasInvariant) ? outString.append(" : ") : outString;
                 outString.append("labels: final");
             }
@@ -105,6 +114,7 @@ private:
         out.flush();
     }
 
+
     /**
      * Method used to write the transitions declarations in tChecker syntax.
      * @param processName the name of the process (up to now we only assume one process).
@@ -113,31 +123,37 @@ private:
      */
     void writeTransitionsDeclarations(const std::string &processName, std::vector<json> transitions, std::ofstream &out)
     {
-        for (auto &transition: transitions) {
+        for (auto &transition: transitions)
+        {
             bool putColon = false;
             std::string outString =
                     "edge:" + processName + ":" + static_cast<std::string>(transition.at(SOURCE).at(REF)) +
                     ":" + static_cast<std::string>(transition.at(TARGET).at(REF)) + ":" + "a" + "{";
 
-            if (transition.contains(LABEL)) {
+            if (transition.contains(LABEL))
+            {
                 std::vector<json> labels = getJsonAsArray(transition.at(LABEL));
                 std::string labelKind = static_cast<std::string>(labels.front().at(KIND));
 
                 // The following checks are used to insert the fictitious clock based on the content of the transition.
-                if (labels.size() == 1 && labelKind == GUARD) {
+                if (labels.size() == 1 && labelKind == GUARD)
+                {
                     // We have only guards and no assignments in a transition.
                     writeTransitionsDeclarations_helper(outString, labels, putColon);
                     outString.append(" : do: " + fictitiousClock + " = 0");
-                } else if (labels.size() == 1 && labelKind == ASSIGNMENT) {
+                } else if (labels.size() == 1 && labelKind == ASSIGNMENT)
+                {
                     // We have only assignments and no guards in a transition.
                     outString.append("provided: " + fictitiousClock + " > 0");
                     putColon = true;
                     writeTransitionsDeclarations_helper(outString, labels, putColon);
-                } else if (labels.size() == 2) {
+                } else if (labels.size() == 2)
+                {
                     // We have both guards and assignments in a transition.
                     writeTransitionsDeclarations_helper(outString, labels, putColon);
                 }
-            } else {
+            } else
+            {
                 // If no guards or assignments are present, we still have to preserve the strictly monotonic time.
                 outString.append("provided: " + fictitiousClock + " > 0 : do: " + fictitiousClock + " = 0");
             }
@@ -148,6 +164,7 @@ private:
         out.flush();
     }
 
+
     /**
      * Helper method used inside writeTransitionsDeclarations().
      * @param outString the string that will be written in the output file.
@@ -156,11 +173,13 @@ private:
      */
     void writeTransitionsDeclarations_helper(std::string &outString, std::vector<json> labels, bool &putColon)
     {
-        for (auto &label: labels) {
+        for (auto &label: labels)
+        {
             std::string labelText = static_cast<std::string>(label.at(TEXT));
             std::string labelKind = static_cast<std::string>(label.at(KIND));
 
-            if (labelKind == GUARD) {
+            if (labelKind == GUARD)
+            {
                 // We have to check if C will eventually be updated due to the transition's guard.
                 int newMax = getMaxIntFromStr(labelText);
                 C = (C < newMax) ? newMax : C;
@@ -170,7 +189,8 @@ private:
                 outString.append(labelText + " && " + fictitiousClock + " > 0");
                 putColon = true;
             }
-            if (labelKind == ASSIGNMENT) {
+            if (labelKind == ASSIGNMENT)
+            {
                 (putColon) ? outString.append(" : ") : outString;
                 outString.append("do: ");
                 std::replace(labelText.begin(), labelText.end(), ',', ';');
@@ -185,6 +205,7 @@ private:
 public:
     explicit Translator(std::string outFilePath, int C = 0, int Q = 0) : outFilePath(std::move(outFilePath)), C(C), Q(Q)
     {}
+
 
     /**
     * This method performs the translation from UPPAAL syntax to tChecker syntax.
@@ -233,6 +254,7 @@ public:
         out.close();
     }
 
+
     /**
      * Method used to tell if a given TA in json format is nrt or not.
      * @param inFile the json representation of the TA to check.
@@ -245,18 +267,23 @@ public:
         std::vector<std::string> clocks = TAContentExtractor::getClocks(static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION)));
 
         // For each transition we check if the nrt condition holds.
-        for (auto &transition: transitions) {
-            if (transition.contains(LABEL)) {
+        for (auto &transition: transitions)
+        {
+            if (transition.contains(LABEL))
+            {
                 std::vector<json> labels = getJsonAsArray(transition.at(LABEL));
 
                 // We check if the transition has exactly two labels and if they correspond to an assignment and a reset.
-                if (labels.size() == 2) {
+                if (labels.size() == 2)
+                {
                     if ((static_cast<std::string>(labels[0].at(KIND)) == GUARD &&
                          static_cast<std::string>(labels[1].at(KIND)) == ASSIGNMENT) ||
                         (static_cast<std::string>(labels[1].at(KIND)) == GUARD &&
-                         static_cast<std::string>(labels[0].at(KIND)) == ASSIGNMENT)) {
+                         static_cast<std::string>(labels[0].at(KIND)) == ASSIGNMENT))
+                    {
                         // If it is the case, for each clock we check if it is used both in an assignment and in a reset.
-                        for (auto &clock: clocks) {
+                        for (auto &clock: clocks)
+                        {
                             if ((static_cast<std::string>(labels[0].at(TEXT)).find(clock) != std::string::npos) &&
                                 (static_cast<std::string>(labels[1].at(TEXT)).find(clock) != std::string::npos))
                                 return false;

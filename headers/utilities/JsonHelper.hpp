@@ -16,11 +16,13 @@ static json getJsonAsArray(json inFile)
 {
     if (inFile.is_array())
         return inFile;
-    else {
+    else
+    {
         json inFileToArray = json::array();
         inFileToArray.push_back(inFile);
         return inFileToArray;
     }
 }
+
 
 #endif // UTOTPARSER_JSONHELPER_H

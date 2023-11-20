@@ -24,9 +24,12 @@ int main(int argc, char *argv[])
 
     deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
 
-    try {
-        for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getOutputDirPath())) {
-            if (std::filesystem::is_regular_file(entry)) {
+    try
+    {
+        for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getOutputDirPath()))
+        {
+            if (std::filesystem::is_regular_file(entry))
+            {
 
                 if (static_cast<std::string>(entry.path()).find(".tck") == std::string::npos)
                     continue;
@@ -48,7 +51,8 @@ int main(int argc, char *argv[])
         }
         // At the end we print a convenient dashboard to quickly check the results.
         printDashBoard(dashboardResults, false, true);
-    } catch (const std::filesystem::filesystem_error &e) {
+    } catch (const std::filesystem::filesystem_error &e)
+    {
         std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
     }
 
