@@ -40,6 +40,7 @@ public:
         return clocks;
     }
 
+
     /**
      * Method used to return the clocks declarations in the given TA.
      * @param inFile the json representation of the TA.
@@ -49,6 +50,7 @@ public:
     {
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION));
     }
+
 
     /**
      * Method used to return the initial location name in the given TA.
@@ -60,6 +62,7 @@ public:
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF));
     }
 
+
     /**
      * Method used to return the locations declarations in the given TA.
      * @param inFile the json representation of the TA.
@@ -69,6 +72,18 @@ public:
     {
         return inFile.at(NTA).at(TEMPLATE).at(LOCATION);
     }
+
+
+    /**
+     * Method used to return a pointer to the locations declarations in the given TA.
+     * @param inFile the json representation of the TA.
+     * @return a pointer pointing to a json containing the locations declaration.
+     */
+    static json *getLocationsPtr(json &inFile)
+    {
+        return &(inFile.at(NTA).at(TEMPLATE).at(LOCATION));
+    }
+
 
     /**
      * Method used to return the transitions declarations in the given TA.
