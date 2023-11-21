@@ -54,11 +54,11 @@ private:
 
     /**
      * Method used to write the locations part of the graphviz .dot file.
-     * @param locations a vector containing a json representation of locations.
+     * @param locations a json representation of the TA's locations.
      * @param initialLocation the name of the initial location.
      * @param out the stream in which to write the file.
      */
-    static void writeLocations(std::vector<json> locations, const std::string &initialLocation, std::ofstream &out)
+    static void writeLocations(json locations, const std::string &initialLocation, std::ofstream &out)
     {
         for (auto &location: locations)
         {
@@ -101,10 +101,10 @@ private:
 
     /**
      * Method used to write the transitions part of the graphviz .dot file.
-     * @param transitions a vector containing a json representation of transitions.
+     * @param transitions a json representation of the TA's transitions.
      * @param out the stream in which to write the file.
      */
-    static void writeTransitions(std::vector<json> transitions, std::ofstream &out)
+    static void writeTransitions(json transitions, std::ofstream &out)
     {
         for (auto &transition: transitions)
         {
@@ -133,7 +133,7 @@ private:
      * @param labels the transition's labels which content will be written in the graphviz .dot file.
      * @return a string which contains a properly formatted text according to the labels content.
      */
-    static std::string writeTransitions_helper(std::vector<json> labels)
+    static std::string writeTransitions_helper(json labels)
     {
         std::string dotLabelAddition;
 

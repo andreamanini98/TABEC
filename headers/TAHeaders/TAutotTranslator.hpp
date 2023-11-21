@@ -23,10 +23,13 @@ class Translator {
 
 private:
     const std::string outFilePath;
+
     // The number of states of the TA.
     int Q;
+
     // The maximum value appearing in TA's guards and invariants.
     int C;
+
     // A clock used to make the time increase strictly monotonically.
     // The behaviour of this clock is as follows:
     // - It is reset in input to a location.
@@ -64,10 +67,10 @@ private:
     * Method used to write the locations declarations in tChecker syntax.
     * @param processName the name of the process (up to now we only assume one process).
     * @param initialLocation the name of the TA's initial location.
-    * @param locations a vector of locations saved in json format.
+    * @param locations the TA's locations saved in json format.
     * @param out the stream where we write our output file.
     */
-    void writeLocationsDeclarations(const std::string &processName, const std::string &initialLocation, std::vector<json> locations, std::ofstream &out)
+    void writeLocationsDeclarations(const std::string &processName, const std::string &initialLocation, json locations, std::ofstream &out)
     {
         // We get the number of states.
         Q = static_cast<int>(locations.size());
@@ -118,10 +121,10 @@ private:
     /**
      * Method used to write the transitions declarations in tChecker syntax.
      * @param processName the name of the process (up to now we only assume one process).
-     * @param transitions a vector of transitions saved in json format.
+     * @param transitions the TA's transitions saved in json format.
      * @param out the stream where we write our output file.
      */
-    void writeTransitionsDeclarations(const std::string &processName, std::vector<json> transitions, std::ofstream &out)
+    void writeTransitionsDeclarations(const std::string &processName, json transitions, std::ofstream &out)
     {
         for (auto &transition: transitions)
         {
@@ -132,7 +135,7 @@ private:
 
             if (transition.contains(LABEL))
             {
-                std::vector<json> labels = getJsonAsArray(transition.at(LABEL));
+                json labels = getJsonAsArray(transition.at(LABEL));
                 std::string labelKind = static_cast<std::string>(labels.front().at(KIND));
 
                 // The following checks are used to insert the fictitious clock based on the content of the transition.
@@ -263,7 +266,7 @@ public:
     static bool isNRT(json inFile)
     {
         bool isNRT = true;
-        std::vector<json> transitions = getJsonAsArray(TAContentExtractor::getTransitions(inFile));
+        json transitions = getJsonAsArray(TAContentExtractor::getTransitions(inFile));
         std::vector<std::string> clocks = TAContentExtractor::getClocks(static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION)));
 
         // For each transition we check if the nrt condition holds.
@@ -271,7 +274,7 @@ public:
         {
             if (transition.contains(LABEL))
             {
-                std::vector<json> labels = getJsonAsArray(transition.at(LABEL));
+                json labels = getJsonAsArray(transition.at(LABEL));
 
                 // We check if the transition has exactly two labels and if they correspond to an assignment and a reset.
                 if (labels.size() == 2)
