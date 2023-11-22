@@ -25,4 +25,19 @@ static json getJsonAsArray(json inFile)
 }
 
 
+/**
+ * Helper method used to get a json pointer pointing to a json array.
+ * @param jsonPtr a json for which to get a pointer pointing to a json array.
+ * @return a pointer pointing to a json array.
+ */
+static json *getJsonPtrAsArray(json *jsonPtr)
+{
+    // If the tile pointer's content is not an array, we have to make it an array.
+    if (!jsonPtr->is_array())
+        *jsonPtr = getJsonAsArray(*jsonPtr);
+
+    return jsonPtr;
+}
+
+
 #endif // UTOTPARSER_JSONHELPER_H

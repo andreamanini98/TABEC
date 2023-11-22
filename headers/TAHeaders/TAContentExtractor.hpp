@@ -64,6 +64,17 @@ public:
 
 
     /**
+     * Method used to return a pointer to the initial location name in the given TA.
+     * @param inFile the json representation of the TA.
+     * @return a pointer to the string containing the initial location name.
+     */
+    static json *getInitialLocationNamePtr(json &inFile)
+    {
+        return &(inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF));
+    }
+
+
+    /**
      * Method used to return the locations declarations in the given TA.
      * @param inFile the json representation of the TA.
      * @return a json containing the locations declaration.
@@ -93,6 +104,17 @@ public:
     static json getTransitions(json inFile)
     {
         return inFile.at(NTA).at(TEMPLATE).at(TRANSITION);
+    }
+
+
+    /**
+     * Method used to return a pointer to the transitions declarations in the given TA.
+     * @param inFile the json representation of the TA.
+     * @return a pointer pointing to a json containing the transitions declaration.
+     */
+    static json *getTransitionsPtr(json &inFile)
+    {
+        return &(inFile.at(NTA).at(TEMPLATE).at(TRANSITION));
     }
 
 };
