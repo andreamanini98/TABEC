@@ -18,10 +18,10 @@ private:
     std::string currentDirPath = XSTRING(SOURCE_ROOT);
 
     // Path to the input directory where files are going to be taken.
-    std::string inputDirPath = cliHandler.isCmd(src) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(src) + 1]) : (currentDirPath + "/inputFiles");
+    std::string inputDirPath = cliHandler.isCmd(src) ? cliHandler.getCmdArgument(src) : (currentDirPath + "/inputFiles");
 
     // Path to the output directory where files are going to be written.
-    std::string outputDirPath = cliHandler.isCmd(dst) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(dst) + 1]) : (currentDirPath + "/outputs/outputFiles");
+    std::string outputDirPath = cliHandler.isCmd(dst) ? cliHandler.getCmdArgument(dst) : (currentDirPath + "/outputs/outputFiles");
 
     // Path to the directory containing shell scripts.
     std::string scriptsDirPath = currentDirPath + "/scriptsForChecks";
@@ -30,7 +30,7 @@ private:
     std::string outputDirForCheckingPath = currentDirPath + "/outputs/outputFilesForChecking";
 
     // Path to the bin folder of the installed tChecker tool (set during build with cmake -D).
-    std::string tCheckerBinPath = cliHandler.isCmd(lns) ? ((*(cliHandler.getArgv_p()))[cliHandler.getPos(lns) + 1]) : XSTRING(TCHECKER_BIN);
+    std::string tCheckerBinPath = cliHandler.isCmd(lns) ? cliHandler.getCmdArgument(lns) : XSTRING(TCHECKER_BIN);
 
     // Path to the directory where PDF files will be generated starting from a .dot representation.
     std::string outputPDFsDirPath = currentDirPath + "/outputs/outputPDFs";
@@ -40,6 +40,9 @@ private:
 
     // Path to the directory containing logs derived from the execution of shell scripts.
     std::string outputDirForCheckingPathLogs = currentDirPath + "/outputs/logs/outputFilesForCheckingLogs";
+
+    // Path to the directory containing tiles to be used by the constructor.
+    std::string inputTilesDirPath = currentDirPath + "/inputTiles";
 
 
 public:
@@ -92,6 +95,12 @@ public:
     [[nodiscard]] const std::string &getOutputDirForCheckingPathLogs() const
     {
         return outputDirForCheckingPathLogs;
+    }
+
+
+    [[nodiscard]] const std::string &getInputTilesDirPath() const
+    {
+        return inputTilesDirPath;
     }
 
 };

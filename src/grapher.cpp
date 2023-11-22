@@ -24,7 +24,7 @@ void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &output
 
     for (const auto &entry: getEntriesInAlphabeticalOrder(sourceDirPath))
     {
-        std::string outputFileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0) + "_out.pdf";
+        std::string outputFileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0) + ".pdf";
 
         std::string outputDirFile = outputDirPath + "/" += outputFileName;
         system(("dot -Tpdf -o " + outputDirFile + " " + static_cast<std::string>(entry.path())).c_str());
@@ -36,7 +36,7 @@ void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &output
 
 int main(int argc, char *argv[])
 {
-    CliHandler cliHandler(&argc, &argv, false);
+    CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
 
     deleteDirectoryContents(stringsGetter.getOutputDOTsDirPath());

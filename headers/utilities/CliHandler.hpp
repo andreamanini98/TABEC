@@ -1,7 +1,8 @@
 #ifndef UTOTPARSER_CLIHANDLER_H
 #define UTOTPARSER_CLIHANDLER_H
 
-#include "Utils.hpp"
+#include "utilities/Utils.hpp"
+#include "defines/ANSI-color-codes.h"
 
 // List of available commands. Remember to update the vector availableCommands below as well.
 // ------------------------------------------------------------------------------------
@@ -35,8 +36,10 @@ private:
 
     // A pointer to main's argc.
     int *argc_p;
+
     // A pointer to main's argv.
     char ***argv_p;
+
     // A map containing an entry for each command, where the entry keeps track of:
     // - The fact that the command is actually among the ones inserted when launching the program.
     // - The position of the command (if present).
@@ -50,9 +53,10 @@ public:
      * @param argv_p a pointer to the main's argv.
      * @param debug true if some debug information has to be printed, false otherwise.
      */
-    CliHandler(int *argc_p, char ***argv_p, bool debug) : argc_p(argc_p), argv_p(argv_p)
+    CliHandler(int *argc_p, char ***argv_p, bool debug = false) : argc_p(argc_p), argv_p(argv_p)
     {
         commandsAndPositions.clear();
+
         // We transform the triple pointer ***arv_p in a vector of strings.
         std::vector<std::string> cliArguments(*(this->argv_p), *(this->argv_p) + *(this->argc_p));
 
@@ -65,9 +69,9 @@ public:
             // Remember that find() on a map returns an iterator, hence to access the actual element we have to access second on it with ->.
             for (std::string &cmd: availableCommands)
             {
-                std::cout << "Command: " << cmd << " is present " <<
-                          (commandsAndPositions.find(cmd)->second).first << " at position " <<
-                          (commandsAndPositions.find(cmd)->second).second << std::endl;
+                std::cout << "Command: " << cmd << " is present "
+                          << (commandsAndPositions.find(cmd)->second).first << " at position "
+                          << (commandsAndPositions.find(cmd)->second).second << std::endl;
             }
         }
     }
@@ -95,13 +99,13 @@ public:
     }
 
 
-    /**
-     * returns a pointer to the main's argv.
-     * @return a pointer to the main's argv.
-     */
-    char ***getArgv_p()
+    std::string getCmdArgument(const std::string &cmd)
     {
-        return argv_p;
+        if (isCmd(cmd))
+            return (*argv_p)[getPos(cmd) + 1];
+
+        std::cerr << BHRED << "Command " << cmd << " has not been provided when launching the program." << reset;
+        return "";
     }
 
 };

@@ -12,15 +12,14 @@ using json = nlohmann::json;
 
 int main(int argc, char *argv[])
 {
-    CliHandler cliHandler(&argc, &argv, false);
+    CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
 
     std::vector<json> tiles;
 
     std::string nameTile = std::string();
 
-    // TODO: you'll have to create an appropriate tiles folder instead of using the default input one.
-    for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputDirPath()))
+    for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputTilesDirPath()))
     {
         std::ifstream file(entry.path());
 

@@ -14,7 +14,7 @@ using json = nlohmann::json;
 
 int main(int argc, char *argv[])
 {
-    CliHandler cliHandler(&argc, &argv, false);
+    CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
 
     std::vector<DashBoardEntry> dashboardResults;
