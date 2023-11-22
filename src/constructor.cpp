@@ -9,7 +9,9 @@
 
 using json = nlohmann::json;
 
-
+// TODO: it should be helpful if you add the capability of making pdfs out of the result of the constructor.
+//       however, remember that up to now the grapher only works taking all the xml files inside the inputFiles folder,
+//       you'll have to change its behaviour (maybe with a command line option).
 int main(int argc, char *argv[])
 {
     try
@@ -40,7 +42,10 @@ int main(int argc, char *argv[])
         }
 
         TATileConstructor taTileConstructor(tiles);
-        taTileConstructor.concatenateTiles();
+        json resultingTA = taTileConstructor.createTAFromTiles();
+
+        std::cout << "\n\nResultingTA:\n\n";
+        std::cout << std::setw(4) << resultingTA << std::endl;
 
     } catch (CommandNotProvidedException &e)
     {
