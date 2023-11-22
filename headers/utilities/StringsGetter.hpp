@@ -12,42 +12,51 @@
 class StringsGetter {
 
 private:
-    CliHandler &cliHandler;
-
     // Path to the current working directory.
-    std::string currentDirPath = XSTRING(SOURCE_ROOT);
+    std::string currentDirPath {};
 
     // Path to the input directory where files are going to be taken.
-    std::string inputDirPath = cliHandler.isCmd(src) ? cliHandler.getCmdArgument(src) : (currentDirPath + "/inputFiles");
+    std::string inputDirPath {};
 
     // Path to the output directory where files are going to be written.
-    std::string outputDirPath = cliHandler.isCmd(dst) ? cliHandler.getCmdArgument(dst) : (currentDirPath + "/outputs/outputFiles");
+    std::string outputDirPath {};
 
     // Path to the directory containing shell scripts.
-    std::string scriptsDirPath = currentDirPath + "/scriptsForChecks";
+    std::string scriptsDirPath {};
 
     // Path to the directory containing TA descriptions where parameters have been substituted with appropriate values.
-    std::string outputDirForCheckingPath = currentDirPath + "/outputs/outputFilesForChecking";
+    std::string outputDirForCheckingPath {};
 
     // Path to the bin folder of the installed tChecker tool (set during build with cmake -D).
-    std::string tCheckerBinPath = cliHandler.isCmd(lns) ? cliHandler.getCmdArgument(lns) : XSTRING(TCHECKER_BIN);
+    std::string tCheckerBinPath {};
 
     // Path to the directory where PDF files will be generated starting from a .dot representation.
-    std::string outputPDFsDirPath = currentDirPath + "/outputs/outputPDFs";
+    std::string outputPDFsDirPath {};
 
     // Path to the directory where the .dot files will be written.
-    std::string outputDOTsDirPath = currentDirPath + "/outputs/outputDOTs";
+    std::string outputDOTsDirPath {};
 
     // Path to the directory containing logs derived from the execution of shell scripts.
-    std::string outputDirForCheckingPathLogs = currentDirPath + "/outputs/logs/outputFilesForCheckingLogs";
+    std::string outputDirForCheckingPathLogs {};
 
     // Path to the directory containing tiles to be used by the constructor.
-    std::string inputTilesDirPath = currentDirPath + "/inputTiles";
+    std::string inputTilesDirPath {};
 
 
 public:
-    explicit StringsGetter(CliHandler &cliHandler) : cliHandler(cliHandler)
-    {}
+    explicit StringsGetter(CliHandler &cliHandler)
+    {
+        currentDirPath = XSTRING(SOURCE_ROOT);
+        inputDirPath = cliHandler.isCmd(src) ? cliHandler.getCmdArgument(src) : (currentDirPath + "/inputFiles");
+        outputDirPath = cliHandler.isCmd(dst) ? cliHandler.getCmdArgument(dst) : (currentDirPath + "/outputs/outputFiles");
+        scriptsDirPath = currentDirPath + "/scriptsForChecks";
+        outputDirForCheckingPath = currentDirPath + "/outputs/outputFilesForChecking";
+        tCheckerBinPath = cliHandler.isCmd(lns) ? cliHandler.getCmdArgument(lns) : XSTRING(TCHECKER_BIN);
+        outputPDFsDirPath = currentDirPath + "/outputs/outputPDFs";
+        outputDOTsDirPath = currentDirPath + "/outputs/outputDOTs";
+        outputDirForCheckingPathLogs = currentDirPath + "/outputs/logs/outputFilesForCheckingLogs";
+        inputTilesDirPath = currentDirPath + "/inputTiles";
+    }
 
 
     [[nodiscard]] const std::string &getInputDirPath() const

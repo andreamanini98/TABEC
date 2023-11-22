@@ -1,6 +1,7 @@
 #ifndef UTOTPARSER_UPPAALXMLATTRIBUTES_H
 #define UTOTPARSER_UPPAALXMLATTRIBUTES_H
 
+
 // This header contains macros for keywords used by UPPAAL in xml files.
 
 #define ID "@id"
@@ -36,5 +37,6 @@
 // Since ALPHA_MAG should be a multiple of (10)^n, a value of 1 should suffice.
 // e.g. if ALPHA_MAG = 10000 then ALPHA_MAG_IGNORE_DIGITS = 1
 #define ALPHA_MAG_IGNORE_DIGITS 1
+
 
 #endif // UTOTPARSER_UPPAALXMLATTRIBUTES_H

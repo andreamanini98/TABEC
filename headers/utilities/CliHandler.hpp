@@ -3,6 +3,7 @@
 
 #include "utilities/Utils.hpp"
 #include "defines/ANSI-color-codes.h"
+#include "Exceptions.h"
 
 // List of available commands. Remember to update the vector availableCommands below as well.
 // ------------------------------------------------------------------------------------
@@ -99,15 +100,22 @@ public:
     }
 
 
+    /**
+     * Method used to get the argument relative to the specified cmd option.
+     * An argument is the next element given after the cmd option in the command line.
+     * @param cmd the command option for which to get the relative argument.
+     * @return the argument of the cmd option.
+     * @throw CommandNotProvidedException if the command was not provided when launching the program.
+     */
     std::string getCmdArgument(const std::string &cmd)
     {
         if (isCmd(cmd))
             return (*argv_p)[getPos(cmd) + 1];
-
-        std::cerr << BHRED << "Command " << cmd << " has not been provided when launching the program." << reset;
-        return "";
+        else
+            throw CommandNotProvidedException(std::string("Exception: command " + cmd + " not provided.").c_str());
     }
 
 };
+
 
 #endif //UTOTPARSER_CLIHANDLER_H

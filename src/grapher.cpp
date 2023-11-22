@@ -5,7 +5,6 @@
 #include "defines/ANSI-color-codes.h"
 #include "TAHeaders/TADotConverter.hpp"
 #include "utilities/StringsGetter.hpp"
-#include "utilities/PrintUtilities.hpp"
 #include "utilities/Utils.hpp"
 #include "utilities/CliHandler.hpp"
 
@@ -36,50 +35,61 @@ void convertDOTtoPDF(const std::string &sourceDirPath, const std::string &output
 
 int main(int argc, char *argv[])
 {
-    CliHandler cliHandler(&argc, &argv);
-    StringsGetter stringsGetter(cliHandler);
-
-    deleteDirectoryContents(stringsGetter.getOutputDOTsDirPath());
-    deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
-
     try
     {
-        for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputDirPath()))
+        CliHandler cliHandler(&argc, &argv);
+        StringsGetter stringsGetter(cliHandler);
+
+        deleteDirectoryContents(stringsGetter.getOutputDOTsDirPath());
+        deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
+
+        try
         {
-            if (std::filesystem::is_regular_file(entry))
+            for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputDirPath()))
             {
-                std::ifstream file(entry.path());
-
-                if (static_cast<std::string>(entry.path()).find(".xml") == std::string::npos)
-                    continue;
-
-                if (file.is_open())
+                if (std::filesystem::is_regular_file(entry))
                 {
-                    // Computing the name of the .dot file to subsequently translate into PDF format.
-                    std::string outputFileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
+                    std::ifstream file(entry.path());
 
-                    std::cout << "Starting translation from .xml to .dot of file:\n" << entry.path() << std::endl;
+                    if (static_cast<std::string>(entry.path()).find(".xml") == std::string::npos)
+                        continue;
 
-                    TADotConverter taDotConverter(stringsGetter.getOutputDOTsDirPath() + "/" += (outputFileName + ".dot"));
-                    try
+                    if (file.is_open())
                     {
-                        // Converting the .xml file into .dot format.
-                        taDotConverter.translateTAtoDot(outputFileName, getJsonFromFileStream(file));
-                    } catch (NotXMLFormatException &e)
-                    {
-                        std::cerr << BHRED << e.what() << reset << std::endl;
+                        // Computing the name of the .dot file to subsequently translate into PDF format.
+                        std::string outputFileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
+
+                        std::cout << "Starting translation from .xml to .dot of file:\n" << entry.path() << std::endl;
+
+                        TADotConverter taDotConverter(stringsGetter.getOutputDOTsDirPath() + "/" += (outputFileName + ".dot"));
+                        try
+                        {
+                            // Converting the .xml file into .dot format.
+                            taDotConverter.translateTAtoDot(outputFileName, getJsonFromFileStream(file));
+
+                        } catch (NotXMLFormatException &e)
+                        {
+                            std::cerr << BHRED << e.what() << reset << std::endl;
+                            return EXIT_FAILURE;
+                        }
                     }
                 }
+                std::cout << std::endl;
             }
-            std::cout << std::endl;
+        } catch (const std::filesystem::filesystem_error &e)
+        {
+            std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
+            return EXIT_FAILURE;
         }
-    } catch (const std::filesystem::filesystem_error &e)
+
+        // At the end, we translate all the .dot files into .pdf files.
+        convertDOTtoPDF(stringsGetter.getOutputDOTsDirPath(), stringsGetter.getOutputPDFsDirPath());
+
+    } catch (CommandNotProvidedException &e)
     {
-        std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << reset << std::endl;
+        return EXIT_FAILURE;
     }
 
-    // At the end, we translate all the .dot files into .pdf files.
-    convertDOTtoPDF(stringsGetter.getOutputDOTsDirPath(), stringsGetter.getOutputPDFsDirPath());
-
-    return 0;
+    return EXIT_SUCCESS;
 }

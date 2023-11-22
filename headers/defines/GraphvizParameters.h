@@ -1,6 +1,7 @@
 #ifndef UTOTPARSER_GRAPHVIZPARAMETERS_H
 #define UTOTPARSER_GRAPHVIZPARAMETERS_H
 
+
 // This header contains defines which can be used to tune graphviz parameters.
 
 #define FONT_NAME "Helvetica,Arial,sans-serif"
@@ -16,5 +17,6 @@
 #define LOCATION_FONT_SIZE "8pt"
 #define EDGE_FONT_SIZE "8pt"
 #define ARROW_SIZE "0.5"
+
 
 #endif //UTOTPARSER_GRAPHVIZPARAMETERS_H

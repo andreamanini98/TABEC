@@ -300,4 +300,5 @@ public:
 
 };
 
+
 #endif // UTOTPARSER_TAUTOTTRANSLATOR_HPP
