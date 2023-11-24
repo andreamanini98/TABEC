@@ -4,9 +4,6 @@ project(${ProjectId})
 
 add_compile_definitions("SOURCE_ROOT=${CMAKE_CURRENT_SOURCE_DIR}")
 
-file(GLOB_RECURSE ${CMAKE_CURRENT_SOURCE_DIR}/headers/XMLtoJSONInclude "${CMAKE_CURRENT_SOURCE_DIR}/headers/XMLtoJSONInclude/*.hpp" "${CMAKE_CURRENT_SOURCE_DIR}/headers/XMLtoJSONInclude/*.h")
-set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/headers/XMLtoJSONInclude PROPERTIES COMPILE_FLAGS "-w")
-
 # How to set the variable during configuration time:
 # cmake -DTCHECKER_BIN_PATH="/path/to/tChecker/bin"
 set(TCHECKER_BIN_PATH "/" CACHE STRING "The path to the bin directory of tChecker")
