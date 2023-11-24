@@ -46,7 +46,7 @@ public:
      * @param inFile the json representation of the TA.
      * @return a string containing the clocks declaration.
      */
-    static std::string getClocksDeclaration(json inFile)
+    static std::string getClocksDeclaration(const json &inFile)
     {
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(DECLARATION));
     }
@@ -57,7 +57,7 @@ public:
      * @param inFile the json representation of the TA.
      * @return a string containing the initial location name.
      */
-    static std::string getInitialLocationName(json inFile)
+    static std::string getInitialLocationName(const json &inFile)
     {
         return static_cast<std::string>(inFile.at(NTA).at(TEMPLATE).at(INIT).at(REF));
     }
@@ -79,7 +79,7 @@ public:
      * @param inFile the json representation of the TA.
      * @return a json containing the locations declaration.
      */
-    static json getLocations(json inFile)
+    static json getLocations(const json &inFile)
     {
         return inFile.at(NTA).at(TEMPLATE).at(LOCATION);
     }
@@ -101,7 +101,7 @@ public:
      * @param inFile the json representation of the TA.
      * @return a json containing the transitions declaration.
      */
-    static json getTransitions(json inFile)
+    static json getTransitions(const json &inFile)
     {
         return inFile.at(NTA).at(TEMPLATE).at(TRANSITION);
     }
@@ -115,6 +115,29 @@ public:
     static json *getTransitionsPtr(json &inFile)
     {
         return &(inFile.at(NTA).at(TEMPLATE).at(TRANSITION));
+    }
+
+
+    // TODO: maybe raise an exception when no named location has been found.
+    /**
+     * Method used to extract the locations ids. The considered locations must have been defined in UPPAAL with a name.
+     * @param inFile the json file from which to take the named locations.
+     * @param name the string to match in the location's name in order to get it as a result.
+     * @return a vector containing all the locations whose name equals parameter 'name'.
+     */
+    static std::vector<std::string> getNamedLocations(const json &inFile, const std::string &name)
+    {
+        std::vector<std::string> result;
+
+        // First, get all the locations from the given json file.
+        json locations = TAContentExtractor::getLocations(inFile);
+
+        // For each such location, we get only those whose name equals parameter name.
+        for (auto &loc: locations)
+            if (loc.contains(NAME) && static_cast<std::string>(loc.at(NAME).at(TEXT)) == name)
+                result.push_back(loc.at(ID));
+
+        return result;
     }
 
 };

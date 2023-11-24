@@ -32,6 +32,9 @@ const std::string tdt { "-tdt" };
 // If set, the grapher will only translate all the files contained in the 'outputDOTs' directory.
 const std::string rfd { "-rfd" };
 
+// Allows to save a .tck representation of the tile obtained by executing the constructor.
+const std::string ttt {"-ttt"};
+
 // ------------------------------------------------------------------------------------
 
 
@@ -39,7 +42,7 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd };
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt};
 
     // A pointer to main's argc.
     int *argc_p;

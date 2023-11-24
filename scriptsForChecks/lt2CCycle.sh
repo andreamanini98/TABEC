@@ -150,9 +150,7 @@ echo "Now starting testing parameter values multiple of 0.5 and less than or equ
 # Testing parameter multiple of 0.5 and less than or equal to 2C.
 check_emptiness 0
 
-if [[ "$is_not_empty" == "true" ]]; then
-  print_scaled_param "$mu"
-else
+if [[ "$is_not_empty" != "true" ]]; then
   printf "\nAcceptance condition not found, we now have to try parameter values of the form: (n / 2) + alpha.\n"
   printf "\nStarting loop to check parameter values of the form: (n / 2) + alpha.\n"
   printf "Alpha value: %s\n" "$Alpha"
