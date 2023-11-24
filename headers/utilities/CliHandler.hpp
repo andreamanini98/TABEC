@@ -26,6 +26,12 @@ const std::string lns { "-lns" };
 // Prints in the logs all the tests executed with the parameters (it doesn't stop at the first acceptance condition).
 const std::string all { "-all" };
 
+// Allows to save a .dot representation of the tile obtained by executing the constructor.
+const std::string tdt { "-tdt" };
+
+// If set, the grapher will only translate all the files contained in the 'outputDOTs' directory.
+const std::string rfd { "-rfd" };
+
 // ------------------------------------------------------------------------------------
 
 
@@ -33,7 +39,7 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all };
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd };
 
     // A pointer to main's argc.
     int *argc_p;
