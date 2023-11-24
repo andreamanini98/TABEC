@@ -8,6 +8,7 @@
 		<declaration>// Place local declarations here.
 clock x, y;</declaration>
 		<location id="id0" x="-136" y="0" color="#ffa500">
+			<name x="-146" y="-34">in</name>
 		</location>
 		<init ref="id0"/>
 		<transition id="id1">

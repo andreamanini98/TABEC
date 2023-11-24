@@ -8,10 +8,12 @@
 		<declaration>// Place local declarations here.
 clock x, y;</declaration>
 		<location id="id0" x="-136" y="0">
+			<name x="-146" y="-34">in</name>
 		</location>
 		<location id="id1" x="0" y="0">
 		</location>
 		<location id="id2" x="238" y="0">
+			<name x="228" y="-34">out</name>
 		</location>
 		<init ref="id0"/>
 		<transition id="id3">
