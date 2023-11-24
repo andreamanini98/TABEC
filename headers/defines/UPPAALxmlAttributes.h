@@ -4,27 +4,32 @@
 
 // This header contains macros for keywords used by UPPAAL in xml files.
 
-#define ID "@id"
-#define LABEL "label"
-#define KIND "@kind"
-#define TEXT "#text"
-#define SOURCE "source"
-#define REF "@ref"
-#define TARGET "target"
-#define ASSIGNMENT "assignment"
-#define GUARD "guard"
-#define NTA "nta"
-#define TEMPLATE "template"
-#define DECLARATION "declaration"
-#define INIT "init"
-#define LOCATION "location"
-#define TRANSITION "transition"
-#define CLOCK "clock"
-#define COLOR "@color"
-#define INVARIANT "invariant"
+const std::string ID { "@id" };
+const std::string LABEL { "label" };
+const std::string KIND { "@kind" };
+const std::string TEXT { "#text" };
+const std::string SOURCE { "source" };
+const std::string REF { "@ref" };
+const std::string TARGET { "target" };
+const std::string ASSIGNMENT { "assignment" };
+const std::string GUARD { "guard" };
+const std::string NTA { "nta" };
+const std::string TEMPLATE { "template" };
+const std::string DECLARATION { "declaration" };
+const std::string INIT { "init" };
+const std::string LOCATION { "location" };
+const std::string TRANSITION { "transition" };
+const std::string CLOCK { "clock" };
+const std::string COLOR { "@color" };
+const std::string INVARIANT { "invariant" };
+const std::string NAME { "name" };
 
 
 // The following are not real attribute used in UPPAAL, but are used by us for computations involving TA parameters.
+
+// These are the names of input and output states one can use when making a tile.
+const std::string IN { "in" };
+const std::string OUT { "out" };
 
 // TODO alpha can be 0 as we compute it right now (see bigTA).
 //      If you set ALPHA_MAG too big, scientific notation will be used to write the final result in the .tck file.

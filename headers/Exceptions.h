@@ -19,9 +19,32 @@ private:
 };
 
 
+// ----- //
+
+
 class CommandNotProvidedException : public std::exception {
 public:
     explicit CommandNotProvidedException(const char *message) : message_(message)
+    {}
+
+
+    [[nodiscard]] const char *what() const noexcept override
+    {
+        return message_.c_str();
+    }
+
+
+private:
+    std::string message_;
+};
+
+
+// ----- //
+
+
+class ConnectTilesMatchInOutSizeException : public std::exception {
+public:
+    explicit ConnectTilesMatchInOutSizeException(const char *message) : message_(message)
     {}
 
 

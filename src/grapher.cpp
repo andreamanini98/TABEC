@@ -28,7 +28,6 @@ void convertXMLtoDOT(const std::string &outputDirPath, const std::string &output
     } catch (NotXMLFormatException &e)
     {
         std::cerr << BHRED << e.what() << reset << std::endl;
-        std::exit(EXIT_FAILURE);
     }
 }
 
@@ -62,11 +61,11 @@ int main(int argc, char *argv[])
         CliHandler cliHandler(&argc, &argv);
         StringsGetter stringsGetter(cliHandler);
 
+        deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
+
         if (!cliHandler.isCmd(rfd))
         {
             deleteDirectoryContents(stringsGetter.getOutputDOTsDirPath());
-            deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
-
             try
             {
                 for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputDirPath()))
