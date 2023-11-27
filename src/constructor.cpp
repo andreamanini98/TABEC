@@ -12,6 +12,44 @@
 using json = nlohmann::json;
 
 
+/**
+ * Function used to print the TiledTA.
+ * @param tiledTA the TiledTA to print.
+ */
+void printTiledTA(const json &tiledTA)
+{
+    std::cout << "\n\nResultingTiledTA:\n\n";
+    std::cout << std::setw(4) << tiledTA << std::endl;
+}
+
+
+/**
+ * Function used to convert a TA to a .dot file.
+ * @param outputDOTDirPath the path to the directory where the .dot file will be written.
+ * @param tiledTAName the name of the Tiled TA.
+ * @param tiledTA a json representation of the Tiled TA to convert into .dot format.
+ */
+void convertTiledTAtoDOT(const std::string &outputDOTDirPath, const std::string &tiledTAName, const json &tiledTA)
+{
+    TADotConverter taDotConverter(outputDOTDirPath + "/" += (tiledTAName + ".dot"));
+    taDotConverter.translateTAtoDot(tiledTAName, tiledTA);
+}
+
+
+/**
+ * Function used to convert a TA to a .tck file.
+ * @param outputDirPath the path to the directory where the .tck file will be written.
+ * @param tiledTAName the name of the Tiled TA.
+ * @param tiledTA a json representation of the Tiled TA to convert into .tck format.
+ */
+void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &tiledTAName, const json &tiledTA)
+{
+    Translator translator(outputDirPath + "/" += (tiledTAName + ".tck"));
+    translator.translateTA(tiledTAName, tiledTA);
+    std::cout << BHGRN << "Conversion successful" << reset << std::endl;
+}
+
+
 int main(int argc, char *argv[])
 {
     try
@@ -37,26 +75,17 @@ int main(int argc, char *argv[])
             TATileConstructor taTileConstructor(tiles);
             json tiledTA = taTileConstructor.createTAFromTiles();
 
-
-            if (!(cliHandler.isCmd(tdt) && cliHandler.isCmd(ttt)))
-            {
-                std::cout << "\n\nResultingTiledTA:\n\n";
-                std::cout << std::setw(4) << tiledTA << std::endl;
-            }
-
             std::string tiledTAName = "TiledTA";
 
+            if (!(cliHandler.isCmd(tdt) && cliHandler.isCmd(ttt)))
+                printTiledTA(tiledTA);
+
             if (cliHandler.isCmd(tdt))
-            {
-                TADotConverter taDotConverter(stringsGetter.getOutputDOTsDirPath() + "/" += (tiledTAName + ".dot"));
-                taDotConverter.translateTAtoDot(tiledTAName, tiledTA);
-            }
+                convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), tiledTAName, tiledTA);
+
             if (cliHandler.isCmd(ttt))
-            {
-                Translator translator(stringsGetter.getOutputDirPath() + "/" += (tiledTAName + ".tck"));
-                translator.translateTA(tiledTAName, tiledTA);
-                std::cout << BHGRN << "Conversion successful" << reset << std::endl;
-            }
+                convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), tiledTAName, tiledTA);
+
         } catch (ConnectTilesMatchInOutSizeException &e)
         {
             std::cerr << BHRED << e.what() << reset << std::endl;
