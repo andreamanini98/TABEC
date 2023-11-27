@@ -9,8 +9,6 @@
 #include "TAHeaders/TADotConverter.hpp"
 #include "TAHeaders/TAutotTranslator.hpp"
 
-#define CONSTRUCTOR_DEBUG
-
 using json = nlohmann::json;
 
 
@@ -39,10 +37,12 @@ int main(int argc, char *argv[])
             TATileConstructor taTileConstructor(tiles);
             json tiledTA = taTileConstructor.createTAFromTiles();
 
-#ifndef CONSTRUCTOR_DEBUG
-            std::cout << "\n\nResultingTiledTA:\n\n";
-            std::cout << std::setw(4) << tiledTA << std::endl;
-#endif
+
+            if (!(cliHandler.isCmd(tdt) && cliHandler.isCmd(ttt)))
+            {
+                std::cout << "\n\nResultingTiledTA:\n\n";
+                std::cout << std::setw(4) << tiledTA << std::endl;
+            }
 
             std::string tiledTAName = "TiledTA";
 
