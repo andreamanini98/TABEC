@@ -21,7 +21,7 @@ In order to start the converter tool, one can decide to simply launch the execut
 ```
 ./converter
 ```
-Notice that in this way, the source .xml files must be inserted in the `inputFiles` folder, while relatives outputs will be found in the `outputFiles` folder (the ones located in the utotparser directory).
+Notice that in this way, the source `.xml` files must be inserted in the `inputFiles` folder, while relatives outputs will be found in the `outputFiles` folder (the ones located in the utotparser directory).
 
 Additionally, one can also specify the paths where source files are located, as well as the output destination, by passing them as command-line arguments:
 ```
@@ -44,7 +44,7 @@ The above options can be specified in any order, e.g. one could write for exampl
 ```
 **IMPORTANT:** altough options can be specified in any order, always keep in mind that paths for specifying input and output directories must be specified right after their respective option. Thus, something like `./converter -src /path/to/source/directory` is correct, while  `./converter -src -nrt /path/to/source/directory` will not work.
 
-When launched, all .xml files in the chosen source directory will be converted in .tck files in the chosen output directory.
+When launched, all `.xml` files in the chosen source directory will be converted in `.tck` files in the chosen output directory.
 
 Please stick to these executions options, no side-checks are done if different command-line arguments are given.<br>
 Please note that the converter will work only with `.xml` files.
@@ -53,7 +53,7 @@ Please note that the converter will work only with `.xml` files.
 
 Furthermore, when designing TAs in UPPAAL, the following conventions have to be respected:
 * Do not add any comment to locations or transitions.
-* UPPAAL files must be saved with the .xml extension.
+* UPPAAL files must be saved with the `.xml` extension.
 * In UPPAAL final states must have a color (all states with a color will be marked as final).
 * Clock declarations must be written like this: `clock x, y, z;`.
 * Invariants must be written like this: `x < 2 && y == 1`.
@@ -93,7 +93,43 @@ In order to produce a pdf view of the TAs, the grapher tool can be called with t
 ./grapher
 ```
 With this command, all the `.dot` files contained in the `outputDOTs` directory will be translated into `.pdf` files inside the `outputPDFs` directory.<br>
+If you wish to generate `.pdf` files only considering previously generated `.dot` files contained in the `outputDOTs` directory, the following call to the grapher can be issued:
+```
+./grapher -rdf
+```
 **IMPORTANT:** the tool uses graphviz in order to carry out the translation from `.dot` to `.pdf` file format. Please be sure to have graphviz installed on your system before calling the grapher.
+
+<h2>Using the constructor</h2>
+
+STILL UNDER CONSTRUCTION
+
+One of the most useful features of utotparser is its ability to concatenate tiles, in order to generate so-called Tiled TA.<br>
+In order to create Tiled TA, a set of tiles must be given inside the `inputTiles` directory.<br>
+
+A tile can simply be generated in UPPAAL following the conventions mentioned above, but two additional constraints must be put inside the `.xml` files:
+* To denote tile's input locations, such locations must be named as 'in'.
+* To denote tile's output locations, such locations must be named as 'out'.
+
+Then, to concatenate them, one can call the constructor:
+```
+./constructor -ttt
+```
+The option `-ttt` must be given in order to save a `.tck` file of the resulting Tiled TA.<br>
+Then, the checker can be called to check the resulting Tiled TA.<br>
+
+If one wants to generate a pdf out of the Tiled TA, the constructor can be called as follows:
+```
+./constructor -tdt
+```
+This will save a `.dot` file of the resulting TA inside the `outputDOTs` directory.<br>
+Then, the `.pdf` file can be generated simply by calling the grapher with the `-rfd` option enabled:
+```
+./grapher -rfd
+```
+Note that the constructor's `-ttt` and `-tdt` options can be given simultaneously:
+```
+./constructor -ttt -tdt
+```
 
 <h3>Graph legend</h3>
 
