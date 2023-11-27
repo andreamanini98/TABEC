@@ -48,7 +48,7 @@ static std::vector<int> extractIntegersFromString(const std::string &str)
         try
         {
             int found = std::stoi(temp);
-            result.emplace_back(found);
+            result.push_back(found);
         }
         catch (const std::invalid_argument &)
         {}

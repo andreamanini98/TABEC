@@ -35,9 +35,7 @@ int main(int argc, char *argv[])
                     if (static_cast<std::string>(entry.path()).find(".tck") == std::string::npos)
                         continue;
 
-                    std::string nameTA = getStringGivenPosAndToken(
-                            getWordAfterLastSymbol(entry.path(), '/'),
-                            '.', 0);
+                    std::string nameTA = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
                     d_entry.nameTA = nameTA;
 
                     std::cout << "\n-------- " << nameTA << " --------\n";
@@ -46,7 +44,7 @@ int main(int argc, char *argv[])
                     bool isAccepting = taChecker.checkTA(nameTA);
 
                     d_entry.emptinessResult = isAccepting;
-                    dashboardResults.emplace_back(d_entry);
+                    dashboardResults.push_back(d_entry);
                     std::cout << std::string(21, '-') << std::endl;
                 }
             }
