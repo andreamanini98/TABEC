@@ -168,3 +168,8 @@ Other little things one may be aware of:
 * Testing have been done on MacOS Sonoma 14.0 only. Should work also on other Unix-based OSs.
 * If on Unix systems the tool doesn't work, try launching it from a zsh terminal (instead of a bash or other default terminals).
 * If using this tool on Windows, please consider launching it from a Unix virtual machine or by using WSL (Windows Subsystem for Linux).
+* If you see as output something like "printf: xxx: invalid number", where xxx will be a floating point number, please perform the following command in order to avoid such a warning:
+  ```
+  export LC_NUMERIC="en_US.UTF-8"
+  ```
+  This will temporarily change the rules governing nonmonetary numeric formatting during the current shell session.
