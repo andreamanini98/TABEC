@@ -109,6 +109,7 @@ In order to create Tiled TA, a set of tiles must be given inside the `inputTiles
 A tile can simply be generated in UPPAAL following the conventions mentioned above, but two additional constraints must be put inside the `.xml` files:
 * To denote tile's input locations, such locations must be named as 'in'.
 * To denote tile's output locations, such locations must be named as 'out'.
+* Tile invariants must be specified as a comment in input locations.
 
 Then, to concatenate them, one can call the constructor:
 ```
