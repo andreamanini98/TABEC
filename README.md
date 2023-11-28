@@ -1,8 +1,25 @@
 # utotparser
+
+---
+
 This tool aims at providing a way of checking the emptiness of Timed Automata (TA) (one can restrict the checking only to non-reset-test TAs, see below), as well as serving as a conversion tool from UPPAAL to tChecker syntax.
 Due to the limited scope of our usage, the tool can convert only a limited set of the possible TAs one can create in UPPAAL.
 
-<h2>How to install</h2>
+---
+
+## Table of Contents
+
+- [How to install](#how-to-install)
+- [Using the converter](#using-the-converter)
+- [Using the checker](#using-the-checker)
+- [Using the grapher](#using-the-grapher)
+- [Using the constructor](#using-the-constructor)
+- [Summary on outputs](#summary-on-outputs)
+- [Minor things](#minor-things)
+
+<a name="how-to-install"></a>
+
+## How to install
 
 Once cloned, in order to get the executables, navigate inside the corresponding folder and perform the following commands:
 ```
@@ -15,7 +32,11 @@ Please be careful when performing the above commands, since the path to the tChe
 Here, `"/path/to/tChecker/bin"` is the path to the bin folder of your actual tChecker installation (the folder containing the four tools provided by tChecker, so to speak).<br>
 Once the steps above have been completed, exit from the build directory by using the `cd ..` command. You will find the executables in the `executables` directory.
 
-<h2>Using the converter</h2>
+---
+
+<a name="using-the-converter"></a>
+
+## Using the converter
 
 In order to start the converter tool, one can decide to simply launch the executable:
 ```
@@ -49,7 +70,7 @@ When launched, all `.xml` files in the chosen source directory will be converted
 Please stick to these executions options, no side-checks are done if different command-line arguments are given.<br>
 Please note that the converter will work only with `.xml` files.
 
-<h3>Additional nrtTA design conventions</h3>
+## Additional nrtTA design conventions
 
 Furthermore, when designing TAs in UPPAAL, the following conventions have to be respected:
 * Do not add any comment to locations or transitions.
@@ -61,7 +82,11 @@ Furthermore, when designing TAs in UPPAAL, the following conventions have to be 
 
 Please remember to keep blank spaces between clocks and other symbols if you then want to perform nrt condition detection.
 
-<h2>Using the checker</h2>
+---
+
+<a name="using-the-checker"></a>
+
+## Using the checker
 
 In order to see if a TA's language is empty or not, you can call the checker tool by using the following command:
 ```
@@ -85,7 +110,11 @@ When using the checker, the `-all` option is available in order to decide whethe
 ```
 The above command will force the checker to log all the values tested. Not putting the `-all` option will result in the tool stopping at the first acceptance condition met.
 
-<h2>Using the grapher</h2>
+---
+
+<a name="using-the-grapher"></a>
+
+## Using the grapher
 
 This tool offers graphical capabilities for showing the TAs under analysis.<br>
 In order to produce a pdf view of the TAs, the grapher tool can be called with the following command:
@@ -99,7 +128,20 @@ If you wish to generate `.pdf` files only considering previously generated `.dot
 ```
 **IMPORTANT:** the tool uses graphviz in order to carry out the translation from `.dot` to `.pdf` file format. Please be sure to have graphviz installed on your system before calling the grapher.
 
-<h2>Using the constructor</h2>
+### Graph legend
+
+The following conventions have been followed while generating `.pdf` files:
+* Initial states are identified by a double circle.
+* Invariants are contained in the relative location.
+* Final locations are colored.
+* Guards are green.
+* Updates are purple.
+
+---
+
+<a name="using-the-constructor"></a>
+
+## Using the constructor
 
 STILL UNDER CONSTRUCTION
 
@@ -110,6 +152,9 @@ A tile can simply be generated in UPPAAL following the conventions mentioned abo
 * To denote tile's input locations, such locations must be named as 'in'.
 * To denote tile's output locations, such locations must be named as 'out'.
 * Tile invariants must be specified as a comment in input locations.
+
+The following is an example of a legal tile.
+<p><img src="readmeStuff/ExampleTile.png"  alt="" class="center"/></p>
 
 Then, to concatenate them, one can call the constructor:
 ```
@@ -132,16 +177,11 @@ Note that the constructor's `-ttt` and `-tdt` options can be given simultaneousl
 ./constructor -ttt -tdt
 ```
 
-<h3>Graph legend</h3>
+---
 
-The following conventions have been followed while generating `.pdf` files:
-* Initial states are identified by a double circle.
-* Invariants are contained in the relative location.
-* Final locations are colored.
-* Guards are green.
-* Updates are purple.
+<a name="summary-on-outputs"></a>
 
-<h2>Summary on outputs</h2>
+## Summary on outputs
 
 It is convenient to give a description of the output tree structure (useful when everything is left as default).<br>
 All the outputs can be found in the `outputs` directory, which have the following tree structure:
@@ -162,7 +202,11 @@ The content of such sub-directories will be:
 * `outputFilesForChecking`: some `.tck` files used by the tool in order to check the emptiness by varying the TAs' parameter.
 * `outputPDFs`: the `.pdf` representation of the original TAs.
 
-<h2>Minor things</h2>
+---
+
+<a name="minor-things"></a>
+
+## Minor things
 
 Other little things one may be aware of:
 * Since the program uses colors in the cli, if you want to see them, please use a compatible terminal.<br>
