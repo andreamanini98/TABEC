@@ -150,7 +150,7 @@ STILL UNDER CONSTRUCTION
 One of the most useful features of utotparser is its ability to concatenate tiles, in order to generate so-called Tiled TA.<br>
 In order to create Tiled TA, a set of tiles must be given inside the `inputTiles` directory.<br>
 
-A tile can simply be generated in UPPAAL following the conventions mentioned above, but two additional constraints must be put inside the `.xml` files:
+A tile can simply be generated in UPPAAL following the conventions mentioned above, but additional constraints must be put inside the `.xml` files:
 * To denote tile's input locations, such locations must be named as 'in'.
 * To denote tile's output locations, such locations must be named as 'out'.
 * Tile invariants must be specified as a comment in input locations.
@@ -167,7 +167,7 @@ Then, to concatenate them, one can call the constructor:
 The option `-ttt` must be given in order to save a `.tck` file of the resulting Tiled TA.<br>
 Then, the checker can be called to check the resulting Tiled TA.<br>
 
-If one wants to generate a pdf out of the Tiled TA, the constructor can be called as follows:
+If one wants to generate a `.pdf` out of the Tiled TA, the constructor can be called as follows:
 ```bash
   $ ./constructor -tdt
 ```
