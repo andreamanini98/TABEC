@@ -154,7 +154,9 @@ A tile can simply be generated in UPPAAL following the conventions mentioned abo
 * Tile invariants must be specified as a comment in input locations.
 
 The following is an example of a legal tile.
-<p><img src="readmeStuff/ExampleTile.png"  alt="" class="center"/></p>
+<div>
+<p style="margin: 0;"><img src="readmeStuff/ExampleTile.png"  alt=""/></p>
+<div>
 
 Then, to concatenate them, one can call the constructor:
 ```bash
