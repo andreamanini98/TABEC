@@ -9,6 +9,7 @@
 clock x, y;</declaration>
 		<location id="id0" x="-136" y="0">
 			<name x="-146" y="-34">in</name>
+			<label kind="comments" x="-187" y="25">y = 0</label>
 		</location>
 		<location id="id1" x="0" y="0">
 		</location>
