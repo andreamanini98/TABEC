@@ -89,14 +89,16 @@ private:
             // Here we check if the location has some invariants.
             if (location.contains(LABEL) && location.at(LABEL).contains(KIND))
             {
-                (isInitial) ? outString.append(" : ") : outString;
                 std::string labelKind = static_cast<std::string>(location.at(LABEL).at(KIND));
                 if (labelKind == INVARIANT)
                 {
+                    (isInitial) ? outString.append(" : ") : outString;
                     std::string labelText = static_cast<std::string>(location.at(LABEL).at(TEXT));
+
                     // We have to check if C will eventually be updated due to the invariant's constant.
                     int newMax = getMaxIntFromStr(labelText);
                     C = (C < newMax) ? newMax : C;
+
                     outString.append(labelKind + ": ");
                     outString.append(labelText);
                     hasInvariant = true;

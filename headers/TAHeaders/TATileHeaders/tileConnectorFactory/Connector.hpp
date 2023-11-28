@@ -47,26 +47,26 @@ public:
      * @param sourceLocId the id of the transition source.
      * @param destLocId the id of the transition target.
      * @param destTile the destination tile in which the new transition will be added.
-     * @param assignmentText the text appearing on the assignment of the new transition.
+     * @param transitionText the text appearing on the new transition.
+     * @param transitionKind the kind of the new transition.
      */
-    void insertNewTransition(const std::string &sourceLocId, const std::string &destLocId, const std::string &assignmentText)
+    void insertNewTransition(const std::string &sourceLocId, const std::string &destLocId, const std::string &transitionText, const std::string &transitionKind)
     {
         // A pointer to the json representation of the transitions section of the destination tile.
         json *destTileTransitionsPtr = getJsonPtrAsArray(TAContentExtractor::getTransitionsPtr(destTile));
 
         json newTrans = {
                 { ID,     "newTrans" + newTransNonceStr() },
-                { LABEL,  {
-                                  { TEXT, assignmentText },
-                                  { KIND, ASSIGNMENT }
-                          }},
-                { SOURCE, {
-                                  { REF,  sourceLocId }
-                          }},
-                { TARGET, {
-                                  { REF,  destLocId }
-                          }}
+                { SOURCE, {{ REF, sourceLocId }}},
+                { TARGET, {{ REF, destLocId }}}
         };
+
+        // If the transition must have some text, we further add it to the transition itself.
+        if (!transitionText.empty())
+            newTrans[LABEL] = {
+                    { TEXT, transitionText },
+                    { KIND, transitionKind }
+            };
 
         destTileTransitionsPtr->push_back(newTrans);
         newTransNonce++;

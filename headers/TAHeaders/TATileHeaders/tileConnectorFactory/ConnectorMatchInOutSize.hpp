@@ -39,7 +39,10 @@ public:
         // Towards a location in tile2InLocs is created, following the order in which they appear.
         if (tile1OutLocs.size() == tile2InLocs.size())
             for (int i = 0; i < tile1OutLocs.size(); i++)
-                insertNewTransition(tile1OutLocs[i], tile2InLocs[i], "x = 0, y = 0");
+            {
+                std::string transitionText { TAContentExtractor::getLocationLabelText(tile2, tile2InLocs[i], COMMENTS) };
+                insertNewTransition(tile1OutLocs[i], tile2InLocs[i], transitionText, ASSIGNMENT);
+            }
         else
             throw ConnectTilesMatchInOutSizeException("Tiles have different In and Out size for chosen 'match_inout_size' connection method");
     }

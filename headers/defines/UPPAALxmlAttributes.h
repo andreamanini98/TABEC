@@ -23,6 +23,7 @@ const std::string CLOCK { "clock" };
 const std::string COLOR { "@color" };
 const std::string INVARIANT { "invariant" };
 const std::string NAME { "name" };
+const std::string COMMENTS { "comments" };
 
 
 // The following are not real attribute used in UPPAAL, but are used by us for computations involving TA parameters.

@@ -140,6 +140,36 @@ public:
         return result;
     }
 
+
+    /**
+     * Method used to extract the text section of a location's label.
+     * @param inFile the json file in which the text is going to be extracted.
+     * @param locationName the name of the location to extract the label text.
+     * @param kind the kind of label to extract.
+     * @param replaceColon true if one wants to replace all occurrences of '.' characters in the extracted text with ';' characters.
+     * @return the text corresponding to the location label. If the label's kind doesn't match the one given as 'kind' parameter,
+     *         an empty string will be returned instead.
+     */
+    static std::string getLocationLabelText(const json &inFile, const std::string &locationName, const std::string &kind, bool replaceColon = true)
+    {
+        std::string resultLabel {};
+        json locations = TAContentExtractor::getLocations(inFile);
+
+        for (auto &loc: locations)
+        {
+            if (static_cast<std::string>(loc.at(ID)) == locationName)
+            {
+                if (loc.contains(LABEL) && static_cast<std::string>(loc.at(LABEL).at(KIND)) == kind)
+                {
+                    resultLabel = static_cast<std::string>(loc.at(LABEL).at(TEXT));
+                    if (replaceColon)
+                        std::replace(resultLabel.begin(), resultLabel.end(), ',', ';');
+                }
+            }
+        }
+        return resultLabel;
+    }
+
 };
 
 
