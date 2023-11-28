@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Shell script that performs a check on TA's emptiness, first trying all parameter values multiple
 # of 0.5 and, in case a solution is not found, uses the alpha value to perform a check as seen in Theorem 5.

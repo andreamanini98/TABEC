@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Shell script that substitutes all the integers in a given file with a magnified version of such integers.
 # This is done in order to get only integer constants to be used in the tools.

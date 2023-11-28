@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 # Shell script that, given an input file, substitutes all the occurrences of a parameter keyword with the appropriate
 # integer value, producing the result in the file specified as output.
