@@ -17,6 +17,8 @@ Due to the limited scope of our usage, the tool can convert only a limited set o
 - [Summary on outputs](#summary-on-outputs)
 - [Minor things](#minor-things)
 
+---
+
 <a name="how-to-install"></a>
 
 ## How to install
@@ -153,7 +155,7 @@ A tile can simply be generated in UPPAAL following the conventions mentioned abo
 * To denote tile's output locations, such locations must be named as 'out'.
 * Tile invariants must be specified as a comment in input locations.
 
-The following is an example of a legal tile.
+The following is an example of a legal tile, forcing the perameter to be in the (3, &infin;) interval.
 <div>
 <p style="margin: 0;"><img src="readmeStuff/ExampleTile.png"  alt=""/></p>
 <div>
@@ -211,8 +213,9 @@ The content of such sub-directories will be:
 ## Minor things
 
 Other little things one may be aware of:
+* If you're missing tChecker, please download it <a href="https://github.com/ticktac-project/tchecker/releases/tag/v0.8">here</a>.
 * Since the program uses colors in the cli, if you want to see them, please use a compatible terminal.<br>
-* Testing have been done on MacOS Sonoma 14.0 only. Should work also on other Unix-based OSs.
+* Testing have been done on MacOS Sonoma 14.0 and 14.1 only. Should work also on other Unix-based OSs.
 * If on Unix systems the tool doesn't work, try launching it from a zsh terminal (instead of a bash or other default terminals).
 * If using this tool on Windows, please consider launching it from a Unix virtual machine or by using WSL (Windows Subsystem for Linux).
 * If you see as output something like "printf: xxx: invalid number", where xxx will be a floating point number, please perform the following command in order to avoid such a warning:
