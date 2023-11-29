@@ -33,7 +33,10 @@ const std::string tdt { "-tdt" };
 const std::string rfd { "-rfd" };
 
 // Allows to save a .tck representation of the tile obtained by executing the constructor.
-const std::string ttt {"-ttt"};
+const std::string ttt { "-ttt" };
+
+// Allows to start the input mode for manually inserting a string from the tile compositional language.
+const std::string inp { "-inp" };
 
 // ------------------------------------------------------------------------------------
 
@@ -42,7 +45,7 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt};
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp };
 
     // A pointer to main's argc.
     int *argc_p;
@@ -84,6 +87,24 @@ public:
                           << (commandsAndPositions.find(cmd)->second).second << std::endl;
             }
         }
+    }
+
+
+    /**
+    * Function used to check if an element is contained inside a vector and to get its position inside such vector.
+    * @tparam T the type of the vector and of the element to find.
+    * @param vec the vector in which the element may be contained.
+    * @param elem the element to find.
+    * @return a pair containing: (1) true if elem is contained inside vec and (2) its position, otherwise (1) false and (2) -1 as sentinel value.
+    */
+    template<typename T>
+    std::pair<bool, int> isElementInVector(const std::vector<T> &vec, const T &elem)
+    {
+        auto iter = std::find(vec.begin(), vec.end(), elem);
+        if (iter != vec.end())
+            return { true, std::distance(vec.begin(), iter) };
+        else
+            return { false, -1 };
     }
 
 

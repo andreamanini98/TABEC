@@ -77,13 +77,13 @@ public:
      * in order to avoid name conflicts when merging states into one single tile.
      * @param tiles a vector containing all the tiles which ids have to be renamed.
      */
-    static void renameIDs(std::vector<json> &tiles)
+    static void renameIDs(std::vector<std::pair<std::string, json>> &tiles)
     {
         for (auto &tile: tiles)
         {
-            renameInitialLocation(tile);
-            renameLocationsIDs(tile);
-            renameTransitions(tile);
+            renameInitialLocation(tile.second);
+            renameLocationsIDs(tile.second);
+            renameTransitions(tile.second);
 
             taNonce++;
         }

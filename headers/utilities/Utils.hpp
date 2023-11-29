@@ -83,24 +83,6 @@ void deleteDirectoryContents(const std::filesystem::path &dir)
 
 
 /**
- * Function used to check if an element is contained inside a vector and to get its position inside such vector.
- * @tparam T the type of the vector and of the element to find.
- * @param vec the vector in which the element may be contained.
- * @param elem the element to find.
- * @return a pair containing: (1) true if elem is contained inside vec and (2) its position, otherwise (1) false and (2) -1 as sentinel value.
- */
-template<typename T>
-std::pair<bool, int> isElementInVector(const std::vector<T> &vec, const T &elem)
-{
-    auto iter = std::find(vec.begin(), vec.end(), elem);
-    if (iter != vec.end())
-        return { true, std::distance(vec.begin(), iter) };
-    else
-        return { false, -1 };
-}
-
-
-/**
  * Function that, given a string containing some symbols, returns the last word after the last occurrence of such symbol.
  * @param str the string in which we look for the last word.
  * @param symbol the token appearing in the string.
@@ -206,6 +188,23 @@ std::string deleteTrailingNewlines(std::string str)
 {
     str.erase(std::remove(str.begin(), str.end(), '\n'), str.cend());
     return str;
+}
+
+
+/**
+ * Function used to get the names of all the files contained in a specified directory.
+ * @param inputDirPath a path to the directory from which to take the file names
+ * @return a vector containing the name of all the files in the specified directory.
+ */
+std::vector<std::string> getAllFileNamesInDirectory(const std::string &inputDirPath)
+{
+    std::vector<std::string> res {};
+    for (const auto &entry: getEntriesInAlphabeticalOrder(inputDirPath))
+    {
+        std::string fileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
+        res.push_back(fileName);
+    }
+    return res;
 }
 
 

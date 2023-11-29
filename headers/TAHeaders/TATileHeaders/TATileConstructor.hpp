@@ -19,7 +19,7 @@ class TATileConstructor {
 
 private:
     // Vector containing all the tiles that can be merged together.
-    std::vector<json> tiles;
+    std::vector<std::pair<std::string, json>> tiles;
 
 
     /**
@@ -73,8 +73,8 @@ private:
         // For each tile, we have to merge it with the destination one.
         for (int i = 1; i < tiles.size(); i++)
         {
-            mergeLocations(tiles[i], destTile);
-            mergeTransitions(tiles[i], destTile);
+            mergeLocations(tiles[i].second, destTile);
+            mergeTransitions(tiles[i].second, destTile);
         }
 
         TileConnectorFactory *tileConnectorFactory = new ConnectorFactory;
@@ -83,14 +83,14 @@ private:
         for (int i = 0; i < tiles.size() - 1; i++)
         {
             Connector *connector;
-            connector = tileConnectorFactory->createConnector(tiles[i], tiles[i + 1], destTile, match_inout_size);
+            connector = tileConnectorFactory->createConnector(tiles[i].second, tiles[i + 1].second, destTile, match_inout_size);
             connector->connectTiles();
         }
     }
 
 
 public:
-    explicit TATileConstructor(std::vector<json> tiles) : tiles(std::move(tiles))
+    explicit TATileConstructor(std::vector<std::pair<std::string, json>> tiles) : tiles(std::move(tiles))
     {};
 
 
@@ -107,7 +107,7 @@ public:
         TATileRenamer::renameIDs(tiles);
 
         // Destination tile, the one in which all the other tiles will be merged.
-        json destTile = tiles[0];
+        json destTile = tiles[0].second;
 
         // If we have 2 or more tiles, we can merge all of them together.
         if (tiles.size() > 1)

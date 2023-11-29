@@ -59,4 +59,24 @@ private:
 };
 
 
+// ----- //
+
+
+class NeededTilesNotPresentException : public std::exception {
+public:
+    explicit NeededTilesNotPresentException(const char *message) : message_(message)
+    {}
+
+
+    [[nodiscard]] const char *what() const noexcept override
+    {
+        return message_.c_str();
+    }
+
+
+private:
+    std::string message_;
+};
+
+
 #endif //UTOTPARSER_EXCEPTIONS_H

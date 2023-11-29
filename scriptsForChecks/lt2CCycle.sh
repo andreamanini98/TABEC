@@ -123,7 +123,6 @@ check_emptiness() {
     sed "s/$param_keyword/$mu/g" "$input_file" > "$output_tmp_file"
 
     # Now calling tChecker to test the new substitution.
-    local result
     result=$(./tCheckerLiveness.sh "$output_tmp_file" "$tChecker_liveness_path")
 
     # We check if the TA's language is empty or not.
