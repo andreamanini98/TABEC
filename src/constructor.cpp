@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
             if (cliHandler.isCmd(ttt))
                 convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), tiledTAName, tiledTA);
 
-        } catch (ConnectTilesMatchInOutSizeException &e)
+        } catch (ConnectorException &e)
         {
             std::cerr << BHRED << e.what() << reset << std::endl;
             return EXIT_FAILURE;

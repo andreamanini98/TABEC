@@ -83,7 +83,7 @@ private:
         for (int i = 0; i < tiles.size() - 1; i++)
         {
             Connector *connector;
-            connector = tileConnectorFactory->createConnector(tiles[i].second, tiles[i + 1].second, destTile, match_inout_size);
+            connector = tileConnectorFactory->createConnector(tiles[i].second, tiles[i + 1].second, destTile, only_one_out);
             connector->connectTiles();
         }
     }

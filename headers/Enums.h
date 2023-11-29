@@ -6,6 +6,7 @@
  * Enumeration used to collect different methodologies for connecting tiles.
  */
 enum TileConstructMethod {
+    only_one_out,
     match_inout_size
 };
 

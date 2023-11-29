@@ -2,6 +2,7 @@
 #define UTOTPARSER_CONNECTORFACTORY_H
 
 #include "TAHeaders/TATileHeaders/tileConnectorFactory/TileConnectorFactory.hpp"
+#include "TAHeaders/TATileHeaders/tileConnectorFactory/ConnectorOnlyOneOut.hpp"
 #include "TAHeaders/TATileHeaders/tileConnectorFactory/ConnectorMatchInOutSize.hpp"
 
 
@@ -20,6 +21,9 @@ public:
     {
         switch (method)
         {
+            case only_one_out:
+                return new ConnectorOnlyOneOut(tile1, tile2, destTile);
+
             case match_inout_size:
                 return new ConnectorMatchInOutSize(tile1, tile2, destTile);
 

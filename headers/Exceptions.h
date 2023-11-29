@@ -42,9 +42,9 @@ private:
 // ----- //
 
 
-class ConnectTilesMatchInOutSizeException : public std::exception {
+class ConnectorException : public std::exception {
 public:
-    explicit ConnectTilesMatchInOutSizeException(const char *message) : message_(message)
+    explicit ConnectorException(const char *message) : message_(message)
     {}
 
 

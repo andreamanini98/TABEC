@@ -12,9 +12,6 @@ using json = nlohmann::json;
 
 class ConnectorMatchInOutSize : public Connector {
 
-private:
-
-
 public:
     ConnectorMatchInOutSize(const json &tile1, const json &tile2, json &destTile) : Connector(tile1, tile2, destTile)
     {};
@@ -25,9 +22,9 @@ public:
      * of input locations of tile2. If this is the case, each output location from tile1 will be connected to an input
      * location of tile2, in the order they appear in such tiles.
      * @param tile1 the tile from which the new transitions will start, with out nodes as source.
-     * @param tile2 the tile from which the new transitions will join, with out nodes as target.
+     * @param tile2 the tile from which the new transitions will join, with in nodes as target.
      * @param destTile the destination tile in which the new transition will be added.
-     * @throw ConnectTilesMatchInOutSizeException if the tile1 out locations and tile2 in locations sizes do not match.
+     * @throw ConnectorException if the tile1 out locations and tile2 in locations sizes do not match.
      */
     void connectTiles() override
     {
@@ -44,7 +41,7 @@ public:
                 insertNewTransition(tile1OutLocs[i], tile2InLocs[i], transitionText, ASSIGNMENT);
             }
         else
-            throw ConnectTilesMatchInOutSizeException("Tiles have different In and Out size for chosen 'match_inout_size' connection method");
+            throw ConnectorException("Exception: tiles have different In and Out size for chosen 'match_inout_size' connection method");
     }
 
 };
