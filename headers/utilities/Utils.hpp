@@ -208,4 +208,14 @@ std::vector<std::string> getAllFileNamesInDirectory(const std::string &inputDirP
 }
 
 
+/**
+ * Method used as a comparator function to sort pairs of strings based on the length of the second element.
+ */
+static bool sortPairBySecondElementLength(const std::pair<std::string, std::string> &a, const std::pair<std::string, std::string> &b)
+{
+    // Sort in descending order of length.
+    return a.second.length() > b.second.length();
+}
+
+
 #endif //UTOTPARSER_UTILS_H

@@ -2,7 +2,7 @@
 #define UTOTPARSER_TATILEINPUTPARSER_H
 
 #include "utilities/StringsGetter.hpp"
-
+#include "TAHeaders/TATileHeaders/TATileInputLexer.hpp"
 
 class TATileInputParser {
 
@@ -25,6 +25,8 @@ public:
      */
     void readCompositionalString()
     {
+        TATileInputLexer taTileInputLexer;
+
         std::cout << "The following tiles are available:\n";
 
         std::vector<std::string> availableTiles = getAllFileNamesInDirectory(stringsGetter.getInputTilesDirPath());
@@ -33,21 +35,27 @@ public:
         for (std::string &availableTile: availableTiles)
             std::cout << "\u25CF " << availableTile << std::endl;
 
+        std::string userInput {};
         char confirmFlag { 'n' };
+
         while (confirmFlag == 'n')
         {
             std::cout << "\nPlease insert the tile compositional string.\n";
             std::cout << "$> ";
 
-            getline(std::cin, compositionalTileString);
+            getline(std::cin, userInput);
 
             std::cout << "\nYou have given as input: \n";
-            std::cout << "$> " + compositionalTileString << std::endl;
-            std::cout << "Do you want to confirm? [y = yes, n = no]\n";
+            std::cout << "$> " + userInput << std::endl;
+            std::cout << "\nDo you want to confirm? [y = yes, n = no]\n";
             std::cout << "$> ";
             std::cin >> confirmFlag;
             std::cin.ignore();
         }
+
+        compositionalTileString = taTileInputLexer.tokenizeString(userInput);
+
+        std::cout << "The tokenized string is: " << compositionalTileString << std::endl;
     }
 
 

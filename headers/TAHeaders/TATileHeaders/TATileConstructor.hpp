@@ -94,6 +94,11 @@ public:
     {};
 
 
+    // TODO: maybe you can overload createTAFromTiles so that in one case it still create the TiledTA by merging all the tiles,
+    //       while on the other case you will have to use the parser to build the final TA.
+    //       It will be necessary to also overload some of the renamer methods in order to rename only tiles when needed and not all at once.
+    // Like here for example you can think of overloading createTAFromTiles if you pass to it a TATileInputParser.
+
     /**
      * Method used to create a TA by concatenating tiles.
      * The renaming of the ids is performed first, in order to avoid name clashes in the resulting TA.
