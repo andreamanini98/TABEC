@@ -66,7 +66,7 @@ public:
         // While cursor is not a nullptr, we continue to traverse the list.
         while (cursor)
         {
-            std::cout << "Content of node " << nodeCtr << ": " << std::to_string(cursor->content) << '\n';
+            std::cout << "Content of node " << nodeCtr << ": " << cursor->content << '\n';
             cursor = cursor->next;
             nodeCtr++;
         }
