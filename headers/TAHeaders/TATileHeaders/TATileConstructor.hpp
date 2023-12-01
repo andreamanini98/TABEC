@@ -7,6 +7,7 @@
 #include "defines/UPPAALxmlAttributes.h"
 #include "TAHeaders/TAContentExtractor.hpp"
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
+#include "TAHeaders/TATileHeaders/tileConnectorFactory/Connector.hpp"
 #include "TAHeaders/TATileHeaders/tileConnectorFactory/ConnectorFactory.hpp"
 #include "utilities/JsonHelper.hpp"
 #include "Exceptions.h"
@@ -21,7 +22,42 @@ class TATileConstructor {
 
 private:
     // Vector containing all the tiles that can be merged together.
-    std::vector<std::pair<std::string, json>> tiles;
+    std::vector<std::pair<std::string, json>> tiles {};
+
+
+    /**
+     * Method used to call auxiliary methods that will then merge locations and transitions.
+     * @param destTile the destination tile in which all the tiles will be merged.
+     */
+    void mergeTiles(json &destTile)
+    {
+        std::cout << "Starting tile merging process." << std::endl;
+
+        // For each tile, we have to merge it with the destination one.
+        for (int i = 1; i < tiles.size(); i++)
+        {
+            mergeLocations(tiles[i].second, destTile);
+            mergeTransitions(tiles[i].second, destTile);
+        }
+
+        TileConnectorFactory *tileConnectorFactory = new ConnectorFactory;
+
+        // For each tile couple, we have to make new transitions to let them be connected.
+        for (int i = 0; i < tiles.size() - 1; i++)
+        {
+            Connector *connector;
+            connector = tileConnectorFactory->createConnector(tiles[i].second, tiles[i + 1].second, destTile, only_one_out);
+            connector->connectTiles();
+        }
+    }
+
+
+public:
+    TATileConstructor() = default;
+
+
+    explicit TATileConstructor(std::vector<std::pair<std::string, json>> tiles) : tiles(std::move(tiles))
+    {};
 
 
     /**
@@ -63,43 +99,6 @@ private:
             destTileTransitionsPtr->push_back(trans);
     }
 
-
-    /**
-     * Method used to call auxiliary methods that will then merge locations and transitions.
-     * @param destTile the destination tile in which all the tiles will be merged.
-     */
-    void mergeTiles(json &destTile)
-    {
-        std::cout << "Starting tile merging process." << std::endl;
-
-        // For each tile, we have to merge it with the destination one.
-        for (int i = 1; i < tiles.size(); i++)
-        {
-            mergeLocations(tiles[i].second, destTile);
-            mergeTransitions(tiles[i].second, destTile);
-        }
-
-        TileConnectorFactory *tileConnectorFactory = new ConnectorFactory;
-
-        // For each tile couple, we have to make new transitions to let them be connected.
-        for (int i = 0; i < tiles.size() - 1; i++)
-        {
-            Connector *connector;
-            connector = tileConnectorFactory->createConnector(tiles[i].second, tiles[i + 1].second, destTile, only_one_out);
-            connector->connectTiles();
-        }
-    }
-
-
-public:
-    explicit TATileConstructor(std::vector<std::pair<std::string, json>> tiles) : tiles(std::move(tiles))
-    {};
-
-
-    // TODO: maybe you can overload createTAFromTiles so that in one case it still create the TiledTA by merging all the tiles,
-    //       while on the other case you will have to use the parser to build the final TA.
-    //       It will be necessary to also overload some of the renamer methods in order to rename only tiles when needed and not all at once.
-    // Like here for example you can think of overloading createTAFromTiles if you pass to it a TATileInputParser.
 
     /**
      * Method used to create a TA by concatenating tiles.
