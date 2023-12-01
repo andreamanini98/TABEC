@@ -89,6 +89,20 @@ public:
         }
     }
 
+
+    /**
+     * Method used to rename all the id occurrences inside a single tile's json representation
+     * in order to avoid name conflicts when merging states into one single tile.
+     * @param tiles a json representation of the tile which ids have to be renamed.
+     */
+    static void renameIDs(json &tile)
+    {
+        renameInitialLocation(tile);
+        renameLocationsIDs(tile);
+        renameTransitions(tile);
+        taNonce++;
+    }
+
 };
 
 // Defining static attribute taNonce.

@@ -36,19 +36,41 @@ private:
     TATileInputLexer taTileInputLexer;
 
 
-    //TODO: put inside the TATileRenamer an overloaded method able to rename only a single tile.
-
-
     // TODO: these should serve the purpose of performing actions for each token in the tokenized string.
     //       Most likely, this is where the TATileConstructor will be used.
+    // I think here is better to create a factory method where you pass the linked list and perform actions by consequence.
     void performAction_STUB(const std::string &token)
     {
         std::vector<std::pair<std::string, std::string>> tileNames = taTileInputLexer.getTileTokens();
 
-        for (auto &t: tileNames)
-            if (t.first == token)
-                parserList.getHead()->content.tileStack.push(getJsonFromFileName(stringsGetter.getInputTilesDirPath(), token));
+        if (token == "only_one_out")
+        {
+            parserList.getHead()->content.operatorStack.emplace("only_one_out");
+        } else if (token == "match_inout_size")
+        {
+            parserList.getHead()->content.operatorStack.emplace("match_inout_size");
+        } else
+        {
+            for (auto &t: tileNames)
+            {
+                if (t.first == token)
+                {
+                    json tile = getJsonFromFileName(stringsGetter.getInputTilesDirPath(), token);
+                    TATileRenamer::renameIDs(tile);
+                    parserList.getHead()->content.tileStack.push(tile);
+                }
+            }
+        }
     }
+
+
+    //void consumeParserNode()
+    //{
+    //    while (!parserList.getHead()->content.operatorStack.empty())
+    //    {
+    //
+    //    }
+    //}
 
 
     /**
