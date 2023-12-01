@@ -14,6 +14,8 @@
 
 using json = nlohmann::json;
 
+//TODO: even if you do not explicitly use the tiles name, since you have it, you can pass it to the constructors so that they can
+// Better log eventual errors.
 
 class TATileConstructor {
 
