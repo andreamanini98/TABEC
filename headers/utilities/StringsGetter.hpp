@@ -11,6 +11,8 @@
 
 class StringsGetter {
 
+    // TODO: maybe here you can initialize all the attributes directly in the initializer list.
+
 private:
     // Path to the current working directory.
     std::string currentDirPath {};
