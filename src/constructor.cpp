@@ -76,6 +76,7 @@ void gatherNeededTiles(const std::string &inputDirPath, std::vector<std::pair<st
 
         tiles.emplace_back(tileName, getJsonFromFileStream(file));
     }
+
     // If no needed tiles have been found, an exception is raised since no Tiled TA can be constructed.
     if (tiles.empty())
         throw NeededTilesNotPresentException("Exception: no wanted tile is present between the available ones");
@@ -88,48 +89,48 @@ int main(int argc, char *argv[])
     {
         CliHandler cliHandler(&argc, &argv);
         StringsGetter stringsGetter(cliHandler);
-        TATileInputParser taTileInputParser(stringsGetter);
 
-        // Each pair contains the tile's name and its json representation.
-        std::vector<std::pair<std::string, json>> tiles;
+        json tiledTA {};
 
-        // A vector containing the name of the tiles needed for the Tiled TA construction.
-        std::vector<std::string> neededTiles {};
-
-        // Based on the fact that the user chooses to input a compositional string, the needed tiles are determined.
+        // If the command 'inp' is set, we generate the Tiled TA using the parser, otherwise we use the default construction.
         if (cliHandler.isCmd(inp))
-            neededTiles = taTileInputParser.getNeededTilesNames();
-        else
-            neededTiles = getAllFileNamesInDirectory(stringsGetter.getInputTilesDirPath());
-
-        try
         {
+            TATileInputParser taTileInputParser(stringsGetter);
+            tiledTA = taTileInputParser.getTiledTA();
+        } else
+        {
+            // Each pair contains the tile's name and its json representation.
+            std::vector<std::pair<std::string, json>> tiles;
+
+            // A vector containing the name of the tiles needed for the Tiled TA construction.
+            std::vector<std::string> neededTiles = getAllFileNamesInDirectory(stringsGetter.getInputTilesDirPath());
             gatherNeededTiles(stringsGetter.getInputTilesDirPath(), tiles, neededTiles);
 
+            // TODO: maybe here you should specify a string with which to decide how to default connect tiles.
             TATileConstructor taTileConstructor(tiles);
-            json tiledTA = taTileConstructor.createTAFromTiles();
-
-            std::string tiledTAName = "TiledTA";
-
-            if (!(cliHandler.isCmd(inp) || cliHandler.isCmd(tdt) || cliHandler.isCmd(ttt)))
-                printTiledTA(tiledTA);
-
-            if (cliHandler.isCmd(tdt))
-                convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), tiledTAName, tiledTA);
-
-            if (cliHandler.isCmd(ttt))
-                convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), tiledTAName, tiledTA);
-
-        } catch (ConnectorException &e)
-        {
-            std::cerr << BHRED << e.what() << reset << std::endl;
-            return EXIT_FAILURE;
-        } catch (NeededTilesNotPresentException &e)
-        {
-            std::cerr << BHRED << e.what() << reset << std::endl;
-            return EXIT_FAILURE;
+            tiledTA = taTileConstructor.createTAFromTiles();
         }
+
+        std::string tiledTAName = "TiledTA";
+
+        if (!(cliHandler.isCmd(inp) || cliHandler.isCmd(tdt) || cliHandler.isCmd(ttt)))
+            printTiledTA(tiledTA);
+
+        if (cliHandler.isCmd(tdt))
+            convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), tiledTAName, tiledTA);
+
+        if (cliHandler.isCmd(ttt))
+            convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), tiledTAName, tiledTA);
+
     } catch (CommandNotProvidedException &e)
+    {
+        std::cerr << BHRED << e.what() << reset << std::endl;
+        return EXIT_FAILURE;
+    } catch (ConnectorException &e)
+    {
+        std::cerr << BHRED << e.what() << reset << std::endl;
+        return EXIT_FAILURE;
+    } catch (NeededTilesNotPresentException &e)
     {
         std::cerr << BHRED << e.what() << reset << std::endl;
         return EXIT_FAILURE;

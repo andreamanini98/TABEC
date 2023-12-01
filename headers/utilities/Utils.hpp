@@ -2,6 +2,7 @@
 #define UTOTPARSER_UTILS_H
 
 #include <sstream>
+#include "nlohmann/json.hpp"
 
 #include "Exceptions.h"
 #include "XMLtoJSONInclude/xml2json.hpp"
@@ -215,6 +216,25 @@ static bool sortPairBySecondElementLength(const std::pair<std::string, std::stri
 {
     // Sort in descending order of length.
     return a.second.length() > b.second.length();
+}
+
+
+/**
+ * Function used to get the json representation of a file which name corresponds to the 'name' parameter.
+ * @param inputDirPath the path to the directory where to get the file.
+ * @param name the name of the file to get.
+ * @return a json representation of the file named 'name' located in the directory specified by 'inputDirPath'.
+ */
+json getJsonFromFileName(const std::string &inputDirPath, const std::string &name)
+{
+    for (const auto &entry: getEntriesInAlphabeticalOrder(inputDirPath))
+    {
+        std::ifstream file(entry.path());
+        std::string fileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
+
+        if (name == fileName)
+            return getJsonFromFileStream(file);
+    }
 }
 
 

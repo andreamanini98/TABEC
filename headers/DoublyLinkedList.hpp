@@ -1,5 +1,5 @@
-#ifndef UTOTPARSER_DOUBLELINKEDLIST_H
-#define UTOTPARSER_DOUBLELINKEDLIST_H
+#ifndef UTOTPARSER_DOUBLYLINKEDLIST_H
+#define UTOTPARSER_DOUBLYLINKEDLIST_H
 
 
 template<class T>
@@ -66,7 +66,7 @@ public:
         // While cursor is not a nullptr, we continue to traverse the list.
         while (cursor)
         {
-            std::cout << "Content of node " << nodeCtr << ": " << cursor->content << '\n';
+            std::cout << "Content of node [" << nodeCtr << "]: " << cursor->content << '\n';
             cursor = cursor->next;
             nodeCtr++;
         }
@@ -88,4 +88,4 @@ public:
 };
 
 
-#endif //UTOTPARSER_DOUBLELINKEDLIST_H
+#endif //UTOTPARSER_DOUBLYLINKEDLIST_H
