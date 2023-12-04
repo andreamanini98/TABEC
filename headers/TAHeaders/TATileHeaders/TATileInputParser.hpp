@@ -14,6 +14,8 @@
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "TAHeaders/TATileHeaders/TATileInputLexer.hpp"
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
+#include "TAHeaders/TATileHeaders/parserActionFactory/ActionFactory.hpp"
+#include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
 
 using json = nlohmann::json;
 
@@ -54,28 +56,17 @@ private:
     }
 
 
-    // TODO: I think here is better to create a factory method where you pass the linked list and perform actions by consequence.
-    void performAction_STUB(const std::string &token)
+    /**
+     * Method used to perform an action based on the current token being parsed.
+     * @param token the token that will determine the action to execute.
+     */
+    void performAction(const std::string &token)
     {
-        if (token == "only_one_out")
-        {
-            parserList.getHead()->content.operatorStack.emplace("only_one_out");
-        } else if (token == "match_inout_size")
-        {
-            parserList.getHead()->content.operatorStack.emplace("match_inout_size");
-        } else
-        {
-            std::vector<std::pair<std::string, std::string>> tileNames = taTileInputLexer.getTileTokens();
-            for (auto &t: tileNames)
-            {
-                if (t.first == token)
-                {
-                    json tile = getJsonFromFileName(stringsGetter.getInputTilesDirPath(), token);
-                    TATileRenamer::renameIDs(tile);
-                    parserList.getHead()->content.tileStack.push(tile);
-                }
-            }
-        }
+        std::vector<std::pair<std::string, std::string>> availableTiles = taTileInputLexer.getTileTokens();
+
+        ParserActionFactory *actionFactory = new ActionFactory(stringsGetter, availableTiles);
+        Action *action = actionFactory->createAction(parserList, token);
+        action->performAction();
     }
 
 
@@ -104,8 +95,7 @@ private:
 
             TileConstructMethod method = fromStrTileConstructMethod(currentOperator);
 
-            Connector *connector;
-            connector = tileConnectorFactory->createConnector(t1, t2, destTile, method);
+            Connector *connector = tileConnectorFactory->createConnector(t1, t2, destTile, method);
             connector->connectTiles();
 
             // Gathering the names of the locations which in and out locations' names will be deleted.
@@ -145,7 +135,7 @@ private:
                 // This if-clause checks if, starting from the current position of tokenizedStringToParse, a token matches.
                 if (tokenizedStringToParse.find(token.first) == 0)
                 {
-                    performAction_STUB(token.first);
+                    performAction(token.first);
 
                     // Updating tokenizedStringToParse with the remaining portion to parse.
                     tokenizedStringToParse = tokenizedStringToParse.substr(token.first.length());

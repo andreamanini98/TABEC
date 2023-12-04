@@ -8,7 +8,8 @@
  */
 enum TileConstructMethod {
     only_one_out,
-    match_inout_size
+    match_inout_size,
+    maybe_tile
 };
 
 
@@ -20,6 +21,8 @@ TileConstructMethod fromStrTileConstructMethod(std::string_view str)
     } else if (str == "match_inout_size")
     {
         return match_inout_size;
+    } else {
+        return maybe_tile;
     }
 }
 
