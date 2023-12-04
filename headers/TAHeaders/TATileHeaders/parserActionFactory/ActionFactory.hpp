@@ -4,6 +4,7 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushOperator.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushTile.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
+#include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
 #include "Enums.h"
 

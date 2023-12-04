@@ -14,8 +14,12 @@
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "TAHeaders/TATileHeaders/TATileInputLexer.hpp"
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
+#include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionFactory.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
+#include "TAHeaders/TATileHeaders/parserOperatorFactory/Operator.hpp"
+#include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorFactory.hpp"
+#include "TAHeaders/TATileHeaders/parserOperatorFactory/ParserOperatorFactory.hpp"
 
 using json = nlohmann::json;
 
@@ -36,27 +40,6 @@ private:
 
 
     /**
-     * Method used to delete all the in or out locations' names in order to avoid such unnecessary names for further connections.
-     * This method deletes only the locations' name items, not the whole locations.
-     * @param inFile the json file in which to delete the desired locations' names.
-     * @param locationNames the name of the locations which name has to be deleted.
-     * @param locationText the text that must match with the one of the location in order to delete such location's name.
-     */
-    static void deleteLocName(json &inFile, const std::vector<std::string> &locationNames, const std::string &locationText)
-    {
-        json *locations = TAContentExtractor::getLocationsPtr(inFile);
-
-        // For each location to delete, the 'inFile' locations are scanned and, if the if conditions match, the location's name is deleted.
-        for (const std::string &name: locationNames)
-            for (auto &loc: *locations)
-                if (loc.contains(NAME)
-                    && static_cast<std::string>(loc.at(ID)) == name
-                    && static_cast<std::string>(loc.at(NAME).at(TEXT)) == locationText)
-                    loc.erase(NAME);
-    }
-
-
-    /**
      * Method used to perform an action based on the current token being parsed.
      * @param token the token that will determine the action to execute.
      */
@@ -70,41 +53,19 @@ private:
     }
 
 
-    // TODO: Also here maybe a factory is necessary. also, beautify this shit.
+    // Method used to consume the top-level parserList's node in order to compose the tiles contained in its stack with
+    // respect to the operators contained in its other stack.
     void consumeParserNode()
     {
-        TileConnectorFactory *tileConnectorFactory = new ConnectorFactory;
-
         while (!parserList.getHead()->content.operatorStack.empty())
         {
+            // Get the current operator and remove it from the top of the stack.
             std::string currentOperator = parserList.getHead()->content.operatorStack.top();
             parserList.getHead()->content.operatorStack.pop();
 
-            // We take the tiles in opposite order, since we used a stack internal representation.
-            json t2 = parserList.getHead()->content.tileStack.top();
-            parserList.getHead()->content.tileStack.pop();
-
-            json t1 = parserList.getHead()->content.tileStack.top();
-            parserList.getHead()->content.tileStack.pop();
-
-            json destTile = t1;
-
-            // For each tile required by the operator, we merge the locations and transitions into the destination one.
-            TATileConstructor::mergeLocations(t2, destTile);
-            TATileConstructor::mergeTransitions(t2, destTile);
-
-            TileConstructMethod method = fromStrTileConstructMethod(currentOperator);
-
-            Connector *connector = tileConnectorFactory->createConnector(t1, t2, destTile, method);
-            connector->connectTiles();
-
-            // Gathering the names of the locations which in and out locations' names will be deleted.
-            // If we assume t1 will be on the right and t2 on the left, then for t1, out locations' names have to be
-            // deleted, while for t2, in locations' names have to be deleted.
-            deleteLocName(destTile, TAContentExtractor::getNamedLocations(t2, IN), IN);
-            deleteLocName(destTile, TAContentExtractor::getNamedLocations(t1, OUT), OUT);
-
-            parserList.getHead()->content.tileStack.push(destTile);
+            ParserOperatorFactory *operatorFactory = new OperatorFactory;
+            Operator *parserOperator = operatorFactory->createOperator(parserList, currentOperator);
+            parserOperator->executeOperator();
         }
 
         // TODO: Here you have to implement the logic of checking if you still have other nesting levels (i.e. you were not in nesting level 0).
@@ -158,14 +119,15 @@ public:
     };
 
 
-    // TODO: this is just a stub, you'll have to properly construct a tiledTA.
+    /**
+     * Method used to merge together the given tiles and obtain a Tiled TA.
+     * @return a json representation of a Tiled TA obtained by combining the given tiles and operators.
+     */
     json getTiledTA()
     {
         parseAndPerformActions();
 
         consumeParserNode();
-
-        std::cout << std::setw(4) << parserList.getHead()->content.tileStack.top() << std::endl;
 
         return parserList.getHead()->content.tileStack.top();
     }

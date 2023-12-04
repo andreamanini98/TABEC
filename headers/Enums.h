@@ -1,7 +1,7 @@
 #ifndef UTOTPARSER_ENUMS_H
 #define UTOTPARSER_ENUMS_H
 
-// TODO YOU CAN MOVE THID IN THE TATILEFOLDER AND BEAUTIFY IT
+// TODO YOU HAVE TO MODIFY THIS AND LET THE USER BE ABLE TO EXPAND IT EASILY
 
 /**
  * Enumeration used to collect different methodologies for connecting tiles.
@@ -21,7 +21,8 @@ TileConstructMethod fromStrTileConstructMethod(std::string_view str)
     } else if (str == "match_inout_size")
     {
         return match_inout_size;
-    } else {
+    } else
+    {
         return maybe_tile;
     }
 }

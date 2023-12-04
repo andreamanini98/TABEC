@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
         std::string tiledTAName = "TiledTA";
 
-        if (!(cliHandler.isCmd(inp) || cliHandler.isCmd(tdt) || cliHandler.isCmd(ttt)))
+        if (!(cliHandler.isCmd(tdt) || cliHandler.isCmd(ttt)))
             printTiledTA(tiledTA);
 
         if (cliHandler.isCmd(tdt))
