@@ -8,17 +8,14 @@
 #include "DoublyLinkedList.hpp"
 #include "utilities/StringsGetter.hpp"
 #include "utilities/Utils.hpp"
+#include "TAHeaders/TATileHeaders/TATileConstructor.hpp"
+#include "TAHeaders/TATileHeaders/tileConnectorFactory/Connector.hpp"
+#include "TAHeaders/TATileHeaders/tileConnectorFactory/ConnectorFactory.hpp"
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "TAHeaders/TATileHeaders/TATileInputLexer.hpp"
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
 
 using json = nlohmann::json;
-
-
-//TODO: i think you can have a TATileConstructor attribute here and in order to create a tiledta:
-// 1) find a way of getting the tiles directly from a file only when parsed
-// 2) rename the ids with the renamer
-// 3) find a way of connecting them based on the operator (you may delete the enumerations and work with strings, but remember to change all related contents in the factory.
 
 
 class TATileInputParser {
@@ -36,13 +33,30 @@ private:
     TATileInputLexer taTileInputLexer;
 
 
-    // TODO: these should serve the purpose of performing actions for each token in the tokenized string.
-    //       Most likely, this is where the TATileConstructor will be used.
-    // I think here is better to create a factory method where you pass the linked list and perform actions by consequence.
+    /**
+     * Method used to delete all the in or out locations' names in order to avoid such unnecessary names for further connections.
+     * This method deletes only the locations' name items, not the whole locations.
+     * @param inFile the json file in which to delete the desired locations' names.
+     * @param locationNames the name of the locations which name has to be deleted.
+     * @param locationText the text that must match with the one of the location in order to delete such location's name.
+     */
+    static void deleteLocName(json &inFile, const std::vector<std::string> &locationNames, const std::string &locationText)
+    {
+        json *locations = TAContentExtractor::getLocationsPtr(inFile);
+
+        // For each location to delete, the 'inFile' locations are scanned and, if the if conditions match, the location's name is deleted.
+        for (const std::string &name: locationNames)
+            for (auto &loc: *locations)
+                if (loc.contains(NAME)
+                    && static_cast<std::string>(loc.at(ID)) == name
+                    && static_cast<std::string>(loc.at(NAME).at(TEXT)) == locationText)
+                    loc.erase(NAME);
+    }
+
+
+    // TODO: I think here is better to create a factory method where you pass the linked list and perform actions by consequence.
     void performAction_STUB(const std::string &token)
     {
-        std::vector<std::pair<std::string, std::string>> tileNames = taTileInputLexer.getTileTokens();
-
         if (token == "only_one_out")
         {
             parserList.getHead()->content.operatorStack.emplace("only_one_out");
@@ -51,6 +65,7 @@ private:
             parserList.getHead()->content.operatorStack.emplace("match_inout_size");
         } else
         {
+            std::vector<std::pair<std::string, std::string>> tileNames = taTileInputLexer.getTileTokens();
             for (auto &t: tileNames)
             {
                 if (t.first == token)
@@ -64,13 +79,48 @@ private:
     }
 
 
-    //void consumeParserNode()
-    //{
-    //    while (!parserList.getHead()->content.operatorStack.empty())
-    //    {
-    //
-    //    }
-    //}
+    // TODO: Also here maybe a factory is necessary. also, beautify this shit.
+    void consumeParserNode()
+    {
+        TileConnectorFactory *tileConnectorFactory = new ConnectorFactory;
+
+        while (!parserList.getHead()->content.operatorStack.empty())
+        {
+            std::string currentOperator = parserList.getHead()->content.operatorStack.top();
+            parserList.getHead()->content.operatorStack.pop();
+
+            // We take the tiles in opposite order, since we used a stack internal representation.
+            json t2 = parserList.getHead()->content.tileStack.top();
+            parserList.getHead()->content.tileStack.pop();
+
+            json t1 = parserList.getHead()->content.tileStack.top();
+            parserList.getHead()->content.tileStack.pop();
+
+            json destTile = t1;
+
+            // For each tile required by the operator, we merge the locations and transitions into the destination one.
+            TATileConstructor::mergeLocations(t2, destTile);
+            TATileConstructor::mergeTransitions(t2, destTile);
+
+            TileConstructMethod method = fromStrTileConstructMethod(currentOperator);
+
+            Connector *connector;
+            connector = tileConnectorFactory->createConnector(t1, t2, destTile, method);
+            connector->connectTiles();
+
+            // Gathering the names of the locations which in and out locations' names will be deleted.
+            // If we assume t1 will be on the right and t2 on the left, then for t1, out locations' names have to be
+            // deleted, while for t2, in locations' names have to be deleted.
+            deleteLocName(destTile, TAContentExtractor::getNamedLocations(t2, IN), IN);
+            deleteLocName(destTile, TAContentExtractor::getNamedLocations(t1, OUT), OUT);
+
+            parserList.getHead()->content.tileStack.push(destTile);
+        }
+
+        // TODO: Here you have to implement the logic of checking if you still have other nesting levels (i.e. you were not in nesting level 0).
+        //       If that is the case, you'll have to pass the remaining tile on the current level on top of the stack of the next level (remember
+        //       you'll also have to update the linked list accordingly, maybe just setting head to head->prev will suffice.
+    }
 
 
     /**
@@ -123,9 +173,11 @@ public:
     {
         parseAndPerformActions();
 
-        parserList.printList();
+        consumeParserNode();
 
-        return json::array();
+        std::cout << std::setw(4) << parserList.getHead()->content.tileStack.top() << std::endl;
+
+        return parserList.getHead()->content.tileStack.top();
     }
 
 };
