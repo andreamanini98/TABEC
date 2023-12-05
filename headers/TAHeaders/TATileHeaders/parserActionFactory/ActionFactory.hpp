@@ -57,6 +57,7 @@ public:
         {
             case only_one_out:
             case match_inout_size:
+            case tree_op:
                 return new ActionPushOperator(stringsGetter, parserList, token);
 
             case lparen:

@@ -8,6 +8,7 @@
 enum TileOperatorEnum {
     only_one_out,
     match_inout_size,
+    tree_op,
     lparen,
     rparen,
     maybe_tile
@@ -22,6 +23,9 @@ TileOperatorEnum fromStrTileOperatorEnum(std::string_view str)
     } else if (str == "match_inout_size")
     {
         return match_inout_size;
+    } else if (str == "tree_op")
+    {
+        return tree_op;
     } else if (str == "lparen")
     {
         return lparen;
@@ -44,6 +48,9 @@ std::string toStrTileOperatorEnum(TileOperatorEnum tileConstructMethod)
 
         case match_inout_size:
             return "match_inout_size";
+
+        case tree_op:
+            return "tree_op";
 
         case lparen:
             return "lparen";

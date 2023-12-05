@@ -19,9 +19,9 @@ public:
 
     /**
      * Method in which the first out location of tile1 is connected to the first in location of tile2.
-     * @param tile1 the tile from which the new transitions will start, with first out node as source.
-     * @param tile2 the tile from which the new transitions will join, with first in node as target.
-     * @param destTile the destination tile in which the new transition will be added.
+     * tile1 the tile from which the new transitions will start, with first out node as source.
+     * tile2 the tile from which the new transitions will join, with first in node as target.
+     * destTile the destination tile in which the new transition will be added.
      * @throw ConnectorException if either tile1 or tile2 does not have respectively out or in locations.
      */
     void connectTiles() override

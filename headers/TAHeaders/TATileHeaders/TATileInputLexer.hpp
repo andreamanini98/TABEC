@@ -4,9 +4,11 @@
 #include "utilities/Utils.hpp"
 #include "utilities/StringsGetter.hpp"
 
-// Example of a valid compositional string:
-// t1 +1 (t2 + t3) + (t4)
 
+// Example of a valid compositional string:
+// t4 ++ (t1 + t3) (t2 + t3)
+// t4 ++ (t4 ++ t3 t3) (t4 ++ t3 t3)
+// t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))
 
 class TATileInputLexer {
 
@@ -19,8 +21,9 @@ private:
             {
                     { "lparen",           "(" },
                     { "rparen",           ")" },
-                    { "only_one_out",     "+1" },
-                    { "match_inout_size", "+" }
+                    { "only_one_out",     "+1" }, // t1 +1 t2
+                    { "match_inout_size", "+" },  // t1 + t2
+                    { "tree_op",          "++" }  // t1 ++ t2 t3
             };
 
     // A vector of pairs defining in the second element the actual tile identifier appearing in the

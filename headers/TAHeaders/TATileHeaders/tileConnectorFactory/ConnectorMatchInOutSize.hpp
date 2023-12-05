@@ -21,9 +21,9 @@ public:
      * Method in which two tiles are connected if the number of output locations of tile1 is equal to the number
      * of input locations of tile2. If this is the case, each output location from tile1 will be connected to an input
      * location of tile2, in the order they appear in such tiles.
-     * @param tile1 the tile from which the new transitions will start, with out nodes as source.
-     * @param tile2 the tile from which the new transitions will join, with in nodes as target.
-     * @param destTile the destination tile in which the new transition will be added.
+     * tile1 the tile from which the new transitions will start, with out nodes as source.
+     * tile2 the tile from which the new transitions will join, with in nodes as target.
+     * destTile the destination tile in which the new transition will be added.
      * @throw ConnectorException if the tile1 out locations and tile2 in locations sizes do not match.
      */
     void connectTiles() override

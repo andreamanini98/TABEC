@@ -4,6 +4,7 @@
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/Operator.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorMatchInOutSize.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorOnlyOneOut.hpp"
+#include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorTreeOp.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/ParserOperatorFactory.hpp"
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
@@ -30,6 +31,9 @@ public:
 
             case only_one_out:
                 return new OperatorOnlyOneOut(parserList);
+
+            case tree_op:
+                return new OperatorTreeOp(parserList);
 
             default:
                 std::cerr << BHRED << "Not available operator." << reset << std::endl;
