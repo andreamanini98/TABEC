@@ -5,7 +5,7 @@
 #include "utilities/StringsGetter.hpp"
 
 
-// Example of a valid compositional string:
+// Example of valid compositional strings:
 // t4 ++ (t1 + t3) (t2 + t3)
 // t4 ++ (t4 ++ t3 t3) (t4 ++ t3 t3)
 // t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))
@@ -24,6 +24,14 @@ private:
                     { "only_one_out",     "+1" }, // t1 +1 t2
                     { "match_inout_size", "+" },  // t1 + t2
                     { "tree_op",          "++" }  // t1 ++ t2 t3
+            };
+
+    // A vector containing a description for each available operator.
+    std::vector<std::string> operatorDescription
+            {
+                    { "Operator: +1\nSyntax:   t1 +1 t2\nExample:  Concatenates exactly one 'out' location from t1 to one 'in' location in t2." },
+                    { "Operator: +\nSyntax:   t1 + t2\nExample:  Concatenates each 'out' location from t1 to one 'in' location in t2. Their number must match." },
+                    { "Operator: ++\nSyntax:   t1 ++ t2 t3\nExample:  Creates a tree concatenating the 'in' location of t2 and t3 to one 'out' location of t1." }
             };
 
     // A vector of pairs defining in the second element the actual tile identifier appearing in the
@@ -56,8 +64,30 @@ private:
      */
     void displayAvailableTiles()
     {
+        std::cout << "The following tiles are available:\n";
         for (auto &token: tileTokens)
             std::cout << "\u25CF " << token.second << " - " << token.first << '\n';
+    }
+
+
+    /**
+     * Method used to display the available operators' description.
+     */
+    void displayAvailableOperators()
+    {
+        std::cout << "The following operators are available:\n";
+        for (auto &desc: operatorDescription)
+            std::cout << desc << "\n\n";
+    }
+
+
+    /**
+     * Method used to display some examples to the user.
+     */
+    static void displayExampleSyntax()
+    {
+        std::cout << "An example of a syntactically-valid compositional string is as follows:\n";
+        std::cout << "t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))\n";
     }
 
 
@@ -105,9 +135,13 @@ public:
      */
     std::string getTokenizedCompositionalString()
     {
-        std::cout << "The following tiles are available:\n";
-
         displayAvailableTiles();
+
+        // TODO: make this help information pop-up only with an appropriate cli command.
+        std::cout << '\n';
+        displayAvailableOperators();
+
+        displayExampleSyntax();
 
         std::string userInput {};
         char confirmFlag { 'n' };
