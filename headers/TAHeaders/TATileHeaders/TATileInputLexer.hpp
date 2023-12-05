@@ -88,6 +88,8 @@ private:
     {
         std::cout << "An example of a syntactically-valid compositional string is as follows:\n";
         std::cout << "t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))\n";
+        std::cout << "\nTry also this to have fun:\n";
+        std::cout << "t4 ++ (t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))) (t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3)))\n";
     }
 
 
