@@ -4,6 +4,8 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushOperator.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushTile.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
+#include "TAHeaders/TATileHeaders/parserActionFactory/ActionLParen.hpp"
+#include "TAHeaders/TATileHeaders/parserActionFactory/ActionRParen.hpp"
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
 #include "Enums.h"
@@ -56,6 +58,12 @@ public:
             case only_one_out:
             case match_inout_size:
                 return new ActionPushOperator(stringsGetter, parserList, token);
+
+            case lparen:
+                return new ActionLParen(stringsGetter, parserList, token);
+
+            case rparen:
+                return new ActionRParen(stringsGetter, parserList, token);
 
             case maybe_tile:
                 if (checkIfTile(token))

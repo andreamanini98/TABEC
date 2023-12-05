@@ -17,9 +17,6 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionFactory.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
-#include "TAHeaders/TATileHeaders/parserOperatorFactory/Operator.hpp"
-#include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorFactory.hpp"
-#include "TAHeaders/TATileHeaders/parserOperatorFactory/ParserOperatorFactory.hpp"
 
 using json = nlohmann::json;
 
@@ -50,27 +47,6 @@ private:
         ParserActionFactory *actionFactory = new ActionFactory(stringsGetter, availableTiles);
         Action *action = actionFactory->createAction(parserList, token);
         action->performAction();
-    }
-
-
-    // Method used to consume the top-level parserList's node in order to compose the tiles contained in its stack with
-    // respect to the operators contained in its other stack.
-    void consumeParserNode()
-    {
-        while (!parserList.getHead()->content.operatorStack.empty())
-        {
-            // Get the current operator and remove it from the top of the stack.
-            std::string currentOperator = parserList.getHead()->content.operatorStack.top();
-            parserList.getHead()->content.operatorStack.pop();
-
-            ParserOperatorFactory *operatorFactory = new OperatorFactory;
-            Operator *parserOperator = operatorFactory->createOperator(parserList, currentOperator);
-            parserOperator->executeOperator();
-        }
-
-        // TODO: Here you have to implement the logic of checking if you still have other nesting levels (i.e. you were not in nesting level 0).
-        //       If that is the case, you'll have to pass the remaining tile on the current level on top of the stack of the next level (remember
-        //       you'll also have to update the linked list accordingly, maybe just setting head to head->prev will suffice.
     }
 
 
@@ -108,6 +84,11 @@ private:
             if (!found)
                 tokenizedStringToParse = tokenizedStringToParse.substr(1);
         }
+
+        // At the end of the parsing, we have to force the current node to be consumed, since it may
+        // not be ended by a right parenthesis (this is just like inserting a dummy ')' symbol at the end of the parsed string).
+        ActionRParen action = ActionRParen(stringsGetter, parserList, "rparen");
+        action.performAction();
     }
 
 
@@ -126,8 +107,6 @@ public:
     json getTiledTA()
     {
         parseAndPerformActions();
-
-        consumeParserNode();
 
         return parserList.getHead()->content.tileStack.top();
     }

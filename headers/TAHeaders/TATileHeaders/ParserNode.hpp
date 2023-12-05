@@ -8,11 +8,20 @@ using json = nlohmann::json;
 
 
 struct ParserNode {
+
     friend std::ostream &operator<<(std::ostream &strm, const ParserNode &pn);
 
     int nestingLevel {};
     std::stack<json> tileStack {};
     std::stack<std::string> operatorStack {};
+
+
+    ParserNode() = default;
+
+
+    explicit ParserNode(int nestingLevel) : nestingLevel(nestingLevel)
+    {};
+
 };
 
 

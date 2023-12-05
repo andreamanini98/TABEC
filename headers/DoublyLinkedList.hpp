@@ -54,6 +54,25 @@ public:
 
 
     /**
+     * Method used to delete the first element of the list.
+     * If the list contains only one element, deleting such element will incur in setting the head and tail to nullptr.
+     */
+    void deleteFirst()
+    {
+        if (head->prev)
+        {
+            head = head->prev;
+            head->next->prev = nullptr;
+            head->next = nullptr;
+        } else
+        {
+            head = nullptr;
+            tail = nullptr;
+        }
+    }
+
+
+    /**
      * Method used to print the list starting from the tail and ending in the head.
      */
     void printList()
