@@ -2,7 +2,7 @@
 #define UTOTPARSER_TILECONNECTORFACTORY_H
 
 #include "TAHeaders/TATileHeaders/tileConnectorFactory/Connector.hpp"
-#include "Enums.h"
+#include "TAHeaders/TATileHeaders/TileOperatorEnum.h"
 
 
 class TileConnectorFactory {
@@ -16,7 +16,7 @@ public:
      * @param method the way in which the new transition(s) will be generated.
      * @return a proper tile connector based on the method parameter.
      */
-    virtual Connector *createConnector(const json &tile1, const json &tile2, json &destTile, TileConstructMethod method) = 0;
+    virtual Connector *createConnector(const json &tile1, const json &tile2, json &destTile, TileOperatorEnum op) = 0;
 
 };
 

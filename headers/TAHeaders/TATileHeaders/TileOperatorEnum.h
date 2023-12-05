@@ -1,12 +1,11 @@
-#ifndef UTOTPARSER_ENUMS_H
-#define UTOTPARSER_ENUMS_H
+#ifndef UTOTPARSER_TILEOPERATORENUM_H
+#define UTOTPARSER_TILEOPERATORENUM_H
 
-// TODO YOU HAVE TO MODIFY THIS AND LET THE USER BE ABLE TO EXPAND IT EASILY
 
 /**
  * Enumeration used to collect different methodologies for connecting tiles.
  */
-enum TileConstructMethod {
+enum TileOperatorEnum {
     only_one_out,
     match_inout_size,
     lparen,
@@ -15,7 +14,7 @@ enum TileConstructMethod {
 };
 
 
-TileConstructMethod fromStrTileConstructMethod(std::string_view str)
+TileOperatorEnum fromStrTileOperatorEnum(std::string_view str)
 {
     if (str == "only_one_out")
     {
@@ -36,7 +35,7 @@ TileConstructMethod fromStrTileConstructMethod(std::string_view str)
 }
 
 
-std::string toStrTileConstructMethod(TileConstructMethod tileConstructMethod)
+std::string toStrTileOperatorEnum(TileOperatorEnum tileConstructMethod)
 {
     switch (tileConstructMethod)
     {
@@ -58,4 +57,4 @@ std::string toStrTileConstructMethod(TileConstructMethod tileConstructMethod)
 }
 
 
-#endif //UTOTPARSER_ENUMS_H
+#endif //UTOTPARSER_TILEOPERATORENUM_H

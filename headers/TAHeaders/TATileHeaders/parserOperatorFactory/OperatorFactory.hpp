@@ -7,7 +7,7 @@
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/ParserOperatorFactory.hpp"
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
-#include "Enums.h"
+#include "TAHeaders/TATileHeaders/TileOperatorEnum.h"
 
 
 class OperatorFactory : public ParserOperatorFactory {
@@ -21,9 +21,9 @@ public:
      */
     Operator *createOperator(DoublyLinkedList<ParserNode> &parserList, const std::string &token) override
     {
-        TileConstructMethod method = fromStrTileConstructMethod(token);
+        TileOperatorEnum op = fromStrTileOperatorEnum(token);
 
-        switch (method)
+        switch (op)
         {
             case match_inout_size:
                 return new OperatorMatchInOutSize(parserList);

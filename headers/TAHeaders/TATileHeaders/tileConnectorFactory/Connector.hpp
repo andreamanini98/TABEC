@@ -4,7 +4,7 @@
 #include "nlohmann/json.hpp"
 
 #include "utilities/JsonHelper.hpp"
-#include "Enums.h"
+#include "TAHeaders/TATileHeaders/TileOperatorEnum.h"
 
 using json = nlohmann::json;
 

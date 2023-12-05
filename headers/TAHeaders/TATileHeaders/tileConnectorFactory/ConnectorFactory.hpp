@@ -17,9 +17,9 @@ public:
      * @param method the way in which the new transition(s) will be generated.
      * @return a proper tile connector based on the method parameter.
      */
-    Connector *createConnector(const json &tile1, const json &tile2, json &destTile, TileConstructMethod method) override
+    Connector *createConnector(const json &tile1, const json &tile2, json &destTile, TileOperatorEnum op) override
     {
-        switch (method)
+        switch (op)
         {
             case only_one_out:
                 return new ConnectorOnlyOneOut(tile1, tile2, destTile);

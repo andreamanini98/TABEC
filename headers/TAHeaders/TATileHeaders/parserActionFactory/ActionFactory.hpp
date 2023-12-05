@@ -8,7 +8,7 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionRParen.hpp"
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
-#include "Enums.h"
+#include "TAHeaders/TATileHeaders/TileOperatorEnum.h"
 
 
 class ActionFactory : public ParserActionFactory {
@@ -51,9 +51,9 @@ public:
      */
     Action *createAction(DoublyLinkedList<ParserNode> &parserList, const std::string &token) override
     {
-        TileConstructMethod method = fromStrTileConstructMethod(token);
+        TileOperatorEnum op = fromStrTileOperatorEnum(token);
 
-        switch (method)
+        switch (op)
         {
             case only_one_out:
             case match_inout_size:

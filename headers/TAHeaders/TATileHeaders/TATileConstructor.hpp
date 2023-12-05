@@ -11,7 +11,6 @@
 #include "TAHeaders/TATileHeaders/tileConnectorFactory/ConnectorFactory.hpp"
 #include "utilities/JsonHelper.hpp"
 #include "Exceptions.h"
-#include "Enums.h"
 
 using json = nlohmann::json;
 
