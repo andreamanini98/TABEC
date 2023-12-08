@@ -8,6 +8,34 @@ using json = nlohmann::json;
 
 class RandomCreator {
 
+protected:
+    static json getBlankInitialLocation()
+    {
+        return {{ ID,    "id0" },
+                { LABEL, {{ TEXT, "x = 0; y = 0" }, { KIND, COMMENTS }}},
+                { NAME,  {{ TEXT, "in" }}}};
+    }
+
+
+    static std::string getBlankInitialLocationName()
+    {
+        return "id0";
+    }
+
+
+    static json getBlankTA()
+    {
+        json blankTA;
+        blankTA[NTA][DECLARATION] = "BlankTA";
+        blankTA[NTA][TEMPLATE][DECLARATION] = "clock x, y;";
+        blankTA[NTA][TEMPLATE][INIT][REF] = {};
+        blankTA[NTA][TEMPLATE][LOCATION] = {};
+        blankTA[NTA][TEMPLATE][TRANSITION] = {};
+
+        return blankTA;
+    }
+
+
 public:
     virtual json createRandomTile() = 0;
 
