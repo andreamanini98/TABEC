@@ -4,6 +4,12 @@
 #include "utilities/Utils.hpp"
 #include "utilities/StringsGetter.hpp"
 
+// Context-free grammar describing our compositional language:
+// -----------------------------------------------------------
+// TiledTA -> t | TiledTA (Bin TiledTA | Tri TiledTA TiledTA)* | '(' TiledTA ')'
+// Bin -> '+' | '+1'
+// Tri -> '++'
+// t is a tile derived from an .xml file or a randomly-generated tile.
 
 // Example of valid compositional strings:
 // t4 ++ (t1 + t3) (t2 + t3)
@@ -36,7 +42,10 @@ private:
 
     // A vector of pairs defining in the second element the actual tile identifier appearing in the
     // compositional tile string, while in the first element the tile token corresponding to that symbol.
-    std::vector<std::pair<std::string, std::string>> tileTokens {};
+    std::vector<std::pair<std::string, std::string>> tileTokens
+            {
+                    { "t_barabasi_albert", "t:BA" } // Random-generated tile.
+            };
 
     // A vector comprising both operator and tile tokens.
     std::vector<std::pair<std::string, std::string>> tokens {};
@@ -163,15 +172,10 @@ public:
             std::cin.ignore();
         }
 
-        std::cout << "The tokenized string is: " << tokenizeString(userInput) << std::endl;
+        std::string tokenizedString { tokenizeString(userInput) };
+        std::cout << "The tokenized string is: " << tokenizedString << std::endl;
 
-        return tokenizeString(userInput);
-    }
-
-
-    std::vector<std::pair<std::string, std::string>> getOperatorTokens()
-    {
-        return operatorTokens;
+        return tokenizedString;
     }
 
 

@@ -6,9 +6,10 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionLParen.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionRParen.hpp"
+#include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushRandomTile.hpp"
 #include "TAHeaders/TATileHeaders/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
-#include "TAHeaders/TATileHeaders/TileOperatorEnum.h"
+#include "TAHeaders/TATileHeaders/TileTokensEnum.h"
 
 
 class ActionFactory : public ParserActionFactory {
@@ -51,9 +52,9 @@ public:
      */
     Action *createAction(DoublyLinkedList<ParserNode> &parserList, const std::string &token) override
     {
-        TileOperatorEnum op = fromStrTileOperatorEnum(token);
+        TileTokensEnum tk = fromStrTileTokenEnum(token);
 
-        switch (op)
+        switch (tk)
         {
             case only_one_out:
             case match_inout_size:
@@ -65,6 +66,9 @@ public:
 
             case rparen:
                 return new ActionRParen(stringsGetter, parserList, token);
+
+            case t_barabasi_albert:
+                return new ActionPushRandomTile(stringsGetter, parserList, token);
 
             case maybe_tile:
                 if (checkIfTile(token))
