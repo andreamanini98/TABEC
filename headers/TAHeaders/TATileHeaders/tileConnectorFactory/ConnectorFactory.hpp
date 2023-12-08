@@ -18,7 +18,7 @@ public:
      * @param method the way in which the new transition(s) will be generated.
      * @return a proper tile connector based on the method parameter.
      */
-    Connector *createConnector(const json &tile1, const json &tile2, json &destTile, TileOperatorEnum op) override
+    Connector *createConnector(const json &tile1, const json &tile2, json &destTile, TileTokensEnum op) override
     {
         switch (op)
         {
@@ -45,9 +45,9 @@ public:
      * @param method the way in which the new transition(s) will be generated.
      * @return a proper tile connector based on the method parameter.
      */
-    Connector *createConnector(const json &tile1, const json &tile2, const json &tile3, json &destTile, TileOperatorEnum op) override
+    Connector *createConnector(const json &tile1, const json &tile2, const json &tile3, json &destTile, TileTokensEnum tk) override
     {
-        switch (op)
+        switch (tk)
         {
             case tree_op:
                 return new ConnectorTreeOp(tile1, tile2, tile3, destTile);
