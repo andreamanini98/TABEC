@@ -20,8 +20,8 @@ public:
                 return new RandomCreatorBarabasiAlbert();
 
             default:
-                std::cerr << BHRED << "Not available token." << reset << std::endl;
-                std::cerr << BHRED << "Random tile will not be generated. This may cause undefined behaviour." << reset << std::endl;
+                std::cerr << BHRED << "Not available token." << rstColor << std::endl;
+                std::cerr << BHRED << "Random tile will not be generated. This may cause undefined behaviour." << rstColor << std::endl;
                 break;
         }
     }

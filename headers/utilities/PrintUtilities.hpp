@@ -51,9 +51,9 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool on
               std::endl <<
               "Legend: " <<
               std::endl <<
-              BHGRN << "\u25CF" << reset << " = success" <<
+              BHGRN << "\u25CF" << rstColor << " = success" <<
               std::endl <<
-              BHRED << "\u25CF" << reset << " = failure" <<
+              BHRED << "\u25CF" << rstColor << " = failure" <<
               std::endl;
     std::cout << std::string(nameColumnWidth + 2 * FIXED_COL_WIDTH + 4, '_') << std::endl;
     std::cout << "| TA name    " + std::string(nameColumnWidth - FIXED_COL_WIDTH, ' ') + "| Conversion | Emptiness  |" << std::endl;
@@ -64,9 +64,9 @@ void printDashBoard(const std::vector<DashBoardEntry> &dashboardResults, bool on
         std::cout << "| " << d_entry.nameTA <<
                   std::string(nameColumnWidth - d_entry.nameTA.length() - 1, ' ') <<
                   "| " << std::string(FIXED_COL_WIDTH - 3, ' ') <<
-                  (onlyEmptiness ? " " : (d_entry.translationResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset)) <<
+                  (onlyEmptiness ? " " : (d_entry.translationResult ? BHGRN "\u25CF" rstColor : BHRED "\u25CF" rstColor)) <<
                   " |" << std::string(FIXED_COL_WIDTH - 2, ' ') <<
-                  (onlyConversion ? " " : (d_entry.emptinessResult ? BHGRN "\u25CF" reset : BHRED "\u25CF" reset)) <<
+                  (onlyConversion ? " " : (d_entry.emptinessResult ? BHGRN "\u25CF" rstColor : BHRED "\u25CF" rstColor)) <<
                   " |" << std::endl;
     }
     for (int i = 0; i < nameColumnWidth + 2 * FIXED_COL_WIDTH + 4; i++) std::cout << "\u203E";

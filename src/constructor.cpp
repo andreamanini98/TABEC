@@ -48,7 +48,7 @@ void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &ti
 {
     Translator translator(outputDirPath + "/" += (tiledTAName + ".tck"));
     translator.translateTA(tiledTAName, tiledTA);
-    std::cout << BHGRN << "Conversion successful" << reset << std::endl;
+    std::cout << BHGRN << "Conversion successful" << rstColor << std::endl;
 }
 
 
@@ -124,15 +124,15 @@ int main(int argc, char *argv[])
 
     } catch (CommandNotProvidedException &e)
     {
-        std::cerr << BHRED << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << rstColor << std::endl;
         return EXIT_FAILURE;
     } catch (ConnectorException &e)
     {
-        std::cerr << BHRED << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << rstColor << std::endl;
         return EXIT_FAILURE;
     } catch (NeededTilesNotPresentException &e)
     {
-        std::cerr << BHRED << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << rstColor << std::endl;
         return EXIT_FAILURE;
     }
 

@@ -29,8 +29,8 @@ public:
                 return new ConnectorMatchInOutSize(tile1, tile2, destTile);
 
             default:
-                std::cerr << BHRED << "Not available connection method." << reset << std::endl;
-                std::cerr << BHRED << "New transitions will not be generated." << reset << std::endl;
+                std::cerr << BHRED << "Not available connection method." << rstColor << std::endl;
+                std::cerr << BHRED << "New transitions will not be generated." << rstColor << std::endl;
                 break;
         }
     }
@@ -53,8 +53,8 @@ public:
                 return new ConnectorTreeOp(tile1, tile2, tile3, destTile);
 
             default:
-                std::cerr << BHRED << "Not available connection method." << reset << std::endl;
-                std::cerr << BHRED << "New transitions will not be generated." << reset << std::endl;
+                std::cerr << BHRED << "Not available connection method." << rstColor << std::endl;
+                std::cerr << BHRED << "New transitions will not be generated." << rstColor << std::endl;
                 break;
         }
     }

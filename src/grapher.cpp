@@ -27,7 +27,7 @@ void convertXMLtoDOT(const std::string &outputDirPath, const std::string &output
 
     } catch (NotXMLFormatException &e)
     {
-        std::cerr << BHRED << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << rstColor << std::endl;
     }
 }
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
                 }
             } catch (const std::filesystem::filesystem_error &e)
             {
-                std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
+                std::cerr << BHRED << "Error while reading directory: " << e.what() << rstColor << std::endl;
                 return EXIT_FAILURE;
             }
         }
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
     } catch (CommandNotProvidedException &e)
     {
-        std::cerr << BHRED << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << rstColor << std::endl;
         return EXIT_FAILURE;
     }
 

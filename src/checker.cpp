@@ -53,12 +53,12 @@ int main(int argc, char *argv[])
 
         } catch (const std::filesystem::filesystem_error &e)
         {
-            std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
+            std::cerr << BHRED << "Error while reading directory: " << e.what() << rstColor << std::endl;
             return EXIT_FAILURE;
         }
     } catch (CommandNotProvidedException &e)
     {
-        std::cerr << BHRED << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << rstColor << std::endl;
         return EXIT_FAILURE;
     }
 

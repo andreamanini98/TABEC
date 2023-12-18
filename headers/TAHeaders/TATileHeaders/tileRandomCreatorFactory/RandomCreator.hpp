@@ -9,17 +9,17 @@ using json = nlohmann::json;
 class RandomCreator {
 
 protected:
-    static json getBlankInitialLocation()
+    static std::string getBlankInitialLocationName()
     {
-        return {{ ID,    "id0" },
-                { LABEL, {{ TEXT, "x = 0; y = 0" }, { KIND, COMMENTS }}},
-                { NAME,  {{ TEXT, "in" }}}};
+        return "idInit";
     }
 
 
-    static std::string getBlankInitialLocationName()
+    static json getBlankInitialLocation()
     {
-        return "id0";
+        return {{ ID,    getBlankInitialLocationName() },
+                { LABEL, {{ TEXT, "x = 0; y = 0" }, { KIND, COMMENTS }}},
+                { NAME,  {{ TEXT, "in" }}}};
     }
 
 

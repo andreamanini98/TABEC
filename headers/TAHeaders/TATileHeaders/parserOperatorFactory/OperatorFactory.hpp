@@ -36,8 +36,8 @@ public:
                 return new OperatorTreeOp(parserList);
 
             default:
-                std::cerr << BHRED << "Not available operator." << reset << std::endl;
-                std::cerr << BHRED << "Action will not be performed. This may cause unexpected behaviour" << reset << std::endl;
+                std::cerr << BHRED << "Not available operator." << rstColor << std::endl;
+                std::cerr << BHRED << "Action will not be performed. This may cause unexpected behaviour" << rstColor << std::endl;
                 break;
         }
     }

@@ -75,8 +75,8 @@ public:
                     return new ActionPushTile(stringsGetter, parserList, token);
 
             default:
-                std::cerr << BHRED << "Not available token." << reset << std::endl;
-                std::cerr << BHRED << "Action will not be performed. This may cause unexpected behaviour" << reset << std::endl;
+                std::cerr << BHRED << "Not available token." << rstColor << std::endl;
+                std::cerr << BHRED << "Action will not be performed. This may cause unexpected behaviour" << rstColor << std::endl;
                 break;
         }
     }

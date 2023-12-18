@@ -23,7 +23,7 @@ using json = nlohmann::json;
 void startTranslation(Translator translator, const std::string &nameTA, const json &inFile, DashBoardEntry &d_entry)
 {
     translator.translateTA(nameTA, inFile);
-    std::cout << BHGRN << "Conversion successful" << reset << std::endl;
+    std::cout << BHGRN << "Conversion successful" << rstColor << std::endl;
     d_entry.translationResult = true;
 }
 
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
                                 } else
                                 {
                                     // If -nrt option is enabled and the TA is not a nrt, we stop its translation and raise an error.
-                                    std::cerr << BHRED << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << reset << std::endl;
+                                    std::cerr << BHRED << "Error: " << entry.path() << " is not an nrtTA and thus will not be translated" << rstColor << std::endl;
                                     d_entry.translationResult = false;
                                 }
                             } else
@@ -93,12 +93,12 @@ int main(int argc, char *argv[])
 
                         } catch (NotXMLFormatException &e)
                         {
-                            std::cerr << BHRED << e.what() << reset << std::endl;
+                            std::cerr << BHRED << e.what() << rstColor << std::endl;
                             return EXIT_FAILURE;
                         }
                     } else
                     {
-                        std::cerr << BHRED << "Failed to open file: " << entry.path() << reset << std::endl;
+                        std::cerr << BHRED << "Failed to open file: " << entry.path() << rstColor << std::endl;
                     }
                 }
                 dashboardResults.push_back(d_entry);
@@ -109,12 +109,12 @@ int main(int argc, char *argv[])
 
         } catch (const std::filesystem::filesystem_error &e)
         {
-            std::cerr << BHRED << "Error while reading directory: " << e.what() << reset << std::endl;
+            std::cerr << BHRED << "Error while reading directory: " << e.what() << rstColor << std::endl;
             return EXIT_FAILURE;
         }
     } catch (CommandNotProvidedException &e)
     {
-        std::cerr << BHRED << e.what() << reset << std::endl;
+        std::cerr << BHRED << e.what() << rstColor << std::endl;
         return EXIT_FAILURE;
     }
 

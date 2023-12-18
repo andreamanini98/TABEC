@@ -67,7 +67,7 @@ private:
     {
         std::string color = (isAccepting) ? BHGRN : BHRED;
         std::string acceptance = (isAccepting) ? "not" : "";
-        std::cout << color << "Language is " << acceptance << " empty!" << reset << std::endl;
+        std::cout << color << "Language is " << acceptance << " empty!" << rstColor << std::endl;
         return isAccepting;
     }
 
