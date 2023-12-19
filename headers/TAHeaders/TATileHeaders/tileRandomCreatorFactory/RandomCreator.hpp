@@ -8,6 +8,10 @@ using json = nlohmann::json;
 
 class RandomCreator {
 
+private:
+    // An integer that will be used to keep new transitions unique.
+    int newTransNonce {};
+
 protected:
     static std::string getBlankInitialLocationName()
     {
@@ -23,6 +27,19 @@ protected:
     }
 
 
+    static std::string getBlankOutLocationName()
+    {
+        return "idOut";
+    }
+
+
+    static json getBlankOutLocation()
+    {
+        return {{ ID,   getBlankOutLocationName() },
+                { NAME, {{ TEXT, "out" }}}};
+    }
+
+
     static json getBlankTA()
     {
         json blankTA;
@@ -33,6 +50,34 @@ protected:
         blankTA[NTA][TEMPLATE][TRANSITION] = {};
 
         return blankTA;
+    }
+
+
+    json getBlankTransition(const std::string &srcLoc, const std::string &dstLoc)
+    {
+        json newTrans = {
+                { ID,     "newTrans" + std::to_string(newTransNonce) },
+                { SOURCE, {{ REF, srcLoc }}},
+                { TARGET, {{ REF, dstLoc }}}
+        };
+
+        ++newTransNonce;
+        return newTrans;
+    }
+
+
+    json getLabeledTransition(const std::string &srcLoc, const std::string &dstLoc)
+    {
+        json newTrans = getBlankTransition(srcLoc, dstLoc);
+
+        newTrans[LABEL] = {
+                { TEXT, "some text" },
+                { KIND, GUARD }
+        };
+
+        //TODO: add text on the transitions
+
+        return newTrans;
     }
 
 

@@ -13,7 +13,7 @@ class RandomCreatorBarabasiAlbert : public RandomCreator {
 
 private:
     // The total number of nodes the resulting random network will have.
-    int numNodes { 1000 };
+    int numNodes { 10 };
 
     // The initial number of nodes.
     int m0 { 5 };
@@ -35,6 +35,17 @@ private:
 
     // The maximum degree between all the degrees.
     int maxDegree {};
+
+
+    /**
+     * Method used to get a valid string representation for identifiers to use in locations.
+     * @param idNumber the number to associate to the identifier.
+     * @return a string representation of the identifier.
+     */
+    static std::string getValidId(int idNumber)
+    {
+        return "Id" + std::to_string(idNumber);
+    }
 
 
     /**
@@ -215,6 +226,8 @@ private:
      */
     void createBANetwork()
     {
+        std::cout << "Creating random Barabasi-Albert tile.\n";
+
         // The number of newly added links must be at most equal to the number of nodes in the initial network
         assert (m <= m0);
 
@@ -231,8 +244,66 @@ private:
             ++totalNodes;
         }
 
+        // At the end, the adjacency list must contain all nodes requested.
+        assert (adjacencyList.size() == numNodes);
+
         std::cout << '\n';
         computeDegreeDistribution();
+    }
+
+
+    void insertLocationsInRandomTileFromNetwork(json &randomTile)
+    {
+        // Setting the initial location.
+        randomTile.at(NTA).at(TEMPLATE).at(INIT).at(REF) = getBlankInitialLocationName();
+
+        // Inserting the initial location.
+        json *locationsPtr = getJsonPtrAsArray(TAContentExtractor::getLocationsPtr(randomTile));
+        // Since no locations are still present, clearing makes the 'null' value disappear.
+        locationsPtr->clear();
+
+        locationsPtr->push_back(getBlankInitialLocation());
+        locationsPtr->push_back(getBlankOutLocation());
+
+        for (int i = 0; i < adjacencyList.size(); i++)
+            locationsPtr->push_back({{ ID, getValidId(i) }});
+    }
+
+
+    void connectInAndOut(json *transitionPtr)
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        // Distribution used to extract a random node.
+        std::uniform_int_distribution<int> int_dist(0, static_cast<int>(adjacencyList.size()) - 1);
+
+        // Extracting a random node so that a transition from the initial node to such random node can be created.
+        int randomNode = int_dist(gen);
+        transitionPtr->push_back(getBlankTransition(getBlankInitialLocationName(), getValidId(randomNode)));
+
+        // Extracting a random node so that a transition from such random node to the out node can be created.
+        randomNode = int_dist(gen);
+        transitionPtr->push_back(getBlankTransition(getValidId(randomNode), getBlankOutLocationName()));
+    }
+
+
+    void insertTransitionsInRandomTileFromNetwork(json &randomTile)
+    {
+        json *transitionsPtr = getJsonPtrAsArray(TAContentExtractor::getTransitionsPtr(randomTile));
+        // Since no transitions are still present, clearing makes the 'null' value disappear.
+        transitionsPtr->clear();
+
+        for (int i = 0; i < adjacencyList.size(); i++)
+        {
+            for (auto &neighbor: adjacencyList[i])
+            {
+                std::string srcLoc = getValidId(i);
+                std::string dstLoc = getValidId(neighbor);
+                transitionsPtr->push_back(getLabeledTransition(srcLoc, dstLoc));
+            }
+        }
+        connectInAndOut(transitionsPtr);
     }
 
 
@@ -241,43 +312,16 @@ public:
     {
         createBANetwork();
 
-        // TODO: you have to translate the ba network in json
+        json randomTile = getBlankTA();
 
-#ifdef DEBUG_BA
-        std::cout << "Creating random barabasi albert tile\n";
+        insertLocationsInRandomTileFromNetwork(randomTile);
 
-        json randomTA = getBlankTA();
-
-        // Setting the initial location.
-        randomTA.at(NTA).at(TEMPLATE).at(INIT).at(REF) = getBlankInitialLocationName();
-
-        // Inserting the initial location.
-        json *locationsPtr = getJsonPtrAsArray(TAContentExtractor::getLocationsPtr(randomTA));
-        // Since no locations are still present, clearing makes the 'null' value disappear.
-        locationsPtr->clear();
-        locationsPtr->push_back(getBlankInitialLocation());
-
-        // TODO: perform insertion of locations here in a barabasi style.
-
-        json *transitionsPtr = getJsonPtrAsArray(TAContentExtractor::getTransitionsPtr(randomTA));
-        // Since no transitions are still present, clearing makes the 'null' value disappear.
-        transitionsPtr->clear();
-
-        // TODO: perform insertion of transitions here in a barabasi style.
-
-        // Maybe it is better to insert locations and transitions at the same time.
-        // If it is the case, just rearrange the above code accordingly.
+        insertTransitionsInRandomTileFromNetwork(randomTile);
 
         std::cout << "\n\nResultingTiledTA:\n\n";
-        std::cout << std::setw(4) << randomTA << std::endl;
+        std::cout << std::setw(4) << randomTile << std::endl;
 
-        // Before returning, remember to add an output location and 2 new transitions: one from in to a random
-        // location, and one from a random location to out (vedi un po' poi come fare bene sta roba).
-
-        return randomTA;
-#endif
-
-        return json {};
+        return randomTile;
     }
 
 };
