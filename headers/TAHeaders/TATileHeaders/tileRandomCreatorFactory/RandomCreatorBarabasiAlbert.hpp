@@ -13,7 +13,7 @@ class RandomCreatorBarabasiAlbert : public RandomCreator {
 
 private:
     // The total number of nodes the resulting random network will have.
-    int numNodes { 10 };
+    int numNodes { 20 };
 
     // The initial number of nodes.
     int m0 { 5 };
@@ -226,6 +226,8 @@ private:
      */
     void createBANetwork()
     {
+        // TODO: change assertions in exceptions.
+
         std::cout << "Creating random Barabasi-Albert tile.\n";
 
         // The number of newly added links must be at most equal to the number of nodes in the initial network
@@ -252,6 +254,7 @@ private:
     }
 
 
+    //TODO: document method
     void insertLocationsInRandomTileFromNetwork(json &randomTile)
     {
         // Setting the initial location.
@@ -270,6 +273,7 @@ private:
     }
 
 
+    //TODO: document method
     void connectInAndOut(json *transitionPtr)
     {
         std::random_device rd;
@@ -288,8 +292,12 @@ private:
     }
 
 
+    //TODO: document method
     void insertTransitionsInRandomTileFromNetwork(json &randomTile)
     {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
         json *transitionsPtr = getJsonPtrAsArray(TAContentExtractor::getTransitionsPtr(randomTile));
         // Since no transitions are still present, clearing makes the 'null' value disappear.
         transitionsPtr->clear();
@@ -300,7 +308,7 @@ private:
             {
                 std::string srcLoc = getValidId(i);
                 std::string dstLoc = getValidId(neighbor);
-                transitionsPtr->push_back(getLabeledTransition(srcLoc, dstLoc));
+                transitionsPtr->push_back(getLabeledTransition(srcLoc, dstLoc, gen));
             }
         }
         connectInAndOut(transitionsPtr);
@@ -308,8 +316,11 @@ private:
 
 
 public:
+    //TODO: document method
     json createRandomTile() override
     {
+        // TODO: create a std::randomDevice here and pass it around where necessary
+
         createBANetwork();
 
         json randomTile = getBlankTA();
