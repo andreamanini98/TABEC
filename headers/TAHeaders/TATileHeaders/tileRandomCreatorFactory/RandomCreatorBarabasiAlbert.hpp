@@ -125,11 +125,8 @@ private:
     /**
      * Method used to insert a new node and connect it to the existing nodes by using the preferential attachment technique.
      */
-    void insertNode()
+    void insertNode(std::mt19937 &gen)
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-
         // The new node to connect with other existing nodes.
         // Since nodes are referenced by their integer index, and since the indexes start from 0,
         // by taking the size of the adjacency list as the new node index will suffice.
@@ -224,7 +221,7 @@ private:
     /**
      * Method used to create a BA network and print some statistics.
      */
-    void createBANetwork()
+    void createBANetwork(std::mt19937 &gen)
     {
         // TODO: change assertions in exceptions.
 
@@ -242,7 +239,7 @@ private:
 
         while (totalNodes < numNodes)
         {
-            insertNode();
+            insertNode(gen);
             ++totalNodes;
         }
 
@@ -254,7 +251,10 @@ private:
     }
 
 
-    //TODO: document method
+    /**
+     * Method used to insert locations names in the tile.
+     * @param randomTile a json representation of the tile in which to add locations names.
+     */
     void insertLocationsInRandomTileFromNetwork(json &randomTile)
     {
         // Setting the initial location.
@@ -273,12 +273,14 @@ private:
     }
 
 
-    //TODO: document method
-    void connectInAndOut(json *transitionPtr)
+    /**
+     * Method used to insert additional transitions:
+     * - From the initial location to one random location in the tile.
+     * - From one random location in the tile to the output location.
+     * @param transitionPtr a pointer tp the transition section of the tile.
+     */
+    void connectInAndOut(json *transitionPtr, std::mt19937 &gen)
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-
         // Distribution used to extract a random node.
         std::uniform_int_distribution<int> int_dist(0, static_cast<int>(adjacencyList.size()) - 1);
 
@@ -292,12 +294,12 @@ private:
     }
 
 
-    //TODO: document method
-    void insertTransitionsInRandomTileFromNetwork(json &randomTile)
+    /**
+     * Method used to insert the transitions in the random tile.
+     * @param randomTile a json representation of the tile in which to add the transitions.
+     */
+    void insertTransitionsInRandomTileFromNetwork(json &randomTile, std::mt19937 &gen)
     {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-
         json *transitionsPtr = getJsonPtrAsArray(TAContentExtractor::getTransitionsPtr(randomTile));
         // Since no transitions are still present, clearing makes the 'null' value disappear.
         transitionsPtr->clear();
@@ -311,23 +313,27 @@ private:
                 transitionsPtr->push_back(getLabeledTransition(srcLoc, dstLoc, gen));
             }
         }
-        connectInAndOut(transitionsPtr);
+        connectInAndOut(transitionsPtr, gen);
     }
 
 
 public:
-    //TODO: document method
+    /**
+     * Method used to create a random tile using the Barabasi-Albert algorithm.
+     * @return a json representation of a random tile created using the Barabasi-Albert algorithm.
+     */
     json createRandomTile() override
     {
-        // TODO: create a std::randomDevice here and pass it around where necessary
+        std::random_device rd;
+        std::mt19937 gen(rd());
 
-        createBANetwork();
+        createBANetwork(gen);
 
         json randomTile = getBlankTA();
 
         insertLocationsInRandomTileFromNetwork(randomTile);
 
-        insertTransitionsInRandomTileFromNetwork(randomTile);
+        insertTransitionsInRandomTileFromNetwork(randomTile, gen);
 
         std::cout << "\n\nResultingTiledTA:\n\n";
         std::cout << std::setw(4) << randomTile << std::endl;
