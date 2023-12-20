@@ -248,9 +248,9 @@ private:
         int clock { int_dist_bool(gen) };
 
         std::string guardString {
-                sanitizeGuard(clockGuards[(int_dist(gen))], ckChoices[clock], gen)
+                sanitizeGuard(clockGuards[int_dist(gen)], ckChoices[clock], gen)
                 + " && "
-                + sanitizeGuard(clockGuards[(int_dist(gen))], ckChoices[1 - clock], gen)
+                + sanitizeGuard(clockGuards[int_dist(gen)], ckChoices[1 - clock], gen)
         };
 
         newTrans[LABEL] = {
