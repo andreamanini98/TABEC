@@ -161,23 +161,22 @@ std::string substituteCharInString(std::string originalString, char charToReplac
 
 
 /**
- * Method used to substitute all occurrences of a given string inside a string with another string.
+ * Method used to substitute the first occurrence of a given string inside a string with another string.
  * The input string is not modified, a result is returned containing the replaced strings.
- * @param inputStr the string in which to replace the desired strings.
- * @param toReplace the string to look fr in 'inputStr' and to replace.
+ * @param inputStr the string in which to replace the desired string.
+ * @param toReplace the string to look for in 'inputStr' and to replace.
  * @param replacement the string with which the string 'toReplace' is going to be replaced.
- * @return a string equal to 'inputStr', where each occurrence of 'toReplace' has been substituted with 'replacement'.
+ * @return a string equal to 'inputStr', where the first occurrence of 'toReplace' has been substituted with 'replacement'.
  */
-std::string substituteStringInString(const std::string &inputStr, const std::string &toReplace, const std::string &replacement)
+std::string subSinS(const std::string &inputStr, const std::string &toReplace, const std::string &replacement)
 {
     std::string tmpCopy = inputStr;
+
     size_t pos = tmpCopy.find(toReplace);
 
-    while (pos != std::string::npos)
-    {
+    if (pos != std::string::npos)
         tmpCopy.replace(pos, toReplace.length(), replacement);
-        pos = tmpCopy.find(toReplace, pos + replacement.length());
-    }
+
     return tmpCopy;
 }
 

@@ -339,3 +339,5 @@ public:
 
 
 #endif //UTOTPARSER_RANDOMCREATORBARABASIALBERT_H
+
+// t4 ++ (t4 ++ (t:BA + tile_accepting) tile_accepting) (t4 ++ (t1 + tile_accepting) (t:BA + t:BA + t:BA + tile_accepting))
