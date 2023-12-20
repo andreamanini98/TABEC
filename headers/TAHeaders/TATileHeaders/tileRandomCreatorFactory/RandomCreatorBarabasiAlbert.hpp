@@ -13,13 +13,13 @@ class RandomCreatorBarabasiAlbert : public RandomCreator {
 
 private:
     // The total number of nodes the resulting random network will have.
-    int numNodes { 20 };
+    int numNodes { 4 };
 
     // The initial number of nodes.
-    int m0 { 5 };
+    int m0 { 3 };
 
     // The number of links added when inserting a new node.
-    int m { 3 };
+    int m { 2 };
 
     // A vector of vectors representing the adjacency list of the network.
     // Each position in the outer vector represents a node by its integer index.

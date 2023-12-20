@@ -17,7 +17,7 @@ private:
     int minConst { 0 };
 
     // The maximum constant appearing in guards.
-    int maxConst { 10 };
+    int maxConst { 5 };
 
     // Vector containing semantically meaningful clock guards.
     // Note that 'const' can also be the keyword 'param'.
@@ -191,6 +191,48 @@ private:
 
 
     /**
+     * Method used to handle the case where a guard only has one clock involved and there may be the possibility
+     * of having an assignment for the other clock, hence preserving the nrt property.
+     * @param newTrans the transition in which to add the guard and possibly the assignment.
+     * @param gena random number generator.
+     */
+    void handleSwitchCase1(json &newTrans, std::mt19937 &gen)
+    {
+        // Uniform distribution used to select the shape of the guard.
+        std::uniform_int_distribution<int> int_dist(0, static_cast<int>(clockGuards.size()) - 1);
+
+        // Uniform distribution used to select the clocks and if to put also an assignment.
+        std::uniform_int_distribution<int> int_dist_bool(0, static_cast<int>(ckChoices.size()) - 1);
+
+        int clock { int_dist_bool(gen) };
+
+        std::string guardString {};
+        std::string assignmentString {};
+
+        guardString = sanitizeGuard(clockGuards[int_dist(gen)], ckChoices[clock], gen);
+
+        // Deciding if to put a guard for the other clock, hence keeping the nrt condition.
+        int alsoPutAssignment = int_dist_bool(gen);
+
+        if (alsoPutAssignment)
+        {
+            assignmentString = subSinS(clockAssignment, "ck", ckChoices[1 - clock]);
+
+            newTrans[LABEL] = {
+                    {{ TEXT, guardString },      { KIND, GUARD }},
+                    {{ TEXT, assignmentString }, { KIND, ASSIGNMENT }}
+            };
+        } else
+        {
+            newTrans[LABEL] = {
+                    { TEXT, guardString },
+                    { KIND, GUARD }
+            };
+        }
+    }
+
+
+    /**
      * Method used to handle the case where only a guard involving both clocks should be added in the new transitions.
      * @param newTrans the transition in which to add the guard.
      * @param gen a random number generator.
@@ -316,7 +358,9 @@ protected:
     {
         json newTrans = getBlankTransition(srcLoc, dstLoc);
 
+        // Uniform distribution used to select the shape of the transition.
         std::uniform_int_distribution<int> int_dist(0, 2);
+
         int labelSeed = int_dist(gen);
 
         switch (labelSeed)
@@ -326,11 +370,7 @@ protected:
                 break;
 
             case 1: // Only one clock in the guard.
-                //TODO: still have to implement this
-                newTrans[LABEL] = {
-                        { TEXT, "1" },
-                        { KIND, GUARD }
-                }; // TO HAVE BOTH ASSIGNMENTS AND GUARDS, YOU HAVE TO INSERT AN ARRAY AS A LABEL, GUARDA UN JSON DI ESEMPIO PER VEDERE COME FARE
+                handleSwitchCase1(newTrans, gen);
                 break;
 
             default: // Both clocks in the guard.
