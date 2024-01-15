@@ -124,6 +124,7 @@ private:
 
     /**
      * Method used to insert a new node and connect it to the existing nodes by using the preferential attachment technique.
+     * @param gen a random number generator.
      */
     void insertNode(std::mt19937 &gen)
     {
@@ -220,6 +221,7 @@ private:
 
     /**
      * Method used to create a BA network and print some statistics.
+     * @param gen a random number generator.
      */
     void createBANetwork(std::mt19937 &gen)
     {
@@ -278,6 +280,7 @@ private:
      * - From the initial location to one random location in the tile.
      * - From one random location in the tile to the output location.
      * @param transitionPtr a pointer tp the transition section of the tile.
+     * @param gen a random number generator.
      */
     void connectInAndOut(json *transitionPtr, std::mt19937 &gen)
     {
@@ -297,6 +300,7 @@ private:
     /**
      * Method used to insert the transitions in the random tile.
      * @param randomTile a json representation of the tile in which to add the transitions.
+     * @param gen a random number generator.
      */
     void insertTransitionsInRandomTileFromNetwork(json &randomTile, std::mt19937 &gen)
     {

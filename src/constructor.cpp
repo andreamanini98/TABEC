@@ -104,6 +104,7 @@ int main(int argc, char *argv[])
 
             // A vector containing the name of the tiles needed for the Tiled TA construction.
             std::vector<std::string> neededTiles = getAllFileNamesInDirectory(stringsGetter.getInputTilesDirPath());
+            // TODO: change this into a cached version, checking if a tile have already been loaded in memory.
             gatherNeededTiles(stringsGetter.getInputTilesDirPath(), tiles, neededTiles);
 
             // TODO: maybe here you should specify a string with which to decide how to default connect tiles.

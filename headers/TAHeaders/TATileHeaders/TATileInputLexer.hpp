@@ -6,10 +6,10 @@
 
 // Context-free grammar describing our compositional language:
 // -----------------------------------------------------------
-// TiledTA -> t | TiledTA (Bin TiledTA | Tri TiledTA TiledTA)* | '(' TiledTA ')'
+// TiledTA -> Tile | TiledTA (Bin TiledTA | Tri TiledTA TiledTA)* | '(' TiledTA ')'
 // Bin -> '+' | '+1'
 // Tri -> '++'
-// t is a tile derived from an .xml file or a randomly-generated tile.
+// Tile -> t (where t is a tile derived from an .xml file or a randomly-generated tile)
 
 // Example of valid compositional strings:
 // t4 ++ (t1 + t3) (t2 + t3)
