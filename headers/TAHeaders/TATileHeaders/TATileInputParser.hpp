@@ -100,12 +100,20 @@ public:
     };
 
 
+    TATileInputParser(StringsGetter &stringsGetter, std::string &str) : stringsGetter(stringsGetter), taTileInputLexer(stringsGetter)
+    {
+        parserList.insertFirst(ParserNode());
+        compositionalTileString = taTileInputLexer.getTokenizedCompositionalString(str);
+    }
+
+
     /**
      * Method used to merge together the given tiles and obtain a Tiled TA.
      * @return a json representation of a Tiled TA obtained by combining the given tiles and operators.
      */
     json getTiledTA()
     {
+        std::cout << "Compositional string: " << compositionalTileString << std::endl;
         parseAndPerformActions();
 
         return parserList.getHead()->content.tileStack.top();

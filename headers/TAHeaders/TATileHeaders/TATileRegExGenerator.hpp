@@ -4,6 +4,8 @@
 #include <random>
 #include "utilities/Utils.hpp"
 
+#define PRINT_DERIVATIONS
+
 
 // Context-free grammar describing our compositional language:
 // -----------------------------------------------------------
@@ -48,10 +50,10 @@ private:
 
                     { triOp,       { "++" }},
 
-                    { tile,        { "tile_0_5",
-                                           "tile_3_inf",
-                                           "tile_accepting",
-                                           "tile_double_out",
+                    { tile,        { "t1", // tile_0_5.
+                                           "t2", // tile_3_inf.
+                                           "t3", // tile_accepting.
+                                           "t4", // tile_double_out.
                                            "t:BA" }}
             };
 
@@ -60,7 +62,7 @@ public:
     /**
      * Method used to print the available expansion rules as specified inside the 'expansionRules' map.
      */
-    void printExpansionRules()
+    [[maybe_unused]] void printExpansionRules()
     {
         std::cout << "Available expansion rules:\n";
         for (auto &expRule: expansionRules)
@@ -110,9 +112,18 @@ public:
 
         std::string regEx { startSymbol };
 
+#ifdef PRINT_DERIVATIONS
+        std::cout << regEx << '\n';
+#endif
+
         // Laying out the structure of the regular expression, stopping after 'maxIter' iterations.
         for (int i = 0; i < maxIter; i++)
+        {
             regEx = subSinS(regEx, startSymbol, pickRandomExpansion(startSymbol, gen));
+#ifdef PRINT_DERIVATIONS
+            std::cout << regEx << '\n';
+#endif
+        }
 
         // Now each remaining 'startingSymbol' occurrence must be transformed into a 'tile' non-terminal,
         // in order to subsequently transform it into a proper tile name.
@@ -120,13 +131,21 @@ public:
         // but it has been done this way to be coherent with the final step involving all the non-starting non-terminals.
         while (regEx.find(startSymbol) != std::string::npos)
             regEx = subSinS(regEx, startSymbol, tile);
+#ifdef PRINT_DERIVATIONS
+        std::cout << regEx << '\n';
+#endif
 
-        // Finally, each non-terminal must be substituted with a proper terminal symbol (since at
+        // Finally, each non-terminal must be substituted with a proper terminal symbol, since at
         // this level no recursive productions can happen, given that no more 'startingSymbol' occurrence
         // is present, that is, no recursive productions are available.
         for (const std::string &nonTerminal: nonStartingNonTerminals)
             while (regEx.find(nonTerminal) != std::string::npos)
+            {
                 regEx = subSinS(regEx, nonTerminal, pickRandomExpansion(nonTerminal, gen));
+#ifdef PRINT_DERIVATIONS
+                std::cout << regEx << '\n';
+#endif
+            }
 
         return regEx;
     }

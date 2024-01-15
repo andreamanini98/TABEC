@@ -179,6 +179,20 @@ public:
     }
 
 
+    /**
+     * Method used to get a tokenized version of a given string.
+     * @param str the string to tokenize.
+     * @return a tokenized version of the 'str' parameter.
+     */
+    std::string getTokenizedCompositionalString(std::string &str)
+    {
+        std::string tokenizedString { tokenizeString(str) };
+        std::cout << "The tokenized string is: " << tokenizedString << std::endl;
+
+        return tokenizedString;
+    }
+
+
     std::vector<std::pair<std::string, std::string>> getTileTokens()
     {
         return tileTokens;
