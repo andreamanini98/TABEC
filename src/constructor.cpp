@@ -4,7 +4,7 @@
 
 #include "utilities/StringsGetter.hpp"
 #include "TAHeaders/TATileHeaders/TATileConstructor.hpp"
-#include "TAHeaders/TATileHeaders/TATileInputParser.hpp"
+#include "TAHeaders/TATileHeaders/lexerAndParser/TATileInputParser.hpp"
 #include "utilities/Utils.hpp"
 #include "utilities/CliHandler.hpp"
 #include "TAHeaders/TADotConverter.hpp"

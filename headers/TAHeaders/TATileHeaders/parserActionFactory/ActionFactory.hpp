@@ -7,7 +7,7 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionLParen.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionRParen.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushRandomTile.hpp"
-#include "TAHeaders/TATileHeaders/ParserNode.hpp"
+#include "TAHeaders/TATileHeaders/lexerAndParser/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
 #include "TAHeaders/TATileHeaders/TileTokensEnum.h"
 

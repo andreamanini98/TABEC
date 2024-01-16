@@ -4,7 +4,7 @@
 #include "nlohmann/json.hpp"
 
 #include "DoublyLinkedList.hpp"
-#include "TAHeaders/TATileHeaders/ParserNode.hpp"
+#include "TAHeaders/TATileHeaders/lexerAndParser/ParserNode.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/Operator.hpp"
 #include "TAHeaders/TATileHeaders/TATileConstructor.hpp"
 #include "TAHeaders/TAContentExtractor.hpp"

@@ -2,7 +2,7 @@
 #define UTOTPARSER_TATILEREGEXGENERATORSTRICT_H
 
 #include "utilities/Utils.hpp"
-#include "TAHeaders/TATileHeaders/TATileRegExGenerator.hpp"
+#include "TAHeaders/TATileHeaders/regexGenerator/TATileRegExGenerator.hpp"
 
 #define PRINT_DERIVATIONS
 

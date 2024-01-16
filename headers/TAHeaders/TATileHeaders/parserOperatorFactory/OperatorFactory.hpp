@@ -6,7 +6,7 @@
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorOnlyOneOut.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorTreeOp.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/ParserOperatorFactory.hpp"
-#include "TAHeaders/TATileHeaders/ParserNode.hpp"
+#include "TAHeaders/TATileHeaders/lexerAndParser/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
 #include "TAHeaders/TATileHeaders/TileTokensEnum.h"
 

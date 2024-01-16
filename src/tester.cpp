@@ -6,9 +6,9 @@
 #include "utilities/CliHandler.hpp"
 #include "TAHeaders/TADotConverter.hpp"
 #include "TAHeaders/TAutotTranslator.hpp"
-#include "TAHeaders/TATileHeaders/TATileRegExGenerator.hpp"
-#include "TAHeaders/TATileHeaders/TATileRegExGeneratorStrict.hpp"
-#include "TAHeaders/TATileHeaders/TATileInputParser.hpp"
+#include "TAHeaders/TATileHeaders/regexGenerator/TATileRegExGenerator.hpp"
+#include "TAHeaders/TATileHeaders/regexGenerator/TATileRegExGeneratorStrict.hpp"
+#include "TAHeaders/TATileHeaders/lexerAndParser/TATileInputParser.hpp"
 
 using json = nlohmann::json;
 

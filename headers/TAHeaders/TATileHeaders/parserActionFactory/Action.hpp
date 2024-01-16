@@ -3,7 +3,7 @@
 
 #include "utilities/StringsGetter.hpp"
 #include "DoublyLinkedList.hpp"
-#include "TAHeaders/TATileHeaders/ParserNode.hpp"
+#include "TAHeaders/TATileHeaders/lexerAndParser/ParserNode.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/Operator.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/OperatorFactory.hpp"
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/ParserOperatorFactory.hpp"
