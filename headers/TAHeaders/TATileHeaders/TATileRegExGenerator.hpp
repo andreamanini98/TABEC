@@ -17,6 +17,11 @@
 class TATileRegExGenerator {
 
 private:
+    // The non-terminal representing a tile (which will then be identified by its name).
+    const std::string tile { "Tile" };
+
+
+protected:
     // The starting non-terminal symbol representing a general TiledTA
     const std::string startSymbol { "TiledTA" };
 
@@ -26,53 +31,15 @@ private:
     // The non-terminal representing a ternary operator
     const std::string triOp { "Tri" };
 
-    // The non-terminal representing a tile (which will then be identified by its name).
-    const std::string tile { "Tile" };
-
-    // Vector containing the non-terminals different from the starting one.
-    const std::vector<std::string> nonStartingNonTerminals { binOp, triOp, tile };
-
     // The maximum iterations performed when building the structure of the regular expression.
-    const int maxIter { 10 };
+    int maxIter {};
 
     // This map contains as keys the non-terminals, while as values the possible expansions
     // rules relative to the specific non-terminal, contained inside a vector of strings.
-    const std::map<std::string, std::vector<std::string>> expansionRules
-            {
-                    { startSymbol, { tile,
-                                           startSymbol,
-                                           startSymbol + " " + binOp + " " + startSymbol,
-                                           startSymbol + " " + triOp + " " + startSymbol + " " + startSymbol,
-                                           "( " + startSymbol + " )" }},
+    std::map<std::string, std::vector<std::string>> expansionRules {};
 
-                    { binOp,       { "+",
-                                           "+1" }},
-
-                    { triOp,       { "++" }},
-
-                    { tile,        { "t1", // tile_0_5.
-                                           "t2", // tile_3_inf.
-                                           "t3", // tile_accepting.
-                                           "t4", // tile_double_out.
-                                           "t:BA" }}
-            };
-
-
-public:
-    /**
-     * Method used to print the available expansion rules as specified inside the 'expansionRules' map.
-     */
-    [[maybe_unused]] void printExpansionRules()
-    {
-        std::cout << "Available expansion rules:\n";
-        for (auto &expRule: expansionRules)
-        {
-            std::cout << expRule.first << " -> ";
-            for (auto &rule: expRule.second)
-                std::cout << " " << rule << " | ";
-            std::cout << std::endl;
-        }
-    }
+    // Vector containing the non-terminals different from the starting one.
+    std::vector<std::string> nonStartingNonTerminals {};
 
 
     /**
@@ -95,6 +62,46 @@ public:
     }
 
 
+public:
+    explicit TATileRegExGenerator(int maxIter) : maxIter(maxIter)
+    {
+        expansionRules = {
+                { startSymbol, { tile,
+                                       startSymbol + " " + binOp + " " + startSymbol,
+                                       startSymbol + " " + triOp + " " + startSymbol + " " + startSymbol,
+                                       "( " + startSymbol + " )" }},
+
+                { binOp,       { "+",
+                                       "+1" }},
+
+                { triOp,       { "++" }},
+
+                { tile,        { "t1", // tile_0_5.
+                                       "t2", // tile_3_inf.
+                                       "t3", // tile_accepting.
+                                       "t4", // tile_double_out.
+                                       "t:BA" }}
+        };
+        nonStartingNonTerminals = { binOp, triOp, tile };
+    }
+
+
+    /**
+     * Method used to print the available expansion rules as specified inside the 'expansionRules' map.
+     */
+    [[maybe_unused]] void printExpansionRules()
+    {
+        std::cout << "Available expansion rules:\n";
+        for (auto &expRule: expansionRules)
+        {
+            std::cout << expRule.first << " -> ";
+            for (auto &rule: expRule.second)
+                std::cout << " " << rule << " | ";
+            std::cout << std::endl;
+        }
+    }
+
+
     /**
      * Method used to create a random string corresponding to the context-free grammar specified inside the 'expansionRules' map.
      * The idea is to first lay out the structure of the string by expanding the 'startSymbol' non-terminals.
@@ -103,7 +110,7 @@ public:
      * for it from its respective expansion rules.
      * @return a string corresponding to the context-free grammar specified inside the 'expansionRules' map.
      */
-    std::string generateRegEx()
+    virtual std::string generateRegEx()
     {
         std::random_device rd;
         std::mt19937 gen(rd());

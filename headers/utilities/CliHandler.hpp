@@ -38,6 +38,12 @@ const std::string ttt { "-ttt" };
 // Allows to start the input mode for manually inserting a string from the tile compositional language.
 const std::string inp { "-inp" };
 
+// Specifies to generate strict regular expressions in the tester. This will require the maximum number of iterations as subsequent argument.
+const std::string tst { "-tst"};
+
+// Specifies to generate regular expressions in the tester. This will require the maximum number of iterations as subsequent argument.
+const std::string tns { "-tns"};
+
 // ------------------------------------------------------------------------------------
 
 
@@ -45,7 +51,7 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp };
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns };
 
     // A pointer to main's argc.
     int *argc_p;

@@ -9,7 +9,6 @@
 #include "TAHeaders/TATileHeaders/TATileRegExGenerator.hpp"
 #include "TAHeaders/TATileHeaders/TATileRegExGeneratorStrict.hpp"
 #include "TAHeaders/TATileHeaders/TATileInputParser.hpp"
-#include "Exceptions.h"
 
 using json = nlohmann::json;
 
@@ -52,28 +51,49 @@ void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &ti
 }
 
 
-// TODO: I fear that the TATileRegExGenerator is too general and will fail almost every time in constructing
-//       semantically correct tiles. For this reason, i think it would be nice to create another regex generator
-//       but more controlled, letting the user choose which one to use via the command line.
+// TODO: you should change the way in which you specify tiles here. The tool must automatically infer
+//       which tiles are usable for binary or ternary operators, in addition to handling the special case
+//       of tile-accepting. maybe a cycle on the tiles counting how many in/out locations are present may suffice.
+
+// TODO: how to proceed:
+//       1) Create a way to automatically run tests and gather results.
 
 int main(int argc, char *argv[])
 {
     CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
 
-    TATileRegExGenerator taTileRegExGenerator;
+    // Now generating the right regex generator based on the given cli command.
+    TATileRegExGenerator* taTileRegExGenerator;
 
-    std::cout << "Starting tester.\n";
+    if (cliHandler.isCmd(tns))
+        taTileRegExGenerator = new TATileRegExGenerator(std::stoi(cliHandler.getCmdArgument(tns)));
+    else if (cliHandler.isCmd(tst))
+        taTileRegExGenerator = new TATileRegExGeneratorStrict(std::stoi(cliHandler.getCmdArgument(tst)));
+    else
+    {
+        std::cerr << BHRED << "Invalid argument specified for running the tester." << rstColor << std::endl;
+        return EXIT_FAILURE;
+    }
 
-    std::string regEx { taTileRegExGenerator.generateRegEx() };
-    std::cout << "Obtained string:\n" << regEx << "\n\n";
+    std::cout << "Starting generating random tests.\n";
 
-    TATileInputParser taTileInputParser(stringsGetter, regEx);
-    json tiledTA = taTileInputParser.getTiledTA();
+    for (int i = 0; i < 5; i++)
+    {
+        std::string regEx { taTileRegExGenerator->generateRegEx() };
+        std::cout << "Obtained string:\n" << regEx << "\n";
 
-    printTiledTA(tiledTA);
-    convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), "RegExTA", tiledTA);
-    convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), "RegExTA", tiledTA);
+        TATileInputParser taTileInputParser(stringsGetter, regEx);
+        json tiledTA = taTileInputParser.getTiledTA();
+
+        std::string TAName = "RegExTA_" + std::to_string(i + 1);
+
+        printTiledTA(tiledTA);
+        convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), TAName, tiledTA);
+        convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), TAName, tiledTA);
+    }
+
+    // Here you should gather the results of the tests.
 
     return EXIT_SUCCESS;
 }
