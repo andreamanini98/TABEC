@@ -13,7 +13,7 @@ class RandomCreatorBarabasiAlbert : public RandomCreator {
 
 private:
     // The total number of nodes the resulting random network will have.
-    int numNodes { 4 };
+    int numNodes {};
 
     // The initial number of nodes.
     int m0 { 3 };
@@ -322,6 +322,15 @@ private:
 
 
 public:
+    explicit RandomCreatorBarabasiAlbert(int syntaxParameter)
+    {
+        if (syntaxParameter > 4)
+            numNodes = syntaxParameter;
+        else
+            numNodes = 4;
+    }
+
+
     /**
      * Method used to create a random tile using the Barabasi-Albert algorithm.
      * @return a json representation of a random tile created using the Barabasi-Albert algorithm.
@@ -350,4 +359,4 @@ public:
 
 #endif //UTOTPARSER_RANDOMCREATORBARABASIALBERT_H
 
-// t4 ++ (t4 ++ (t:BA + tile_accepting) tile_accepting) (t4 ++ (t1 + tile_accepting) (t:BA + t:BA + t:BA + tile_accepting))
+// t4 ++ (t4 ++ (t:BA[10] + tile_accepting) tile_accepting) (t4 ++ (t1 + tile_accepting) (t:BA[] + t:BA[2] + t:BA[20] + tile_accepting))

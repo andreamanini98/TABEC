@@ -15,7 +15,7 @@ public:
      * @param token the token based on which the action will be executed.
      * @return an Action that will affect the 'parserList' parameter based on the given 'token' parameter.
      */
-    virtual Action *createAction(DoublyLinkedList<ParserNode> &parserList, const std::string &token) = 0;
+    virtual Action *createAction(DoublyLinkedList<ParserNode> &parserList, const std::string &token, int syntaxParameter) = 0;
 
 };
 

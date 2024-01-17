@@ -7,7 +7,7 @@
 class TileRandomCreatorFactory {
 
 public:
-    virtual RandomCreator *createRandomCreator(const std::string &token) = 0;
+    virtual RandomCreator *createRandomCreator(const std::string &token, int syntaxParameter) = 0;
 
 };
 

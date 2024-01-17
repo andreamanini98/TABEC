@@ -17,9 +17,12 @@ using json = nlohmann::json;
 
 class ActionPushRandomTile : public Action {
 
+private:
+    int syntaxParameter {};
+
 public:
-    ActionPushRandomTile(StringsGetter &stringsGetter, DoublyLinkedList<ParserNode> &parserList, const std::string &token) :
-            Action(stringsGetter, parserList, token)
+    ActionPushRandomTile(StringsGetter &stringsGetter, DoublyLinkedList<ParserNode> &parserList, const std::string &token, int syntaxParameter) :
+            Action(stringsGetter, parserList, token), syntaxParameter(syntaxParameter)
     {};
 
 
@@ -28,7 +31,7 @@ public:
         std::cout << "Now generating random tile\n";
 
         TileRandomCreatorFactory *randomCreatorFactory = new RandomCreatorFactory();
-        RandomCreator *randomCreator = randomCreatorFactory->createRandomCreator(token);
+        RandomCreator *randomCreator = randomCreatorFactory->createRandomCreator(token, syntaxParameter);
         json randomTile = randomCreator->createRandomTile();
 
         // Each tile has to be renamed in order to avoid name clashes.

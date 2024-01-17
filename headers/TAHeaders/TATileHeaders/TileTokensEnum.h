@@ -16,6 +16,8 @@ enum TileTokensEnum {
     tree_op,
     lparen,
     rparen,
+    lsqparen,
+    rsqparen,
     t_barabasi_albert,
     maybe_tile
 };
@@ -42,7 +44,14 @@ TileTokensEnum fromStrTileTokenEnum(std::string_view str)
     } else if (str == "t_barabasi_albert")
     {
         return t_barabasi_albert;
-    } else
+    } else if (str == "lsqparen")
+    {
+        return lsqparen;
+    } else if (str == "rsqparen")
+    {
+        return rsqparen;
+    }
+    else
     {
         return maybe_tile;
     }

@@ -10,14 +10,14 @@
 class RandomCreatorFactory : public TileRandomCreatorFactory {
 
 public:
-    RandomCreator *createRandomCreator(const std::string &token) override
+    RandomCreator *createRandomCreator(const std::string &token, int syntaxParameter) override
     {
         TileTokensEnum tk = fromStrTileTokenEnum(token);
 
         switch (tk)
         {
             case t_barabasi_albert:
-                return new RandomCreatorBarabasiAlbert();
+                return new RandomCreatorBarabasiAlbert(syntaxParameter);
 
             default:
                 std::cerr << BHRED << "Not available token." << rstColor << std::endl;

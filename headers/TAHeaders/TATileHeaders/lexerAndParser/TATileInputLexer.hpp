@@ -9,7 +9,14 @@
 // TiledTA -> Tile | TiledTA (Bin TiledTA | Tri TiledTA TiledTA)* | '(' TiledTA ')'
 // Bin -> '+' | '+1'
 // Tri -> '++'
-// Tile -> t (where t is a tile derived from an .xml file or a randomly-generated tile)
+// Tile -> t | t '[' Integer ']'
+// Integer -> epsilon | (1..9)(0..9)*
+
+// How to extend the syntax:
+// 1) Add the new tokens in the enum in TileTokens.h.
+// 2) Update accordingly the fromStrTileTokenEnum method in TileTokens.h.
+// 3) Add the tokens and their respective symbol in the operatorTokens vector in TATileInputLexer.hpp.
+// 4) Add the corresponding actions creating a new Action in the parserActionFactory folder or modify existing ones.
 
 // Example of valid compositional strings:
 // t4 ++ (t1 + t3) (t2 + t3)
@@ -27,6 +34,8 @@ private:
             {
                     { "lparen",           "(" },
                     { "rparen",           ")" },
+                    { "lsqparen",         "[" },
+                    { "rsqparen",         "]" },
                     { "only_one_out",     "+1" }, // t1 +1 t2
                     { "match_inout_size", "+" },  // t1 + t2
                     { "tree_op",          "++" }  // t1 ++ t2 t3

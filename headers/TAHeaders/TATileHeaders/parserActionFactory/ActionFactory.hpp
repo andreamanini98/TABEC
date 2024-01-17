@@ -50,7 +50,7 @@ public:
      * @param token the token based on which the action will be executed.
      * @return an action that will affect the 'parserList' parameter based on the given 'token' parameter.
      */
-    Action *createAction(DoublyLinkedList<ParserNode> &parserList, const std::string &token) override
+    Action *createAction(DoublyLinkedList<ParserNode> &parserList, const std::string &token, int syntaxParameter) override
     {
         TileTokensEnum tk = fromStrTileTokenEnum(token);
 
@@ -68,7 +68,7 @@ public:
                 return new ActionRParen(stringsGetter, parserList, token);
 
             case t_barabasi_albert:
-                return new ActionPushRandomTile(stringsGetter, parserList, token);
+                return new ActionPushRandomTile(stringsGetter, parserList, token, syntaxParameter);
 
             case maybe_tile:
                 if (checkIfTile(token))
