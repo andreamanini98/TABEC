@@ -8,6 +8,8 @@
 #include "TAHeaders/TAContentExtractor.hpp"
 #include "TAHeaders/TATileHeaders/tileRandomCreatorFactory/RandomCreator.hpp"
 
+#define PRINT_RESULTING_TA
+
 
 class RandomCreatorBarabasiAlbert : public RandomCreator {
 
@@ -216,6 +218,7 @@ private:
 
         for (auto &d: degreeDistribution)
             std::cout << "Degree " << d.first << "  :  Total nodes = " << d.second.first << "  :  Percentage: " << d.second.second << '\n';
+        std::cout << '\n';
     }
 
 
@@ -227,7 +230,7 @@ private:
     {
         // TODO: change assertions in exceptions.
 
-        std::cout << "Creating random Barabasi-Albert tile.\n";
+        std::cout << "\nCreating random Barabasi-Albert tile.";
 
         // The number of newly added links must be at most equal to the number of nodes in the initial network
         assert (m <= m0);
@@ -348,8 +351,10 @@ public:
 
         insertTransitionsInRandomTileFromNetwork(randomTile, gen);
 
-        std::cout << "\n\nResultingTiledTA:\n\n";
+#ifndef PRINT_RESULTING_TA
+        std::cout << "\nResultingTiledTA:\n";
         std::cout << std::setw(4) << randomTile << std::endl;
+#endif
 
         return randomTile;
     }

@@ -63,13 +63,16 @@ int main(int argc, char *argv[])
     CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
 
+    // Integer indicating the maximum number of states randomly-generated tiles will have.
+    int maxNumOfRandomStates { cliHandler.isCmd(sup) ? std::stoi(cliHandler.getCmdArgument(sup)) : 5 };
+
     // Now generating the right regex generator based on the given cli command.
-    TATileRegExGenerator* taTileRegExGenerator;
+    TATileRegExGenerator *taTileRegExGenerator;
 
     if (cliHandler.isCmd(tns))
         taTileRegExGenerator = new TATileRegExGenerator(std::stoi(cliHandler.getCmdArgument(tns)));
     else if (cliHandler.isCmd(tst))
-        taTileRegExGenerator = new TATileRegExGeneratorStrict(std::stoi(cliHandler.getCmdArgument(tst)));
+        taTileRegExGenerator = new TATileRegExGeneratorStrict(std::stoi(cliHandler.getCmdArgument(tst)), maxNumOfRandomStates);
     else
     {
         std::cerr << BHRED << "Invalid argument specified for running the tester." << rstColor << std::endl;

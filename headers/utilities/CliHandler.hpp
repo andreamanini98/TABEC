@@ -6,12 +6,14 @@
 #include "Exceptions.h"
 
 // List of available commands. Remember to update the vector availableCommands below as well.
-// ------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------
 
-// Specify source directory path. This will require a path as subsequent argument.
+// Specify source directory path.
+// This will require a path as subsequent argument.
 const std::string src { "-src" };
 
-// Specify destination directory path. This will require a path as subsequent argument.
+// Specify destination directory path.
+// This will require a path as subsequent argument.
 const std::string dst { "-dst" };
 
 // The analysis will be carried out only on nrtTAs.
@@ -20,7 +22,8 @@ const std::string nrt { "-nrt" };
 // A Json representation of the TAs will be printed in stdout.
 const std::string jsn { "-jsn" };
 
-// Specify tChecker's liveness tool directory path. This will require a path as subsequent argument.
+// Specify tChecker's liveness tool directory path.
+// This will require a path as subsequent argument.
 const std::string lns { "-lns" };
 
 // Prints in the logs all the tests executed with the parameters (it doesn't stop at the first acceptance condition).
@@ -38,20 +41,26 @@ const std::string ttt { "-ttt" };
 // Allows to start the input mode for manually inserting a string from the tile compositional language.
 const std::string inp { "-inp" };
 
-// Specifies to generate strict regular expressions in the tester. This will require the maximum number of iterations as subsequent argument.
-const std::string tst { "-tst"};
+// Specifies to generate strict regular expressions in the tester.
+// This will require the maximum number of iterations as subsequent argument.
+const std::string tst { "-tst" };
 
-// Specifies to generate regular expressions in the tester. This will require the maximum number of iterations as subsequent argument.
-const std::string tns { "-tns"};
+// Specifies to generate regular expressions in the tester.
+// This will require the maximum number of iterations as subsequent argument.
+const std::string tns { "-tns" };
 
-// ------------------------------------------------------------------------------------
+// The maximum number of states a randomly-generated tile will have when launching the tester.
+// This will require the maximum number of states as subsequent argument.
+const std::string sup { "-sup" };
+
+// ------------------------------------------------------------------------------------------
 
 
 class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns };
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns, sup };
 
     // A pointer to main's argc.
     int *argc_p;

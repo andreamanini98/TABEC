@@ -7,12 +7,15 @@
 #define PRINT_DERIVATIONS
 
 
+// Prefer using the TATileRegExGeneratorStrict class instead!
+
 // Context-free grammar describing our compositional language:
 // -----------------------------------------------------------
 // TiledTA -> Tile | TiledTA (Bin TiledTA | Tri TiledTA TiledTA)* | '(' TiledTA ')'
 // Bin -> '+' | '+1'
 // Tri -> '++'
-// Tile -> t (where t is a tile derived from an .xml file or a randomly-generated tile)
+// Tile -> t | t '[' Integer ']'
+// Integer -> epsilon | (1..9)(0..9)*
 
 class TATileRegExGenerator {
 
