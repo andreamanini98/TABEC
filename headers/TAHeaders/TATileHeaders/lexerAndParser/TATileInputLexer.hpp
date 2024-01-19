@@ -197,17 +197,25 @@ public:
 
 
     /**
-     * Method used to get, from the user, a string representing the way in which tiles will be merged together.
+     * Method used to show relevant information when starting the constructor.
      */
-    std::string getTokenizedCompositionalString()
-    {
+    void showHelpMessage() {
         displayAvailableTiles();
 
-        // TODO: make this help information pop-up only with an appropriate cli command.
         std::cout << '\n';
         displayAvailableOperators();
 
         displayExampleSyntax();
+    }
+
+
+    /**
+     * Method used to get, from the user, a string representing the way in which tiles will be merged together.
+     */
+    std::string getTokenizedCompositionalString(bool showHelp)
+    {
+        if (showHelp)
+            showHelpMessage();
 
         std::string userInput {};
         char confirmFlag { 'n' };

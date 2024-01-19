@@ -206,10 +206,10 @@ private:
 
 
 public:
-    explicit TATileInputParser(StringsGetter &stringsGetter) : stringsGetter(stringsGetter), taTileInputLexer(stringsGetter)
+    TATileInputParser(StringsGetter &stringsGetter, bool showHelp) : stringsGetter(stringsGetter), taTileInputLexer(stringsGetter)
     {
         parserList.insertFirst(ParserNode());
-        compositionalTileString = taTileInputLexer.getTokenizedCompositionalString();
+        compositionalTileString = taTileInputLexer.getTokenizedCompositionalString(showHelp);
     };
 
 

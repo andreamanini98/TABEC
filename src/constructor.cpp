@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         // If the command 'inp' is set, we generate the Tiled TA using the parser, otherwise we use the default construction.
         if (cliHandler.isCmd(inp))
         {
-            TATileInputParser taTileInputParser(stringsGetter);
+            TATileInputParser taTileInputParser(stringsGetter, cliHandler.isCmd(hcr));
             tiledTA = taTileInputParser.getTiledTA();
         }
 

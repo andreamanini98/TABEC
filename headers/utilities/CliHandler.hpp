@@ -53,6 +53,9 @@ const std::string tns { "-tns" };
 // This will require the maximum number of states as subsequent argument.
 const std::string sup { "-sup" };
 
+// Tells the constructor to shou a help message when starting.
+const std::string hcr { "-hcr" };
+
 // ------------------------------------------------------------------------------------------
 
 
@@ -60,7 +63,7 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns, sup };
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns, sup, hcr};
 
     // A pointer to main's argc.
     int *argc_p;
