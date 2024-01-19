@@ -6,7 +6,7 @@
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
 #include "utilities/StringsGetter.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
-#include "TAHeaders/TATileHeaders/TileTypeEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTypeEnum.h"
 
 using json = nlohmann::json;
 

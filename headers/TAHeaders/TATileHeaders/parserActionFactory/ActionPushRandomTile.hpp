@@ -6,7 +6,7 @@
 #include "utilities/StringsGetter.hpp"
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
 #include "TAHeaders/TAContentExtractor.hpp"
-#include "TAHeaders/TATileHeaders/TileTokensEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTokensEnum.h"
 #include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
 #include "TAHeaders/TATileHeaders/tileRandomCreatorFactory/TileRandomCreatorFactory.hpp"
 #include "TAHeaders/TATileHeaders/tileRandomCreatorFactory/RandomCreatorFactory.hpp"

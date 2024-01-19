@@ -9,8 +9,8 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushRandomTile.hpp"
 #include "TAHeaders/TATileHeaders/lexerAndParser/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
-#include "TAHeaders/TATileHeaders/TileTokensEnum.h"
-#include "TAHeaders/TATileHeaders/TileTypeEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTokensEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTypeEnum.h"
 
 
 class ActionFactory : public ParserActionFactory {

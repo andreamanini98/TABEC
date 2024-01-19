@@ -17,7 +17,7 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionFactory.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
-#include "TAHeaders/TATileHeaders/TileTypeEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTypeEnum.h"
 
 using json = nlohmann::json;
 

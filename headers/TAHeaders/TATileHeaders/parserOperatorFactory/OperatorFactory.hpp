@@ -8,7 +8,7 @@
 #include "TAHeaders/TATileHeaders/parserOperatorFactory/ParserOperatorFactory.hpp"
 #include "TAHeaders/TATileHeaders/lexerAndParser/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
-#include "TAHeaders/TATileHeaders/TileTokensEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTokensEnum.h"
 
 
 class OperatorFactory : public ParserOperatorFactory {

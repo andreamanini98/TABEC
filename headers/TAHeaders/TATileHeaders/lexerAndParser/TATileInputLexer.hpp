@@ -3,7 +3,7 @@
 
 #include "utilities/Utils.hpp"
 #include "utilities/StringsGetter.hpp"
-#include "TAHeaders/TATileHeaders/TileTypeEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTypeEnum.h"
 
 // Context-free grammar describing our compositional language:
 // -----------------------------------------------------------

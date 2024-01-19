@@ -57,6 +57,7 @@ void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &ti
 
 // TODO: how to proceed:
 //       1) Create a way to automatically run tests and gather results.
+//       2) Create a way to understand the interval in which the parameter should fall.
 
 int main(int argc, char *argv[])
 {

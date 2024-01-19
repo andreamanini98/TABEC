@@ -1,7 +1,7 @@
 #ifndef UTOTPARSER_RANDOMCREATORFACTORY_H
 #define UTOTPARSER_RANDOMCREATORFACTORY_H
 
-#include "TAHeaders/TATileHeaders/TileTokensEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTokensEnum.h"
 #include "TAHeaders/TATileHeaders/tileRandomCreatorFactory/TileRandomCreatorFactory.hpp"
 #include "TAHeaders/TATileHeaders/tileRandomCreatorFactory/RandomCreator.hpp"
 #include "TAHeaders/TATileHeaders/tileRandomCreatorFactory/RandomCreatorBarabasiAlbert.hpp"

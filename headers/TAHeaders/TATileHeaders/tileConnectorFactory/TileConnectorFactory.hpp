@@ -2,7 +2,7 @@
 #define UTOTPARSER_TILECONNECTORFACTORY_H
 
 #include "TAHeaders/TATileHeaders/tileConnectorFactory/Connector.hpp"
-#include "TAHeaders/TATileHeaders/TileTokensEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTokensEnum.h"
 
 
 class TileConnectorFactory {

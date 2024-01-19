@@ -2,7 +2,7 @@
 #define UTOTPARSER_ACTIONLPAREN_H
 
 #include "utilities/StringsGetter.hpp"
-#include "TAHeaders/TATileHeaders/TileTokensEnum.h"
+#include "TAHeaders/TATileHeaders/tileEnums/TileTokensEnum.h"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionPushTile.hpp"
 
 
