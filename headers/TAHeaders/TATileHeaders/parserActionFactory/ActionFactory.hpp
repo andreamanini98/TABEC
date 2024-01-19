@@ -10,6 +10,7 @@
 #include "TAHeaders/TATileHeaders/lexerAndParser/ParserNode.hpp"
 #include "DoublyLinkedList.hpp"
 #include "TAHeaders/TATileHeaders/TileTokensEnum.h"
+#include "TAHeaders/TATileHeaders/TileTypeEnum.h"
 
 
 class ActionFactory : public ParserActionFactory {
@@ -17,29 +18,55 @@ class ActionFactory : public ParserActionFactory {
 private:
     StringsGetter &stringsGetter;
 
-    // A vector of pairs defining in the second element the actual tile identifier appearing in the
-    // compositional tile string, while in the first element the tile token corresponding to that symbol.
-    std::vector<std::pair<std::string, std::string>> &availableTiles;
+    // A vector of pairs which content is:
+    // 1) The type of the tile.
+    // 2) A vector of pairs defining in the second element the actual tile identifier appearing in the
+    //    compositional tile string, while in the first element the tile token corresponding to that symbol.
+    std::vector<std::pair<TileTypeEnum, std::vector<std::pair<std::string, std::string>>>> &availableTiles;
 
 
     /**
      * Method used to check if a given token corresponds to a tile's name.
      * This is done since we want to keep separate the enumeration and the way in which the available tiles are gathered.
      * @param token the token to check if it is corresponding to a tile's name.
+     * @param tiles a vector of pairs defining in the second element the actual tile identifier appearing in the
+     *              compositional tile string, while in the first element the tile token corresponding to that symbol.
      * @return true if 'token' corresponds to a tile, false otherwise.
      */
-    bool checkIfTile(const std::string &token)
+    static bool checkIfTile(const std::string &token, const std::vector<std::pair<std::string, std::string>> &tiles)
     {
         return std::any_of(
-                availableTiles.begin(), availableTiles.end(),
-                [token](const auto &availableTile) {
-                    return availableTile.first == token;
+                tiles.begin(), tiles.end(),
+                [token](const auto &tile) {
+                    return tile.first == token;
                 });
     }
 
 
+    /**
+     * Method used to tell if a given token is a tile, checking every type of available tiles as specified in
+     * the availableTiles vector, gathered from the lexer.
+     * The returned value is a pair, containing:
+     * 1) The type of the tile.
+     * 2) True if the token corresponds to a tile, false otherwise.
+     * Note that, if false must be returned, the 'notAType' dummy value is inserted in the first position of the pair.
+     * @param token the token to check if it is corresponding to a tile's name.
+     * @return a pair as described above.
+     */
+    std::pair<TileTypeEnum, bool> checkIfTileForType(const std::string &token)
+    {
+        // For each element of 'availableTiles', the check must be carried out.
+        for (auto &tileVec: availableTiles)
+            if (checkIfTile(token, tileVec.second))
+                return std::make_pair(tileVec.first, true);
+
+        // If no tile corresponds to the given token, false is returned.
+        return std::make_pair(notAType, false);
+    }
+
+
 public:
-    ActionFactory(StringsGetter &stringsGetter, std::vector<std::pair<std::string, std::string>> &availableTiles) :
+    ActionFactory(StringsGetter &stringsGetter, std::vector<std::pair<TileTypeEnum, std::vector<std::pair<std::string, std::string>>>> &availableTiles) :
             stringsGetter(stringsGetter), availableTiles(availableTiles)
     {};
 
@@ -71,8 +98,11 @@ public:
                 return new ActionPushRandomTile(stringsGetter, parserList, token, syntaxParameter);
 
             case maybe_tile:
-                if (checkIfTile(token))
-                    return new ActionPushTile(stringsGetter, parserList, token);
+            {
+                std::pair<TileTypeEnum, bool> isTile { checkIfTileForType(token) };
+                if (isTile.second)
+                    return new ActionPushTile(stringsGetter, parserList, token, isTile.first);
+            }
 
             default:
                 std::cerr << BHRED << "Not available token." << rstColor << std::endl;

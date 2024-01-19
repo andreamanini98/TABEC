@@ -13,6 +13,8 @@
 
 using json = nlohmann::json;
 
+#define TILE_TYPE_DEFINED
+
 
 /**
  * Function used to print the TiledTA.
@@ -52,6 +54,7 @@ void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &ti
 }
 
 
+#ifndef TILE_TYPE_DEFINED
 /**
  * Function used to insert in the 'tiles' vector the name of the tile and its json representation.
  * These tiles will then be used for constructing the Tiled TA.
@@ -81,6 +84,7 @@ void gatherNeededTiles(const std::string &inputDirPath, std::vector<std::pair<st
     if (tiles.empty())
         throw NeededTilesNotPresentException("Exception: no wanted tile is present between the available ones");
 }
+#endif
 
 
 int main(int argc, char *argv[])
@@ -97,7 +101,10 @@ int main(int argc, char *argv[])
         {
             TATileInputParser taTileInputParser(stringsGetter);
             tiledTA = taTileInputParser.getTiledTA();
-        } else
+        }
+
+#ifndef TILE_TYPE_DEFINED
+        else
         {
             // Each pair contains the tile's name and its json representation.
             std::vector<std::pair<std::string, json>> tiles;
@@ -111,6 +118,7 @@ int main(int argc, char *argv[])
             TATileConstructor taTileConstructor(tiles);
             tiledTA = taTileConstructor.createTAFromTiles();
         }
+#endif
 
         std::string tiledTAName = "TiledTA";
 

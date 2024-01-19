@@ -11,8 +11,6 @@
 
 class StringsGetter {
 
-    // TODO: maybe here you can initialize all the attributes directly in the initializer list.
-
 private:
     // Path to the current working directory.
     std::string currentDirPath {};
@@ -44,11 +42,19 @@ private:
     // Path to the directory containing tiles to be used by the constructor.
     std::string inputTilesDirPath {};
 
+    // Path to the directory containing acceptance tiles to be used by the constructor.
+    std::string accTilesDirPath {};
+
+    // Path to the directory containing binary tiles to be used by the constructor.
+    std::string binTilesDirPath {};
+
+    // Path to the directory containing ternary tiles to be used by the constructor.
+    std::string triTilesDirPath {};
+
 
 public:
-    explicit StringsGetter(CliHandler &cliHandler)
+    explicit StringsGetter(CliHandler &cliHandler) : currentDirPath(XSTRING(SOURCE_ROOT))
     {
-        currentDirPath = XSTRING(SOURCE_ROOT);
         inputDirPath = cliHandler.isCmd(src) ? cliHandler.getCmdArgument(src) : (currentDirPath + "/inputFiles");
         outputDirPath = cliHandler.isCmd(dst) ? cliHandler.getCmdArgument(dst) : (currentDirPath + "/outputs/outputFiles");
         scriptsDirPath = currentDirPath + "/scriptsForChecks";
@@ -58,6 +64,9 @@ public:
         outputDOTsDirPath = currentDirPath + "/outputs/outputDOTs";
         outputDirForCheckingPathLogs = currentDirPath + "/outputs/logs/outputFilesForCheckingLogs";
         inputTilesDirPath = currentDirPath + "/inputTiles";
+        accTilesDirPath = inputTilesDirPath + "/accTiles";
+        binTilesDirPath = inputTilesDirPath + "/binTiles";
+        triTilesDirPath = inputTilesDirPath + "/triTiles";
     }
 
 
@@ -112,6 +121,24 @@ public:
     [[nodiscard]] const std::string &getInputTilesDirPath() const
     {
         return inputTilesDirPath;
+    }
+
+
+    [[nodiscard]] const std::string &getAccTilesDirPath() const
+    {
+        return accTilesDirPath;
+    }
+
+
+    [[nodiscard]] const std::string &getBinTilesDirPath() const
+    {
+        return binTilesDirPath;
+    }
+
+
+    [[nodiscard]] const std::string &getTriTilesDirPath() const
+    {
+        return triTilesDirPath;
     }
 
 };

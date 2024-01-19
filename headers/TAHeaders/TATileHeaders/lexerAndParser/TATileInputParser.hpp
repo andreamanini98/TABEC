@@ -17,6 +17,7 @@
 #include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ActionFactory.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/ParserActionFactory.hpp"
+#include "TAHeaders/TATileHeaders/TileTypeEnum.h"
 
 using json = nlohmann::json;
 
@@ -147,7 +148,12 @@ private:
      */
     void performAction(const std::string &token, int syntaxParameter)
     {
-        std::vector<std::pair<std::string, std::string>> availableTiles = taTileInputLexer.getTileTokens();
+        // The content of this vector is the following:
+        // 1) The type of the tile.
+        // 2) A vector of pairs containing:
+        //    1) The token of the tile.
+        //    2) The symbol representing the tile used in the compositional string.
+        std::vector<std::pair<TileTypeEnum, std::vector<std::pair<std::string, std::string>>>> availableTiles = taTileInputLexer.getTileTokens();
 
         ParserActionFactory *actionFactory = new ActionFactory(stringsGetter, availableTiles);
         Action *action = actionFactory->createAction(parserList, token, syntaxParameter);

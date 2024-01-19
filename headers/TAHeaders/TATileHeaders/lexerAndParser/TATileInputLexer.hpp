@@ -3,6 +3,7 @@
 
 #include "utilities/Utils.hpp"
 #include "utilities/StringsGetter.hpp"
+#include "TAHeaders/TATileHeaders/TileTypeEnum.h"
 
 // Context-free grammar describing our compositional language:
 // -----------------------------------------------------------
@@ -18,15 +19,13 @@
 // 3) Add the tokens and their respective symbol in the operatorTokens vector in TATileInputLexer.hpp.
 // 4) Add the corresponding actions creating a new Action in the parserActionFactory folder or modify existing ones.
 
-// Example of valid compositional strings:
-// t4 ++ (t1 + t3) (t2 + t3)
-// t4 ++ (t4 ++ t3 t3) (t4 ++ t3 t3)
-// t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))
-
 class TATileInputLexer {
 
 private:
     StringsGetter &stringsGetter;
+
+    // A vector comprising both operator and tile tokens.
+    std::vector<std::pair<std::string, std::string>> tokens {};
 
     // A vector of pairs defining in the second element the actual symbol appearing in the
     // compositional tile string, while in the first element the token corresponding to that symbol.
@@ -49,31 +48,73 @@ private:
                     { "Operator: ++\nSyntax:   t1 ++ t2 t3\nExample:  Creates a tree concatenating the 'in' location of t2 and t3 to one 'out' location of t1." }
             };
 
-    // A vector of pairs defining in the second element the actual tile identifier appearing in the
-    // compositional tile string, while in the first element the tile token corresponding to that symbol.
-    std::vector<std::pair<std::string, std::string>> tileTokens
+    // The following are vectors of pairs defining in the second element the actual tile identifier appearing in
+    // the compositional tile string, while in the first element the tile token corresponding to that symbol.
+
+    // Vector representing randomly-generated tiles.
+    std::vector<std::pair<std::string, std::string>> rngTileTokens
             {
                     { "t_barabasi_albert", "t:BA" } // Random-generated tile.
             };
 
-    // A vector comprising both operator and tile tokens.
-    std::vector<std::pair<std::string, std::string>> tokens {};
+    // Vector representing acceptance tiles.
+    // Those tiles must have one 'in' location, no 'out' locations and at least one accepting location.
+    std::vector<std::pair<std::string, std::string>> accTileTokens {};
+
+    // Vector representing binary tiles.
+    // Those tiles must have one 'in' location and one 'out' location.
+    std::vector<std::pair<std::string, std::string>> binTileTokens {};
+
+    // Vector representing ternary tiles.
+    // Those tiles must have one 'in' location and two 'out' locations.
+    std::vector<std::pair<std::string, std::string>> triTileTokens {};
 
 
     /**
-     * Method used to get the names of all the files contained in a specified directory.
-     * @param inputDirPath a path to the directory from which to take the file names
-     * @return a vector containing the name of all the files in the specified directory.
+     * Method used to gather the name of the available tiles for a given directory path.
+     * @param startId the integer identifier used to number the tiles' symbol used in the compositional string.
+     * @param directoryPath the directory in which to look for the available tiles.
+     * @param tileTokens the vector in which to store the available tiles.
+     * @return an integer representing the number of tiles that has been found.
      */
-    void getAvailableTiles()
+    static int emplaceTile(int startId, const std::string &directoryPath, std::vector<std::pair<std::string, std::string>> &tileTokens)
     {
-        int tileId = 1;
-        for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getInputTilesDirPath()))
+        int tileId = startId;
+        for (const auto &entry: getEntriesInAlphabeticalOrder(directoryPath))
         {
             std::string tileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
             tileTokens.emplace_back(tileName, "t" + std::to_string(tileId));
             tileId++;
         }
+        return tileId;
+    }
+
+
+    /**
+     * Method used to get the names of all the tiles available to use.
+     */
+    void getAvailableTiles()
+    {
+        // A progressive integer used to differentiate the name of the tiles to be used in the compositional string.
+        int tileId { 1 };
+
+        // For each accepting, binary and ternary type of tile, gather the available ones.
+        tileId = emplaceTile(tileId, stringsGetter.getAccTilesDirPath(), accTileTokens);
+        tileId = emplaceTile(tileId, stringsGetter.getBinTilesDirPath(), binTileTokens);
+        emplaceTile(tileId, stringsGetter.getTriTilesDirPath(), triTileTokens);
+    }
+
+
+    /**
+     * Method used to display the available tiles, printing the symbol and the name of such tiles.
+     * @param message a string to be displayed before printing the tiles.
+     * @param vector the vector containing the available tiles to print.
+     */
+    static void displayVectorOfTiles(const std::string &message, const std::vector<std::pair<std::string, std::string>> &vector)
+    {
+        std::cout << message;
+        for (auto &token: vector)
+            std::cout << "\u25CF " << token.second << " - " << token.first << '\n';
     }
 
 
@@ -83,8 +124,10 @@ private:
     void displayAvailableTiles()
     {
         std::cout << "The following tiles are available:\n";
-        for (auto &token: tileTokens)
-            std::cout << "\u25CF " << token.second << " - " << token.first << '\n';
+        displayVectorOfTiles("\nAccepting tiles:\n", accTileTokens);
+        displayVectorOfTiles("\nBinary tiles:\n", binTileTokens);
+        displayVectorOfTiles("\nTernary tiles:\n", triTileTokens);
+        displayVectorOfTiles("\nRandomly-generated tiles:\n", rngTileTokens);
     }
 
 
@@ -146,7 +189,10 @@ public:
     {
         getAvailableTiles();
         tokens.insert(tokens.end(), operatorTokens.begin(), operatorTokens.end());
-        tokens.insert(tokens.end(), tileTokens.begin(), tileTokens.end());
+        tokens.insert(tokens.end(), accTileTokens.begin(), accTileTokens.end());
+        tokens.insert(tokens.end(), binTileTokens.begin(), binTileTokens.end());
+        tokens.insert(tokens.end(), triTileTokens.begin(), triTileTokens.end());
+        tokens.insert(tokens.end(), rngTileTokens.begin(), rngTileTokens.end());
     };
 
 
@@ -202,8 +248,22 @@ public:
     }
 
 
-    std::vector<std::pair<std::string, std::string>> getTileTokens()
+    /**
+     * Method used to return all the available tiles, grouped in a vector based on their type.
+     * The returned vector has the following content:
+     * 1) The type of the tile.
+     * 2) A vector of pairs containing:
+     *    1) The token of the tile.
+     *    2) The symbol representing the tile used in the compositional string.
+     * Randomly-generated tiles are not returned here, since they're handled separately in the parser.
+     * @return a vector containing all the available tiles grouped by type.
+     */
+    std::vector<std::pair<TileTypeEnum, std::vector<std::pair<std::string, std::string>>>> getTileTokens()
     {
+        std::vector<std::pair<TileTypeEnum, std::vector<std::pair<std::string, std::string>>>> tileTokens {};
+        tileTokens.emplace_back(accTile, accTileTokens);
+        tileTokens.emplace_back(binTile, binTileTokens);
+        tileTokens.emplace_back(triTile, triTileTokens);
         return tileTokens;
     }
 
