@@ -53,7 +53,7 @@ const std::string tns { "-tns" };
 // This will require the maximum number of states as subsequent argument.
 const std::string sup { "-sup" };
 
-// Tells the constructor to shou a help message when starting.
+// Tells the constructor to show a help message when starting.
 const std::string hcr { "-hcr" };
 
 // ------------------------------------------------------------------------------------------

@@ -51,10 +51,6 @@ void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &ti
 }
 
 
-// TODO: you should change the way in which you specify tiles here. The tool must automatically infer
-//       which tiles are usable for binary or ternary operators, in addition to handling the special case
-//       of tile-accepting. maybe a cycle on the tiles counting how many in/out locations are present may suffice.
-
 // TODO: how to proceed:
 //       1) Create a way to automatically run tests and gather results.
 //       2) Create a way to understand the interval in which the parameter should fall.
@@ -63,6 +59,7 @@ int main(int argc, char *argv[])
 {
     CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
+    TATileInputParser taTileInputParser(stringsGetter);
 
     // Integer indicating the maximum number of states randomly-generated tiles will have.
     int maxNumOfRandomStates { cliHandler.isCmd(sup) ? std::stoi(cliHandler.getCmdArgument(sup)) : 5 };
@@ -73,8 +70,14 @@ int main(int argc, char *argv[])
     if (cliHandler.isCmd(tns))
         taTileRegExGenerator = new TATileRegExGenerator(std::stoi(cliHandler.getCmdArgument(tns)));
     else if (cliHandler.isCmd(tst))
-        taTileRegExGenerator = new TATileRegExGeneratorStrict(std::stoi(cliHandler.getCmdArgument(tst)), maxNumOfRandomStates);
-    else
+    {
+        taTileRegExGenerator = new TATileRegExGeneratorStrict(
+                std::stoi(cliHandler.getCmdArgument(tst)), maxNumOfRandomStates,
+                taTileInputParser.getRngTileTokens(),
+                taTileInputParser.getAccTileTokens(),
+                taTileInputParser.getBinTileTokens(),
+                taTileInputParser.getTriTileTokens());
+    } else
     {
         std::cerr << BHRED << "Invalid argument specified for running the tester." << rstColor << std::endl;
         return EXIT_FAILURE;
@@ -82,13 +85,13 @@ int main(int argc, char *argv[])
 
     std::cout << "Starting generating random tests.\n";
 
-    for (int i = 0; i < 5; i++)
+    // TODO let the user specify the number of tests to be executed by command line parameter
+    for (int i = 0; i < 1; i++)
     {
         std::string regEx { taTileRegExGenerator->generateRegEx() };
         std::cout << "Obtained string:\n" << regEx << "\n";
 
-        TATileInputParser taTileInputParser(stringsGetter, regEx);
-        json tiledTA = taTileInputParser.getTiledTA();
+        json tiledTA = taTileInputParser.getTiledTA(regEx);
 
         std::string TAName = "RegExTA_" + std::to_string(i + 1);
 

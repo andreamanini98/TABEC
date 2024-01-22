@@ -11,33 +11,34 @@
 
 // Context-free grammar describing our compositional language (strict version):
 // ----------------------------------------------------------------------------
-// TiledTA -> BinTile | TriTile | RngTile | (BinTile | RngTile) Bin TiledTA | TriTile Tri '(' TiledTA ')' '(' TiledTA ')' | '(' TiledTA ')'
+// TA -> '(' TiledTA ')' '+1' AccTile
+// TiledTA -> BinTile | RngTile | (BinTile | RngTile) Bin TiledTA | TriTile Tri '(' TiledTA ')' '(' TiledTA ')' | '(' TiledTA ')'
 // Bin -> '+'
 // Tri -> '++'
+// AccTile -> t (where t is a tile derived from an .xml file which can only have one 'in' location and no 'out' locations).
 // BinTile -> t (where t is a tile derived from an .xml file which can only apply to a binary operator).
 // TriTile -> t (where t is a tile derived from an .xml file which can only apply to a ternary operator).
 // RngTile -> t | t '[' Integer ']' (where t is a randomly-generated tile which can only apply to a binary operator).
 // Integer -> epsilon | (1..9)(0..9)*
 
-// tile-accepting is a tile that should not appear anywhere but at the end of the entire string.
-
 class TATileRegExGeneratorStrict : public TATileRegExGenerator {
 
 private:
+    // The non-terminal representing a random tile which can be connected with a binary operator.
+    const std::string rngTile { "RngTile" };
+
+    // The non-terminal representing a tile composed only by one 'in' location and no 'out' locations.
+    // This tile must also have one accepting location inside.
+    const std::string accTile { "AccTile" };
+
     // The non-terminal representing a tile which can be connected with a binary operator.
     const std::string binTile { "BinTile" };
 
     // The non-terminal representing a tile which can be connected with a ternary operator.
     const std::string triTile { "TriTile" };
 
-    // The non-terminal representing a random tile which can be connected with a binary operator.
-    const std::string rngTile { "RngTile" };
-
     // The non-terminal representing a random integer number.
     const std::string integer { "Integer" };
-
-    // The non-terminal representing a tile composed only by one 'in' accepting state.
-    const std::string acceptingTile { "t3" };
 
     // Integer indicating the maximum number of states randomly-generated tiles will have.
     int maxNumOfRandomStates {};
@@ -128,10 +129,33 @@ private:
     }
 
 
+    /**
+     * Method used to add an additional accepting tile to the randomly-generated TiledTA.
+     * This is done to ensure at least one accepting location is present, since other tiles may not have one.
+     * @param regEx the regular expression representing the TiledTA in which to add the accepting tile.
+     * @param gen a regular expression containing the additional accepting tile.
+     */
+    void addAcceptingTile(std::string &regEx, std::mt19937 &gen)
+    {
+        // Using the '+1' operator since it ensures that the accepting tile will be
+        // connected to at least one location of the randomly-generated tiled TA.
+        regEx = "( " + regEx + " )" + " +1 " + pickRandomExpansion(accTile, gen);
+    }
+
+
 public:
-    explicit TATileRegExGeneratorStrict(int maxIter, int maxNumOfRandomStates) :
+    explicit TATileRegExGeneratorStrict(int maxIter,
+                                        int maxNumOfRandomStates,
+                                        std::vector<std::string> rngTileTokens,
+                                        std::vector<std::string> accTileTokens,
+                                        std::vector<std::string> binTileTokens,
+                                        std::vector<std::string> triTileTokens) :
             TATileRegExGenerator(maxIter), maxNumOfRandomStates(maxNumOfRandomStates)
     {
+        // Creating also parametrized versions of rng tokens.
+        for (const std::string &rngToken: rngTileTokens)
+            rngTileTokens.push_back(rngToken + "[" + integer + "]");
+
         expansionRules = {
                 { startSymbol, { binTile + " " + binOp + " " + startSymbol,
                                        rngTile + " " + binOp + " " + startSymbol,
@@ -142,13 +166,13 @@ public:
 
                 { triOp,       { "++" }},
 
-                { binTile,     { "t1",  // tile_0_5.
-                                       "t2" }}, // tile_3_inf.
+                { rngTile,     rngTileTokens },
 
-                { triTile,     { "t4" }}, // tile_double_out
+                { accTile,     accTileTokens },
 
-                { rngTile,     { "t:BA",
-                                       "t:BA[" + integer + "]" }}
+                { binTile,     binTileTokens },
+
+                { triTile,     triTileTokens }
         };
         nonStartingNonTerminals = { binOp, triOp, binTile, triTile, rngTile };
     }
@@ -199,9 +223,7 @@ public:
         substituteInteger(regEx, gen);
 
         // Adding the accepting tile at the end since tiles may not have one accepting location inside them.
-        // Using the '+1' operator since it ensures that the accepting_tile will be connected to at least
-        // one location of the randomly-generated tiled TA.
-        regEx = "( " + regEx + " )" + " +1 " + acceptingTile;
+        addAcceptingTile(regEx, gen);
 
         return regEx;
     }

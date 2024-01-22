@@ -206,18 +206,15 @@ private:
 
 
 public:
+    explicit TATileInputParser(StringsGetter &stringsGetter) : stringsGetter(stringsGetter), taTileInputLexer(stringsGetter)
+    {};
+
+
     TATileInputParser(StringsGetter &stringsGetter, bool showHelp) : stringsGetter(stringsGetter), taTileInputLexer(stringsGetter)
     {
         parserList.insertFirst(ParserNode());
         compositionalTileString = taTileInputLexer.getTokenizedCompositionalString(showHelp);
     };
-
-
-    TATileInputParser(StringsGetter &stringsGetter, std::string &str) : stringsGetter(stringsGetter), taTileInputLexer(stringsGetter)
-    {
-        parserList.insertFirst(ParserNode());
-        compositionalTileString = taTileInputLexer.getTokenizedCompositionalString(str);
-    }
 
 
     /**
@@ -230,6 +227,44 @@ public:
         parseAndPerformActions();
 
         return parserList.getHead()->content.tileStack.top();
+    }
+
+
+    /**
+     * Method used to merge together the given tiles and obtain a Tiled TA, contained in the given 'str' parameter.
+     * Useful when creating the parser using the constructor accepting only the 'stringsGetter' parameter.
+     * @param str the string describing the structure of the TA.
+     * @return a json representation of a Tiled TA obtained by combining the given tiles and operators.
+     */
+    json getTiledTA(std::string &str)
+    {
+        parserList.insertFirst(ParserNode());
+        compositionalTileString = taTileInputLexer.getTokenizedCompositionalString(str);
+        return getTiledTA();
+    }
+
+
+    std::vector<std::string> getRngTileTokens()
+    {
+        return taTileInputLexer.getRngTileTokens();
+    }
+
+
+    std::vector<std::string> getAccTileTokens()
+    {
+        return taTileInputLexer.getAccTileTokens();
+    }
+
+
+    std::vector<std::string> getBinTileTokens()
+    {
+        return taTileInputLexer.getBinTileTokens();
+    }
+
+
+    std::vector<std::string> getTriTileTokens()
+    {
+        return taTileInputLexer.getTriTileTokens();
     }
 
 };
