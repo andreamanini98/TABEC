@@ -2,6 +2,7 @@
 #include <fstream>
 #include "nlohmann/json.hpp"
 
+#include "utilities/Utils.hpp"
 #include "utilities/StringsGetter.hpp"
 #include "utilities/CliHandler.hpp"
 #include "TAHeaders/TADotConverter.hpp"
@@ -51,6 +52,20 @@ void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &ti
 }
 
 
+/**
+ * Method used to clean directories before starting the automatic test generation.
+ * @param stringsGetter a 'StringsGetter' that will retrieve the paths for the directories to clean.
+ */
+void cleanDirectories(StringsGetter &stringsGetter)
+{
+    deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPathLogs());
+    deleteDirectoryContents(stringsGetter.getOutputDOTsDirPath());
+    deleteDirectoryContents(stringsGetter.getOutputDirPath());
+    deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
+    deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
+}
+
+
 // TODO: how to proceed:
 //       1) Create a way to automatically run tests and gather results.
 //       2) Create a way to understand the interval in which the parameter should fall.
@@ -60,6 +75,9 @@ int main(int argc, char *argv[])
     CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
     TATileInputParser taTileInputParser(stringsGetter);
+
+    // Cleaning directories before starting test generation.
+    cleanDirectories(stringsGetter);
 
     // Integer indicating the maximum number of states randomly-generated tiles will have.
     int maxNumOfRandomStates { cliHandler.isCmd(sup) ? std::stoi(cliHandler.getCmdArgument(sup)) : 5 };
@@ -85,8 +103,8 @@ int main(int argc, char *argv[])
 
     std::cout << "Starting generating random tests.\n";
 
-    // TODO let the user specify the number of tests to be executed by command line parameter
-    for (int i = 0; i < 1; i++)
+    int numTests = cliHandler.isCmd(nbt) ? std::stoi(cliHandler.getCmdArgument(nbt)) : 10;
+    for (int i = 0; i < numTests; i++)
     {
         std::string regEx { taTileRegExGenerator->generateRegEx() };
         std::cout << "Obtained string:\n" << regEx << "\n";

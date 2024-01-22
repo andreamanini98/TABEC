@@ -56,6 +56,10 @@ const std::string sup { "-sup" };
 // Tells the constructor to show a help message when starting.
 const std::string hcr { "-hcr" };
 
+// Specifies how many tests to be executed by the tester.
+// This will require the number of tests to execute as subsequent argument.
+const std::string nbt {"-nbt"};
+
 // ------------------------------------------------------------------------------------------
 
 

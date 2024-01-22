@@ -35,7 +35,6 @@ public:
         json randomTile = randomCreator->createRandomTile();
 
         // Each tile has to be renamed in order to avoid name clashes.
-        // TODO: once finished, check if the tile gets correctly renamed.
         TATileRenamer::renameIDs(randomTile);
         parserList.getHead()->content.tileStack.push(randomTile);
     }
