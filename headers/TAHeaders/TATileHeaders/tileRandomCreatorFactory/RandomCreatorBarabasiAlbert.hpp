@@ -46,7 +46,9 @@ private:
      */
     static std::string getValidId(int idNumber)
     {
-        return "Id" + std::to_string(idNumber);
+        // Inserting a string after the 'idNumber' since duplicates may arise due to
+        // the adopted numbering convention when creating many large random networks.
+        return "Id" + std::to_string(idNumber) + "BA";
     }
 
 
