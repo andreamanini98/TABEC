@@ -29,6 +29,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/outputPDFs)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/outputDOTs)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/logs)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/logs/outputFilesForCheckingLogs)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/logs/testingResults)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
 
@@ -44,3 +45,4 @@ execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/gt
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/lt2CCycle.sh)
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/lt2CScale.sh)
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/tCheckerLiveness.sh)
+execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scripts/collectResults.sh)

@@ -21,8 +21,11 @@ private:
     // Path to the output directory where files are going to be written.
     std::string outputDirPath {};
 
-    // Path to the directory containing shell scripts.
+    // Path to the directory containing shell scripts used for checks.
     std::string scriptsDirPath {};
+
+    // Path to the directory containing shell scripts used for various purposes but checking.
+    std::string otherScriptsPath {};
 
     // Path to the directory containing TA descriptions where parameters have been substituted with appropriate values.
     std::string outputDirForCheckingPath {};
@@ -51,6 +54,9 @@ private:
     // Path to the directory containing ternary tiles to be used by the constructor.
     std::string triTilesDirPath {};
 
+    // Path to the directory containing results derived from testing.
+    std::string testingResultsDirPath {};
+
 
 public:
     explicit StringsGetter(CliHandler &cliHandler) : currentDirPath(XSTRING(SOURCE_ROOT))
@@ -67,6 +73,8 @@ public:
         accTilesDirPath = inputTilesDirPath + "/accTiles";
         binTilesDirPath = inputTilesDirPath + "/binTiles";
         triTilesDirPath = inputTilesDirPath + "/triTiles";
+        testingResultsDirPath = currentDirPath + "/outputs/logs/testingResults";
+        otherScriptsPath = currentDirPath + "/scripts";
     }
 
 
@@ -139,6 +147,18 @@ public:
     [[nodiscard]] const std::string &getTriTilesDirPath() const
     {
         return triTilesDirPath;
+    }
+
+
+    [[nodiscard]] const std::string &getTestingResultsDirPath() const
+    {
+        return testingResultsDirPath;
+    }
+
+
+    [[nodiscard]] const std::string &getOtherScriptsPath() const
+    {
+        return otherScriptsPath;
     }
 
 };

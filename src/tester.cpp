@@ -64,6 +64,7 @@ void cleanDirectories(StringsGetter &stringsGetter)
     deleteDirectoryContents(stringsGetter.getOutputDirPath());
     deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
     deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
+    deleteDirectoryContents(stringsGetter.getTestingResultsDirPath());
 }
 
 
@@ -113,9 +114,21 @@ void writeLogs(StringsGetter &stringsGetter, TATileInputParser &parser, const st
 }
 
 
-// TODO: how to proceed:
-//       1) Create a way to automatically run tests and gather results.
-//       2) Create a way to understand the interval in which the parameter should fall.
+/**
+ * Function which, by calling a shell script, collects all the results in a single file.
+ * @param stringsGetter a string getter.
+ */
+void gatherResults(StringsGetter &stringsGetter)
+{
+    system(
+            spaceStr({
+                             stringsGetter.getOtherScriptsPath() + "/collectResults.sh", // Script name
+                             stringsGetter.getOutputDirForCheckingPathLogs(),            // $1
+                             stringsGetter.getTestingResultsDirPath(),                   // $2
+                             stringsGetter.getTCheckerBinPath()                          // $3
+                     }).c_str());
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -167,7 +180,7 @@ int main(int argc, char *argv[])
         convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), TAName, tiledTA);
     }
 
-    // Here you should gather the results of the tests.
+    gatherResults(stringsGetter);
 
     return EXIT_SUCCESS;
 }

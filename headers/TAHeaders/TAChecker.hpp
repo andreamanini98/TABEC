@@ -272,8 +272,8 @@ private:
 public:
     TAChecker(StringsGetter &stringsGetter, CliHandler &cliHandler) : stringsGetter(stringsGetter), cliHandler(cliHandler)
     {
-        this->shellScriptPath = stringsGetter.getScriptsDirPath();
-        this->tCheckerBinPath = stringsGetter.getTCheckerBinPath();
+        shellScriptPath = stringsGetter.getScriptsDirPath();
+        tCheckerBinPath = stringsGetter.getTCheckerBinPath();
     }
 
 
