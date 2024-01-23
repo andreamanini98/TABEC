@@ -10,6 +10,7 @@
 #include "TAHeaders/TATileHeaders/regexGenerator/TATileRegExGenerator.hpp"
 #include "TAHeaders/TATileHeaders/regexGenerator/TATileRegExGeneratorStrict.hpp"
 #include "TAHeaders/TATileHeaders/lexerAndParser/TATileInputParser.hpp"
+#include "utilities/Logger.hpp"
 
 using json = nlohmann::json;
 
@@ -112,6 +113,9 @@ int main(int argc, char *argv[])
         json tiledTA = taTileInputParser.getTiledTA(regEx);
 
         std::string TAName = "RegExTA_" + std::to_string(i + 1);
+
+        Logger logger(stringsGetter.getOutputDirForCheckingPathLogs(), TAName + ".txt");
+        logger.writeLog("RegEx generated:\n" + regEx + "\n\n");
 
         printTiledTA(tiledTA);
         convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), TAName, tiledTA);

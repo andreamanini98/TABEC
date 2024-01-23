@@ -40,7 +40,6 @@ public:
     Logger(std::string logDirPath, std::string logFileName) : logDirPath(std::move(logDirPath)), logFileName(std::move(logFileName))
     {
         this->logPath = this->logDirPath + "/" + this->logFileName;
-        clearLogs();
         writeLog("Default logger created as: " + logPath);
     }
 
@@ -48,7 +47,7 @@ public:
     /**
      * Method used to clear the log file written by the logger.
      */
-    void clearLogs()
+    [[maybe_unused]] void clearLogs()
     {
         // In order to clean logging files, we open them in truncating mode.
         std::ofstream file(logPath, std::ofstream::out | std::ofstream::trunc);

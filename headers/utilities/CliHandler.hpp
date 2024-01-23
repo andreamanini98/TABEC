@@ -60,6 +60,9 @@ const std::string hcr { "-hcr" };
 // This will require the number of tests to execute as subsequent argument.
 const std::string nbt {"-nbt"};
 
+// Used to specify in the checker if logs have to be deleted or not.
+const std::string cls { "-cls" };
+
 // ------------------------------------------------------------------------------------------
 
 
@@ -67,7 +70,7 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns, sup, hcr};
+    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns, sup, hcr, nbt, cls};
 
     // A pointer to main's argc.
     int *argc_p;

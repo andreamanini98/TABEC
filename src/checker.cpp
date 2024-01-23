@@ -12,6 +12,22 @@
 using json = nlohmann::json;
 
 
+/**
+ * Method used to delete the content of directories before starting the checking process.
+ * Please follow these guidelines:
+ * - A deletion of 'outputFilesForCheckingPathLogs' directory should occur when starting the checker alone.
+ * - A deletion of 'outputFilesForCheckingPathLogs' directory should not occur when starting the checker after the tester.
+ * @param cliHandler an handler for command-line arguments.
+ * @param stringsGetter a getter for strings.
+ */
+void clearDirectoryContent(CliHandler &cliHandler, StringsGetter &stringsGetter)
+{
+    if (cliHandler.isCmd(cls))
+        deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPathLogs());
+    deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
+}
+
+
 int main(int argc, char *argv[])
 {
     try
@@ -24,7 +40,7 @@ int main(int argc, char *argv[])
 
         TAChecker taChecker(stringsGetter, cliHandler);
 
-        deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
+        clearDirectoryContent(cliHandler, stringsGetter);
 
         try
         {
