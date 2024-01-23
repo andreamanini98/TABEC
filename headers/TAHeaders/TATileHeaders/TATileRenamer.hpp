@@ -17,11 +17,13 @@ private:
 
     /**
      * Method used to get a string representation of taNonce.
+     * Inserting a string before the 'taNonce' since duplicates may arise due to
+     * the adopted numbering convention when creating many large TAs.
      * @return a string representation of taNonce.
      */
     static std::string taNonceStr()
     {
-        return std::to_string(taNonce);
+        return "T" + std::to_string(taNonce);
     }
 
 
@@ -101,6 +103,15 @@ public:
         renameLocationsIDs(tile);
         renameTransitions(tile);
         taNonce++;
+    }
+
+
+    /**
+     * Method used to reset the 'taNonce' attribute to 0.
+     */
+    static void resetTANonce()
+    {
+        taNonce = 0;
     }
 
 };

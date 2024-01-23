@@ -11,6 +11,7 @@
 #include "TAHeaders/TATileHeaders/regexGenerator/TATileRegExGeneratorStrict.hpp"
 #include "TAHeaders/TATileHeaders/lexerAndParser/TATileInputParser.hpp"
 #include "utilities/Logger.hpp"
+#include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
 
 using json = nlohmann::json;
 
@@ -168,6 +169,9 @@ int main(int argc, char *argv[])
     int numTests = cliHandler.isCmd(nbt) ? std::stoi(cliHandler.getCmdArgument(nbt)) : 10;
     for (int i = 0; i < numTests; i++)
     {
+        // Resetting the nonce at each test generation in order to avoid the index becoming too big.
+        TATileRenamer::resetTANonce();
+
         std::string regEx { taTileRegExGenerator->generateRegEx() };
         std::cout << "Obtained string:\n" << regEx << "\n";
 
