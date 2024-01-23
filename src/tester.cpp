@@ -118,14 +118,16 @@ void writeLogs(StringsGetter &stringsGetter, TATileInputParser &parser, const st
  * Function which, by calling a shell script, collects all the results in a single file.
  * @param stringsGetter a string getter.
  */
-void gatherResults(StringsGetter &stringsGetter)
+void gatherResults(StringsGetter &stringsGetter, CliHandler &cliHandler)
 {
     system(
             spaceStr({
                              stringsGetter.getOtherScriptsPath() + "/collectResults.sh", // Script name
                              stringsGetter.getOutputDirForCheckingPathLogs(),            // $1
                              stringsGetter.getTestingResultsDirPath(),                   // $2
-                             stringsGetter.getTCheckerBinPath()                          // $3
+                             stringsGetter.getTCheckerBinPath(),                         // $3
+                             std::to_string(cliHandler.isCmd(atc)), // $4
+                             std::to_string(cliHandler.isCmd(atp))  // $5
                      }).c_str());
 }
 
@@ -180,7 +182,7 @@ int main(int argc, char *argv[])
         convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), TAName, tiledTA);
     }
 
-    gatherResults(stringsGetter);
+    gatherResults(stringsGetter, cliHandler);
 
     return EXIT_SUCCESS;
 }

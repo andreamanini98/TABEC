@@ -58,10 +58,16 @@ const std::string hcr { "-hcr" };
 
 // Specifies how many tests to be executed by the tester.
 // This will require the number of tests to execute as subsequent argument.
-const std::string nbt {"-nbt"};
+const std::string nbt { "-nbt" };
 
 // Used to specify in the checker if logs have to be deleted or not.
 const std::string cls { "-cls" };
+
+// Used to specify in the tester that the checker must be run automatically after the test generation.
+const std::string atc { "-atc" };
+
+// Used to specify in the tester that, after the checker execution, the results must be printed in the console.
+const std::string atp { "-atp" };
 
 // ------------------------------------------------------------------------------------------
 
@@ -70,7 +76,12 @@ class CliHandler {
 
 private:
     // A vector containing all the available commands that can be inserted in the cli.
-    std::vector<std::string> availableCommands = { src, dst, nrt, jsn, lns, all, tdt, rfd, ttt, inp, tst, tns, sup, hcr, nbt, cls};
+    std::vector<std::string> availableCommands = { src, dst, nrt,
+                                                   jsn, lns, all,
+                                                   tdt, rfd, ttt,
+                                                   inp, tst, tns,
+                                                   sup, hcr, nbt,
+                                                   cls, atc, atp };
 
     // A pointer to main's argc.
     int *argc_p;
