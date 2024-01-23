@@ -267,6 +267,18 @@ public:
         return taTileInputLexer.getTriTileTokens();
     }
 
+
+    std::vector<std::string> getBinTileSymbols()
+    {
+        return taTileInputLexer.getBinTileSymbols();
+    }
+
+
+    std::vector<std::string> getTriTileSymbols()
+    {
+        return taTileInputLexer.getTriTileSymbols();
+    }
+
 };
 
 

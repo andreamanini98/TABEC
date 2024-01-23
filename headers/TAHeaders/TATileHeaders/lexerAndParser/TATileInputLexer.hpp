@@ -284,7 +284,7 @@ public:
 
 
     /**
-     * Method used to get only the symbols associated with randomly-generated tiles.
+     * Method used to get only the tokens associated with randomly-generated tiles.
      * The return is made by value, since otherwise the returned vector may be deallocated before being utilized.
      * @return the second elements of the 'rngTileTokens' vector.
      */
@@ -301,7 +301,7 @@ public:
 
 
     /**
-     * Method used to get only the symbols associated with accepting tiles.
+     * Method used to get only the tokens associated with accepting tiles.
      * The return is made by value, since otherwise the returned vector may be deallocated before being utilized.
      * @return the second elements of the 'accTileTokens' vector.
      */
@@ -318,7 +318,7 @@ public:
 
 
     /**
-     * Method used to get only the symbols associated with binary tiles.
+     * Method used to get only the tokens associated with binary tiles.
      * The return is made by value, since otherwise the returned vector may be deallocated before being utilized.
      * @return the second elements of the 'binTileTokens' vector.
      */
@@ -335,7 +335,7 @@ public:
 
 
     /**
-     * Method used to get only the symbols associated with ternary tiles.
+     * Method used to get only the tokens associated with ternary tiles.
      * The return is made by value, since otherwise the returned vector may be deallocated before being utilized.
      * @return the second elements of the 'triTileTokens' vector.
      */
@@ -346,6 +346,40 @@ public:
 
         for (const auto &tile: triTileTokens)
             result.push_back(tile.second);
+
+        return result;
+    }
+
+
+    /**
+     * Method used to get only the symbols associated with binary tiles.
+     * The return is made by value, since otherwise the returned vector may be deallocated before being utilized.
+     * @return the second elements of the 'binTileTokens' vector.
+     */
+    std::vector<std::string> getBinTileSymbols()
+    {
+        std::vector<std::string> result {};
+        result.reserve(binTileTokens.size());
+
+        for (const auto &tile: binTileTokens)
+            result.push_back(tile.first);
+
+        return result;
+    }
+
+
+    /**
+     * Method used to get only the symbols associated with ternary tiles.
+     * The return is made by value, since otherwise the returned vector may be deallocated before being utilized.
+     * @return the second elements of the 'triTileTokens' vector.
+     */
+    std::vector<std::string> getTriTileSymbols()
+    {
+        std::vector<std::string> result {};
+        result.reserve(triTileTokens.size());
+
+        for (const auto &tile: triTileTokens)
+            result.push_back(tile.first);
 
         return result;
     }

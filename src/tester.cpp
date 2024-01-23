@@ -54,7 +54,7 @@ void convertTiledTAtoTCK(const std::string &outputDirPath, const std::string &ti
 
 
 /**
- * Method used to clean directories before starting the automatic test generation.
+ * Function used to clean directories before starting the automatic test generation.
  * @param stringsGetter a 'StringsGetter' that will retrieve the paths for the directories to clean.
  */
 void cleanDirectories(StringsGetter &stringsGetter)
@@ -64,6 +64,52 @@ void cleanDirectories(StringsGetter &stringsGetter)
     deleteDirectoryContents(stringsGetter.getOutputDirPath());
     deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
     deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
+}
+
+
+/**
+ * Function used to collect the name of all the used tiles inside the randomly-generated regular expression.
+ * @param regEx the regular expression in which to look for the used tiles.
+ * @param parser an instance of the parser.
+ * @return a vector containing the name of all the used tiles.
+ */
+std::vector<std::string> gatherUsedTiles(const std::string &regEx, TATileInputParser &parser)
+{
+    std::vector<std::string> usedTiles {};
+
+    for (const std::string &tile: parser.getBinTileSymbols())
+        if (regEx.find(tile) != std::string::npos)
+            usedTiles.push_back(tile);
+
+    for (const std::string &tile: parser.getTriTileSymbols())
+        if (regEx.find(tile) != std::string::npos)
+            usedTiles.push_back(tile);
+
+    return usedTiles;
+}
+
+
+/**
+ * Function used to write additional information in the logs, useful for analyzing test results.
+ * @param stringsGetter a string getter.
+ * @param parser an instance of the parser.
+ * @param TAName the name of the randomly-generated TA.
+ * @param regEx the regular expression used to generate the TA.
+ */
+void writeLogs(StringsGetter &stringsGetter, TATileInputParser &parser, const std::string &TAName, const std::string &regEx)
+{
+    Logger logger(stringsGetter.getOutputDirForCheckingPathLogs(), TAName + ".txt");
+
+    std::string logToWrite { "RegEx generated:\n" + regEx + "\n" };
+
+    std::vector<std::string> usedTiles { gatherUsedTiles(regEx, parser) };
+    if (!usedTiles.empty())
+    {
+        logToWrite.append("Used tiles (random and accepting tiles excluded):\n");
+        for (const std::string &tile: usedTiles)
+            logToWrite.append(tile + " ");
+    }
+    logger.writeLog(logToWrite.append("\n\n"));
 }
 
 
@@ -114,8 +160,7 @@ int main(int argc, char *argv[])
 
         std::string TAName = "RegExTA_" + std::to_string(i + 1);
 
-        Logger logger(stringsGetter.getOutputDirForCheckingPathLogs(), TAName + ".txt");
-        logger.writeLog("RegEx generated:\n" + regEx + "\n\n");
+        writeLogs(stringsGetter, taTileInputParser, TAName, regEx);
 
         printTiledTA(tiledTA);
         convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), TAName, tiledTA);
