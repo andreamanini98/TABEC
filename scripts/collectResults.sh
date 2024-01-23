@@ -52,7 +52,8 @@ for f in "$1"/*; do
 
   # Fetching the value of the parameter.
   # Please note that this will return only one possible parameter.
-  param_value=$(grep -A 2 "[[ ACC ]]" "$f" | tail -n 1 | awk '{print $NF}')
+  # The final sed is used to transform the comma in the floating point number into a dot.
+  param_value=$(grep -A 2 "[[ ACC ]]" "$f" | tail -n 1 | awk '{print $NF}' | sed 's/,/./')
 
   # String used to inform if the TA's language is empty or not.
   empty_language_alert="Language is empty"
@@ -69,6 +70,9 @@ for f in "$1"/*; do
     echo "Tiles used: $used_tiles";
     printf "\n\n" } >> "$output_dir_path/$output_file_name"
 done
+
+  clear
+  cat "$output_dir_path/$output_file_name"
 
 # ----- SCRIPT BODY ----- #
 
