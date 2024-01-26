@@ -30,6 +30,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/outputDOTs)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/logs)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/logs/outputFilesForCheckingLogs)
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/logs/testingResults)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/outputs/logs/testingResourceUsage)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/executables)
 

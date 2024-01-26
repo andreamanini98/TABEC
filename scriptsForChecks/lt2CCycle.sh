@@ -25,14 +25,20 @@ output_tmp_file="$4"
 # Used to either log all values of the parameters (all) or stop at the first acceptance condition found (lla).
 log_all="$5"
 
+# The name of the file .txt file in which to store resource usage of the TA under analysis.
+ta_results_file_name="$6"
+
+# Path to the directory containing the files used for storing resource usages.
+testing_resource_usage_directory="$7"
+
 # ----- PARAMETERS DEFINITIONS ----- #
 
 
 # ----- VARIABLES DEFINITIONS ----- #
 
 # Check if the correct number of arguments is provided.
-if [[ $# -ne 5 ]]; then
-  echo "Error: arguments required: 5, arguments provided: $#."
+if [[ $# -ne 7 ]]; then
+  echo "Error: arguments required: 7, arguments provided: $#."
   exit 1
 fi
 
@@ -123,7 +129,7 @@ check_emptiness() {
     sed "s/$param_keyword/$mu/g" "$input_file" > "$output_tmp_file"
 
     # Now calling tChecker to test the new substitution.
-    result=$(./tCheckerLiveness.sh "$output_tmp_file" "$tChecker_liveness_path")
+    result=$(./tCheckerLiveness.sh "$output_tmp_file" "$tChecker_liveness_path" "$ta_results_file_name" "$testing_resource_usage_directory")
 
     # We check if the TA's language is empty or not.
     if [[ "$result" == "true" ]]; then
@@ -145,6 +151,9 @@ check_emptiness() {
 # ----- SCRIPT BODY ----- #
 
 echo "Now starting testing parameter values multiple of 0.5 and less than or equal to 2C."
+
+# Calling with '>>' since the check on parameter < 2C must be carried out secondly.
+printf "$Parameter < 2C testing.\n-----------------------\n" >> "$testing_resource_usage_directory/$ta_results_file_name"
 
 # Testing parameter multiple of 0.5 and less than or equal to 2C.
 check_emptiness 0

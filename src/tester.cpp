@@ -66,6 +66,7 @@ void cleanDirectories(StringsGetter &stringsGetter)
     deleteDirectoryContents(stringsGetter.getOutputDirForCheckingPath());
     deleteDirectoryContents(stringsGetter.getOutputPDFsDirPath());
     deleteDirectoryContents(stringsGetter.getTestingResultsDirPath());
+    deleteDirectoryContents(stringsGetter.getTestingResourceUsageDirPath());
 }
 
 

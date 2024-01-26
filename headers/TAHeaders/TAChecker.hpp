@@ -105,30 +105,37 @@ private:
     /**
      * Method used to call the script that will substitute the param keywords occurrences in order to subsequently call another
      * script that will check if the TA admits an acceptance condition in the case where the parameter has a value greater than 2C.
+     * @param nameTA the name of the TA under analysis.
+     * @return a string containing the result obtained by tChecker..
      */
-    std::string c_gt2C()
+    std::string c_gt2C(const std::string &nameTA)
     {
         return Command::exec(
                 spaceStr({
-                                 shellScriptPath + gt2C,    // Script name
-                                 inputFilePath,             // $1
-                                 gt2COutputFilePath,        // $2
-                                 tCheckerBinPath + liveness // $3
+                                 shellScriptPath + gt2C,                        // Script name
+                                 inputFilePath,                                 // $1
+                                 gt2COutputFilePath,                            // $2
+                                 tCheckerBinPath + liveness,                    // $3
+                                 nameTA + ".txt",                               // $4
+                                 stringsGetter.getTestingResourceUsageDirPath() // $5
                          }));
     }
 
 
     /**
      * Method used to call tChecker's liveness tool and return it's result when the TA is not parametric.
-     * @return the result obtained by tChecker.
+     * @param nameTA the name of the TA under analysis.
+     * @return a string containing the result obtained by tChecker.
      */
-    std::string c_tckLiveness_noPar()
+    std::string c_tckLiveness_noPar(const std::string &nameTA)
     {
         return Command::exec(
                 spaceStr({
-                                 shellScriptPath + tckLiveness, // Script name
-                                 inputFilePath,                 // $1
-                                 tCheckerBinPath + liveness     // $2
+                                 shellScriptPath + tckLiveness,                 // Script name
+                                 inputFilePath,                                 // $1
+                                 tCheckerBinPath + liveness,                    // $2
+                                 nameTA + ".txt",                               // $3
+                                 stringsGetter.getTestingResourceUsageDirPath() // $4
                          }));
     }
 
@@ -152,18 +159,21 @@ private:
 
     /**
      * Method used to check if the TA admits an acceptance condition in the case of parameter being less than 2C.
+     * @param nameTA the name of the TA under analysis.
      * @return a string containing the result obtained by tChecker.
      */
-    std::string c_lt2CCycle()
+    std::string c_lt2CCycle(const std::string &nameTA)
     {
         return Command::exec(
                 spaceStr({
-                                 shellScriptPath + lt2CCycle,               // Script name
-                                 lt2COutputFilePath,                        // $1
-                                 tCheckerBinPath + liveness,                // $2
-                                 alphaMag,                                  // $3
-                                 outputTmpFilePath,                         // $4
-                                 cliHandler.isCmd(all) ? "all" : "lla" // $5
+                                 shellScriptPath + lt2CCycle,                   // Script name
+                                 lt2COutputFilePath,                            // $1
+                                 tCheckerBinPath + liveness,                    // $2
+                                 alphaMag,                                      // $3
+                                 outputTmpFilePath,                             // $4
+                                 cliHandler.isCmd(all) ? "all" : "lla",    // $5
+                                 nameTA + ".txt",                               // $6
+                                 stringsGetter.getTestingResourceUsageDirPath() // $7
                          }));
     }
 
@@ -201,7 +211,7 @@ private:
     bool checkMuGreaterThan2C(const std::string &nameTA, Logger &logger)
     {
         std::cout << "Trying mu > 2C." << std::endl;
-        return writeLogAndGetFinalResult(logger, c_gt2C(), nameTA);
+        return writeLogAndGetFinalResult(logger, c_gt2C(nameTA), nameTA);
     }
 
 
@@ -216,20 +226,21 @@ private:
         std::cout << "Language may be empty, now trying mu < 2C." << std::endl;
         // We first use this script to scale all occurrences of integers constants inside the TA translation.
         s_lt2CScale();
-        return writeLogAndGetFinalResult(logger, c_lt2CCycle(), nameTA);
+        return writeLogAndGetFinalResult(logger, c_lt2CCycle(nameTA), nameTA);
     }
 
 
     /**
      * Method used to check if the TA admits an acceptance condition when it is not parametric.
+     * @param nameTA the name of the TA under analysis.
      * @return true if the TA admits an acceptance condition, false otherwise.
      */
-    bool noParCheck()
+    bool noParCheck(const std::string &nameTA)
     {
         // We simply call tChecker and get its result.
         std::cout << "Simply calling tChecker since the TA is not parametric.\n";
 
-        std::string tRes = c_tckLiveness_noPar();
+        std::string tRes = c_tckLiveness_noPar(nameTA);
 
         // We get rid of eventual '\n' characters to compare the result with the string "true".
         tRes = deleteTrailingNewlines(tRes);
@@ -290,7 +301,7 @@ public:
         if (isTAParametric("param"))
             return parCheck(nameTA);
         else
-            return noParCheck();
+            return noParCheck(nameTA);
     }
 
 };

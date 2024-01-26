@@ -19,6 +19,12 @@ output_file="$2"
 # The path to the tChecker's bin directory.
 tChecker_liveness_path="$3"
 
+# The name of the file .txt file in which to store resource usage of the TA under analysis.
+ta_results_file_name="$4"
+
+# Path to the directory containing the files used for storing resource usages.
+testing_resource_usage_directory="$5"
+
 # ----- PARAMETERS DEFINITIONS ----- #
 
 
@@ -34,8 +40,8 @@ C_pattern="# C :: [0-9]+"
 param_keyword="param"
 
 # Check if the correct number of arguments is provided.
-if [[ $# -ne 3 ]]; then
-  echo "Error: arguments required: 3, arguments provided: $#."
+if [[ $# -ne 5 ]]; then
+  echo "Error: arguments required: 5, arguments provided: $#."
   exit 1
 fi
 
@@ -71,8 +77,11 @@ printf "Integer %s replaced and saved in:\n%s\n" "$integer_gt_2C" "$output_file"
 # Moving into the right folder for calling other scripts.
 cd ../scriptsForChecks || exit
 
+# Calling with '>' since the check on parameter > 2C must be carried out first.
+printf "$Parameter > 2C testing.\n-----------------------\n" > "$testing_resource_usage_directory/$ta_results_file_name"
+
 # Now calling tChecker to test the emptiness.
-result=$(./tCheckerLiveness.sh "$output_file" "$tChecker_liveness_path")
+result=$(./tCheckerLiveness.sh "$output_file" "$tChecker_liveness_path" "$ta_results_file_name" "$testing_resource_usage_directory")
 
 if [[ "$result" == "true" ]]; then
   printf "[[ ACC ]]\nAcceptance condition found with parameter value: %s\n" "$integer_gt_2C"

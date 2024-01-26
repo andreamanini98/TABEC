@@ -57,6 +57,9 @@ private:
     // Path to the directory containing results derived from testing.
     std::string testingResultsDirPath {};
 
+    // Path to the directory containing the resource usage results obtained from tests.
+    std::string testingResourceUsageDirPath {};
+
 
 public:
     explicit StringsGetter(CliHandler &cliHandler) : currentDirPath(XSTRING(SOURCE_ROOT))
@@ -75,6 +78,7 @@ public:
         triTilesDirPath = inputTilesDirPath + "/triTiles";
         testingResultsDirPath = currentDirPath + "/outputs/logs/testingResults";
         otherScriptsPath = currentDirPath + "/scripts";
+        testingResourceUsageDirPath = currentDirPath + "/outputs/logs/testingResourceUsage";
     }
 
 
@@ -159,6 +163,12 @@ public:
     [[nodiscard]] const std::string &getOtherScriptsPath() const
     {
         return otherScriptsPath;
+    }
+
+
+    [[nodiscard]] const std::string &getTestingResourceUsageDirPath() const
+    {
+        return testingResourceUsageDirPath;
     }
 
 };
