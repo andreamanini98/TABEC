@@ -120,6 +120,24 @@ std::string getStringGivenPosAndToken(const std::string &str, char symbol, int p
 
 
 /**
+ * Function used to split a string based on a given character and then get all the tokens obtained.
+ * @param str the string to split.
+ * @param symbol the character that will be used to split the 'str' parameter in substrings.
+ * @return a vector of strings containing substrings obtained from the original one.
+ */
+std::vector<std::string> getTokenizedString(const std::string &str, char symbol) {
+    std::istringstream stream(str);
+    std::string token;
+    std::vector<std::string> tokens;
+
+    while (std::getline(stream, token, symbol))
+        tokens.push_back(token);
+
+    return tokens;
+}
+
+
+/**
  * Function used to get all the entries in a directory sorted in alphabetical order.
  * @param directory_path the path to the directory in which to collect all entries.
  * @return a vector containing the alphabetically ordered entries.

@@ -12,6 +12,7 @@
 #include "TAHeaders/TATileHeaders/lexerAndParser/TATileInputParser.hpp"
 #include "utilities/Logger.hpp"
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
+#include "utilities/CommandReader.hpp"
 
 using json = nlohmann::json;
 
@@ -118,7 +119,7 @@ void writeLogs(StringsGetter &stringsGetter, TATileInputParser &parser, const st
 
 /**
  * Function which, by calling a shell script, collects all the results in a single file.
- * @param stringsGetter a string getter.
+ * @param stringsGetter a strings getter.
  */
 void gatherResults(StringsGetter &stringsGetter, CliHandler &cliHandler)
 {
@@ -131,6 +132,82 @@ void gatherResults(StringsGetter &stringsGetter, CliHandler &cliHandler)
                              std::to_string(cliHandler.isCmd(atc)), // $4
                              std::to_string(cliHandler.isCmd(atp))  // $5
                      }).c_str());
+}
+
+
+/**
+ * Function used to get the mean out of a set of values obtained by running the 'cmd' command.
+ * @param totalRuns the total number of elements over which we compute the mean.
+ * @param cmd the command used to get the set of values to average.
+ * @return an average of the collected values.
+ */
+double getMeanResourceUsage(int totalRuns, const std::string &cmd)
+{
+    // Collecting the set of values (as strings) to average.
+    std::string resourceValues { Command::exec(cmd) };
+
+    // Tokenizing the previous values in order to get single values.
+    std::vector<std::string> tokenizedRV { getTokenizedString(resourceValues, '\n') };
+
+    // The maximum value a double can get is 1.79769e+308. For this reason, no side check on overflows are made, since
+    // either for memory or time it would be more than enough to fit the total inside while performing the sums below.
+    double meanValue { 0 };
+    for (const std::string &rv: tokenizedRV)
+        meanValue += std::stod(rv);
+
+    return meanValue / totalRuns;
+}
+
+
+/**
+ * Function used to print to a file the resources utilization obtained after running tests.
+ * @param stringsGetter a strings getter.
+ */
+void gatherResourcesUsage(StringsGetter &stringsGetter)
+{
+    for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getTestingResourceUsageDirPath()))
+    {
+        std::string entryPath { static_cast<std::string>(entry.path()) };
+        std::string nameTA { getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0) };
+
+        std::ofstream out;
+        std::string outputFileName { "ResourceUsages.txt" };
+        out.open(stringsGetter.getTestingResultsDirPath() + "/" + outputFileName, std::ofstream::out | std::ofstream::app);
+
+        // Now getting the total number of runs in order to use it in computing averages.
+        std::string totalRuns_command { "grep -c \"CYCLE\" " + entryPath };
+        int totalRuns { std::stoi(Command::exec(totalRuns_command)) };
+
+        // Now getting the average resources' utilization.
+        std::string runningTime_command { "grep \"RUNNING_TIME_SECONDS\" " + entryPath + " | awk '{print $NF}'" };
+        double meanRunningTime { getMeanResourceUsage(totalRuns, runningTime_command) };
+
+        std::string memoryMaxRSS_command { "grep \"MEMORY_MAX_RSS\" " + entryPath + " | awk '{print $NF}'" };
+        double meanMemoryMaxRSS { getMeanResourceUsage(totalRuns, memoryMaxRSS_command) };
+
+        std::string storedStates_command { "grep \"STORED_STATES\" " + entryPath + " | awk '{print $NF}'" };
+        double meanStoredStates { getMeanResourceUsage(totalRuns, storedStates_command) };
+
+        std::string visitedStates_command { "grep \"VISITED_STATES\" " + entryPath + " | awk '{print $NF}'" };
+        double meanVisitedStates { getMeanResourceUsage(totalRuns, visitedStates_command) };
+
+        std::string visitedTransitions_command { "grep \"VISITED_TRANSITIONS\" " + entryPath + " | awk '{print $NF}'" };
+        double meanVisitedTransitions { getMeanResourceUsage(totalRuns, visitedTransitions_command) };
+
+        // Now printing results to the file.
+        out << nameTA << '\n';
+        out << std::string(nameTA.length(), '-') << '\n';
+        out << "Total number of runs:                    " << totalRuns << '\n';
+        out << "Mean running time [seconds]:             " << meanRunningTime << '\n';
+        out << "Mean maximum memory utilization [Bytes]: " << meanMemoryMaxRSS << '\n';
+        out << "Mean number of stored states:            " << meanStoredStates << '\n';
+        out << "Mean number of visited states:           " << meanVisitedStates << '\n';
+        out << "Mean number of visited transitions:      " << meanVisitedTransitions << '\n';
+        out << "\n\n";
+
+        out.flush();
+        out.close();
+    }
 }
 
 
@@ -188,6 +265,7 @@ int main(int argc, char *argv[])
     }
 
     gatherResults(stringsGetter, cliHandler);
+    gatherResourcesUsage(stringsGetter);
 
     return EXIT_SUCCESS;
 }
