@@ -175,6 +175,10 @@ void gatherResourcesUsage(StringsGetter &stringsGetter)
         out.open(stringsGetter.getTestingResultsDirPath() + "/" + outputFileName, std::ofstream::out | std::ofstream::app);
 
         // Now getting the total number of runs in order to use it in computing averages.
+        // The number of total runs is equal to the number of times tChecker has been called during the check
+        // of the parameter being > 2C and the parameter being < 2C, conditioned by the fact of having enabled the
+        // option to get the full range of suitable parameters and not stopping at the first one found.
+        // Please note that this should work also for non-parametric TAs.
         std::string totalRuns_command { "grep -c \"CYCLE\" " + entryPath };
         int totalRuns { std::stoi(Command::exec(totalRuns_command)) };
 
