@@ -143,6 +143,7 @@ void gatherResults(StringsGetter &stringsGetter, CliHandler &cliHandler)
  */
 double getMeanResourceUsage(int totalRuns, const std::string &cmd)
 {
+    // TODO: you can merge this function with the peak one, use th same for loop and return a pair of doubles.
     // Collecting the set of values (as strings) to average.
     std::string resourceValues { Command::exec(cmd) };
 
@@ -156,6 +157,28 @@ double getMeanResourceUsage(int totalRuns, const std::string &cmd)
         meanValue += std::stod(rv);
 
     return meanValue / totalRuns;
+}
+
+
+/**
+ * Function used to get the maximum out of a set of values obtained by running the 'cmd' command.
+ * @param cmd the command used to get the set of values from which to get the maximum.
+ * @return the maximum of the collected values.
+ */
+double getPeakResourceUsage(const std::string &cmd)
+{
+    // Collecting the set of values (as strings) to average.
+    std::string resourceValues { Command::exec(cmd) };
+
+    // Tokenizing the previous values in order to get single values.
+    std::vector<std::string> tokenizedRV { getTokenizedString(resourceValues, '\n') };
+
+    // Getting the maximum out of the set of collected values.
+    double maxValue { 0 };
+    for (const std::string &rv: tokenizedRV)
+        maxValue = (std::stod(rv) > maxValue) ? std::stod(rv) : maxValue;
+
+    return maxValue;
 }
 
 
@@ -179,15 +202,21 @@ void gatherResourcesUsage(StringsGetter &stringsGetter)
         // of the parameter being > 2C and the parameter being < 2C, conditioned by the fact of having enabled the
         // option to get the full range of suitable parameters and not stopping at the first one found.
         // Please note that this should work also for non-parametric TAs.
+
         std::string totalRuns_command { "grep -c \"CYCLE\" " + entryPath };
         int totalRuns { std::stoi(Command::exec(totalRuns_command)) };
 
-        // Now getting the average resources' utilization.
+        // Now getting the average and peak resources' utilization.
+        // The meanRunningTime will be the mean time spent by executing the algorithm in tChecker (e.g. the couvscc).
+        // The meanExecutionTime will be the mean time spent executing tChecker (plus some small overhead for the shell script).
+
         std::string runningTime_command { "grep \"RUNNING_TIME_SECONDS\" " + entryPath + " | awk '{print $NF}'" };
         double meanRunningTime { getMeanResourceUsage(totalRuns, runningTime_command) };
+        double peakRunningTime { getPeakResourceUsage(runningTime_command) };
 
         std::string memoryMaxRSS_command { "grep \"MEMORY_MAX_RSS\" " + entryPath + " | awk '{print $NF}'" };
         double meanMemoryMaxRSS { getMeanResourceUsage(totalRuns, memoryMaxRSS_command) };
+        double peakMemoryMaxRSS { getPeakResourceUsage(memoryMaxRSS_command) };
 
         std::string storedStates_command { "grep \"STORED_STATES\" " + entryPath + " | awk '{print $NF}'" };
         double meanStoredStates { getMeanResourceUsage(totalRuns, storedStates_command) };
@@ -198,15 +227,24 @@ void gatherResourcesUsage(StringsGetter &stringsGetter)
         std::string visitedTransitions_command { "grep \"VISITED_TRANSITIONS\" " + entryPath + " | awk '{print $NF}'" };
         double meanVisitedTransitions { getMeanResourceUsage(totalRuns, visitedTransitions_command) };
 
+        std::string executionTime_command { "grep \"EXECUTION_TIME\" " + entryPath + " | awk '{print $NF}'" };
+        double meanExecutionTime { getMeanResourceUsage(totalRuns, executionTime_command) };
+        double peakExecutionTime { getPeakResourceUsage(executionTime_command) };
+
         // Now printing results to the file.
+
         out << nameTA << '\n';
         out << std::string(nameTA.length(), '-') << '\n';
-        out << "Total number of runs:                    " << totalRuns << '\n';
-        out << "Mean running time [seconds]:             " << meanRunningTime << '\n';
-        out << "Mean maximum memory utilization [Bytes]: " << meanMemoryMaxRSS << '\n';
-        out << "Mean number of stored states:            " << meanStoredStates << '\n';
-        out << "Mean number of visited states:           " << meanVisitedStates << '\n';
-        out << "Mean number of visited transitions:      " << meanVisitedTransitions << '\n';
+        out << "Total number of runs:                        " << totalRuns << '\n';
+        out << "Mean algorithm running time [milliseconds]:  " << meanRunningTime * 1000 << '\n';
+        out << "Peak algorithm running time [milliseconds]:  " << peakRunningTime * 1000 << '\n';
+        out << "Mean tChecker running time [milliseconds]:   " << meanExecutionTime << '\n';
+        out << "Peak tChecker running time [milliseconds]:   " << peakExecutionTime << '\n';
+        out << "Mean maximum memory utilization [Bytes]:     " << meanMemoryMaxRSS << '\n';
+        out << "Peak maximum memory utilization [Bytes]:     " << peakMemoryMaxRSS << '\n';
+        out << "Mean number of stored states:                " << meanStoredStates << '\n';
+        out << "Mean number of visited states:               " << meanVisitedStates << '\n';
+        out << "Mean number of visited transitions:          " << meanVisitedTransitions << '\n';
         out << "\n\n";
 
         out.flush();
@@ -217,6 +255,10 @@ void gatherResourcesUsage(StringsGetter &stringsGetter)
 
 int main(int argc, char *argv[])
 {
+    // TODO: you should put in the documentation that MacOS users need coreutils to be installed via homebrew.
+
+    // TODO: also add comments explaining the differences between algorithm running time and tchecker running time.
+
     CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
     TATileInputParser taTileInputParser(stringsGetter);

@@ -37,11 +37,33 @@ fi
 
 # MEMORY-MAX_RSS is measured in Bytes.
 
-# Getting the full output from the execution of tChecker.
-res=$($tChecker_liveness_path -a couvscc -l final "$input_file")
+# If the OS is MacOS the command 'gdate' must be used, otherwise the 'date' command must be used.
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # Get the start time in milliseconds.
+  start_time=$(gdate +%s%3N)
+
+  # Getting the full output from the execution of tChecker.
+  res=$($tChecker_liveness_path -a couvscc -l final "$input_file")
+
+  # Get the end time in milliseconds.
+  end_time=$(gdate +%s%3N)
+else
+  # Get the start time in milliseconds.
+  start_time=$(date +%s%3N)
+
+  # Getting the full output from the execution of tChecker.
+  res=$($tChecker_liveness_path -a couvscc -l final "$input_file")
+
+  # Get the end time in milliseconds.
+  end_time=$(date +%s%3N)
+fi
+
+# Calculate the time difference in milliseconds.
+execution_time=$(($end_time - $start_time))
 
 # Printing the full output into the file collecting information about resource usage.
-printf "$res\n\n" >> "$testing_resource_usage_directory/$ta_results_file_name"
+printf "$res\n" >> "$testing_resource_usage_directory/$ta_results_file_name"
+printf "EXECUTION_TIME $execution_time\n\n" >> "$testing_resource_usage_directory/$ta_results_file_name"
 
 # Echoing the last word taken from the line containing the word 'CYCLE' that will be used to determine if the language is empty or not.
 echo "$res" | grep CYCLE | awk '{print $NF}'
