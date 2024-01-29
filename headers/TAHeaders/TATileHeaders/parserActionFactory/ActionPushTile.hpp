@@ -62,7 +62,9 @@ public:
      */
     void performAction() override
     {
-        json tile { getTile() };
+        // USE json tile = getTile() AND NOT json tile { getTile() } SINCE THE LATTER IN GCC WILL BE
+        // CONSIDERED AN ARRAY, WHILE IN CLANG IT WILL BE CONSIDERED SIMPLY A JSON AS IT SHOULD BE.
+        json tile = getTile();
 
         // Each tile has to be renamed in order to avoid name clashes.
         TATileRenamer::renameIDs(tile);
