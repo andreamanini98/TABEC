@@ -7,6 +7,7 @@
 #include "utilities/StringsGetter.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
 #include "TAHeaders/TATileHeaders/tileEnums/TileTypeEnum.h"
+#include "TAHeaders/TABoundsCalculator.hpp"
 
 using json = nlohmann::json;
 
@@ -65,6 +66,9 @@ public:
         // USE json tile = getTile() AND NOT json tile { getTile() } SINCE THE LATTER IN GCC WILL BE
         // CONSIDERED AN ARRAY, WHILE IN CLANG IT WILL BE CONSIDERED SIMPLY A JSON AS IT SHOULD BE.
         json tile = getTile();
+
+        // Updating the bounds for the current TA based on the tile just collected.
+        TABoundsCalculator::addBounds(TAContentExtractor::getDeclaration(tile));
 
         // Each tile has to be renamed in order to avoid name clashes.
         TATileRenamer::renameIDs(tile);

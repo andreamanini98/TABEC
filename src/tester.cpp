@@ -13,6 +13,7 @@
 #include "utilities/Logger.hpp"
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
 #include "utilities/CommandReader.hpp"
+#include "TAHeaders/TABoundsCalculator.hpp"
 
 using json = nlohmann::json;
 
@@ -253,6 +254,69 @@ void gatherResourcesUsage(StringsGetter &stringsGetter)
 }
 
 
+/**
+ * Function used to get a value of the parameter found by tChecker.
+ * @param stringsGetter a string getter.
+ * @param filePath the path to the file in which to look for the parameter value.
+ * @return a string containing the parameter value, an empty string if no values have been found.
+ */
+std::string getParameterString(StringsGetter &stringsGetter, const std::string &filePath)
+{
+    std::string parString {
+            Command::exec(spaceStr({
+                                           stringsGetter.getOtherScriptsPath() + "/getParameterValue.sh", // Script name
+                                           filePath                                                       // $1
+                                   })) };
+    // Getting rid of the final '\n' character;
+    parString.pop_back();
+
+    return parString;
+}
+
+
+/**
+ * Function used to print into a file the results concerning the bounds found for the parameter.
+ * @param stringsGetter a string getter.
+ */
+void checkParameterInterval(StringsGetter &stringsGetter)
+{
+    std::ofstream out;
+    std::string outputFileName { "ParametersBounds.txt" };
+    out.open(stringsGetter.getTestingResultsDirPath() + "/" + outputFileName, std::ofstream::out | std::ofstream::app);
+
+    for (const auto &entry: getEntriesInAlphabeticalOrder(stringsGetter.getOutputDirForCheckingPathLogs()))
+    {
+        std::string entryPath { static_cast<std::string>(entry.path()) };
+        std::string nameTA { getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0) };
+
+        out << nameTA << '\n' << std::string(nameTA.length(), '-') << '\n';
+
+        std::string parString { getParameterString(stringsGetter, entryPath) };
+
+        if (!parString.empty())
+        {
+            double parameterValue { std::stod(parString) };
+
+            out << "The following bounds have been found:\n" << TABoundsCalculator::getBoundsAsString();
+            out << "The parameter value is: " << std::fixed << std::setprecision(1) << parameterValue << '\n';
+
+            for (const Bound &b: TABoundsCalculator::getBounds())
+                if (b.l <= parameterValue && parameterValue <= b.r)
+                {
+                    out << "Parameter value: " << std::fixed << std::setprecision(1) << parameterValue
+                        << " is within specified bound: " << TABoundsCalculator::getBoundAsString(b);
+                    break;
+                }
+        } else
+            out << "The language of the given TA is empty and thus no parameter has been found.\n";
+
+        out << "\n\n";
+        out.flush();
+    }
+    out.close();
+}
+
+
 int main(int argc, char *argv[])
 {
     // TODO: you should put in the documentation that MacOS users need coreutils to be installed via homebrew.
@@ -293,6 +357,8 @@ int main(int argc, char *argv[])
     int numTests = cliHandler.isCmd(nbt) ? std::stoi(cliHandler.getCmdArgument(nbt)) : 10;
     for (int i = 0; i < numTests; i++)
     {
+        TABoundsCalculator::resetBoundsVector();
+
         // Resetting the nonce at each test generation in order to avoid the index becoming too big.
         TATileRenamer::resetTANonce();
 
@@ -312,6 +378,7 @@ int main(int argc, char *argv[])
 
     gatherResults(stringsGetter, cliHandler);
     gatherResourcesUsage(stringsGetter);
+    checkParameterInterval(stringsGetter);
 
     return EXIT_SUCCESS;
 }

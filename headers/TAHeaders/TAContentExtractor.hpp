@@ -170,6 +170,17 @@ public:
         return resultLabel;
     }
 
+
+    /**
+     * Method used to extract the declaration (representing the bounds) in the given TA.
+     * @param inFile the json file in which the text is going to be extracted.
+     * @return the declaration (representing the bounds) in the given TA.
+     */
+    static std::string getDeclaration(const json &inFile)
+    {
+        return static_cast<std::string>(inFile.at(NTA).at(DECLARATION));
+    }
+
 };
 
 

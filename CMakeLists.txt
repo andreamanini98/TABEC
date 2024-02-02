@@ -47,3 +47,4 @@ execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/lt
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/lt2CScale.sh)
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scriptsForChecks/tCheckerLiveness.sh)
 execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scripts/collectResults.sh)
+execute_process(COMMAND chmod +x ${CMAKE_CURRENT_SOURCE_DIR}/scripts/getParameterValue.sh)
