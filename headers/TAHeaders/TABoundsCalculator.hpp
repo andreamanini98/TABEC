@@ -32,6 +32,9 @@ typedef struct {
 class TABoundsCalculator {
 
 private:
+    // A map storing for each string key (which will be the name of a TA), the corresponding bounds that have been found.
+    static std::map<std::string, std::vector<Bound>> taBounds;
+
     // Vector containing the bounds which constrain the value of the parameter.
     static std::vector<Bound> bounds;
 
@@ -160,6 +163,27 @@ public:
 
 
     /**
+     * Method used to insert into the 'taBounds' map the bounds found for a given key.
+     * @param nameTA the name of the TA for which to store bounds.
+     */
+    static void storeTABounds(const std::string &nameTA)
+    {
+        taBounds.insert(std::make_pair(nameTA, bounds));
+    }
+
+
+    /**
+     * Method used to retrieve from the 'taBounds' map the bounds found for a given key.
+     * @param nameTA the name of the TA for which to retrieve bounds.
+     * @return the bounds relative to the 'nameTA' TA.
+     */
+    static std::vector<Bound> getStoredBounds(const std::string &nameTA)
+    {
+        return taBounds.find(nameTA)->second;
+    }
+
+
+    /**
      * Method used to get a string representation of the bound specified in the 'bound' parameter.
      * @param bound the bound to turn into a string.
      * @return a string representation of the 'bound' parameter.
@@ -181,17 +205,28 @@ public:
      * Method used to get a string representation of the 'bounds' vector.
      * @return a string representation of the 'bounds' vector.
      */
-    static std::string getBoundsAsString()
+    static std::string getBoundsAsString(const std::vector<Bound> &inputBounds)
     {
         std::stringstream res;
 
-        for (const Bound &bound: bounds)
+        for (const Bound &bound: inputBounds)
         {
             if (bound.isDisjoint)
                 res << "Disjoint bound :: ";
             res << "Bound: " << getBoundAsString(bound);
         }
         return res.str();
+    }
+
+
+    /*
+     * Method used to return the bounds for a given TA name, its respective Bounds as a string representation,
+     * @param nameTA the name of the TA for which to return the bounds as a string.
+     * @return a string representation of the bounds retrieved for he 'nameTA' TA.
+     */
+    static std::string getBoundsAsString(const std::string &nameTA)
+    {
+        return getBoundsAsString(taBounds.find(nameTA)->second);
     }
 
 
@@ -203,6 +238,7 @@ public:
 };
 
 // Defining static attributes.
+std::map<std::string, std::vector<Bound>> TABoundsCalculator::taBounds {};
 std::vector<Bound> TABoundsCalculator::bounds {};
 const std::string TABoundsCalculator::nanKeyword { "nan" };
 const std::string TABoundsCalculator::infKeyword { "inf" };

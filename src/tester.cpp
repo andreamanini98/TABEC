@@ -297,10 +297,10 @@ void checkParameterInterval(StringsGetter &stringsGetter)
         {
             double parameterValue { std::stod(parString) };
 
-            out << "The following bounds have been found:\n" << TABoundsCalculator::getBoundsAsString();
+            out << "The following bounds have been found:\n" << TABoundsCalculator::getBoundsAsString(nameTA);
             out << "The parameter value is: " << std::fixed << std::setprecision(1) << parameterValue << '\n';
 
-            for (const Bound &b: TABoundsCalculator::getBounds())
+            for (const Bound &b: TABoundsCalculator::getStoredBounds(nameTA))
                 if (b.l <= parameterValue && parameterValue <= b.r)
                 {
                     out << "Parameter value: " << std::fixed << std::setprecision(1) << parameterValue
@@ -357,6 +357,7 @@ int main(int argc, char *argv[])
     int numTests = cliHandler.isCmd(nbt) ? std::stoi(cliHandler.getCmdArgument(nbt)) : 10;
     for (int i = 0; i < numTests; i++)
     {
+        // Resetting the bounds vector for storing new bounds in the new iteration.
         TABoundsCalculator::resetBoundsVector();
 
         // Resetting the nonce at each test generation in order to avoid the index becoming too big.
@@ -374,6 +375,9 @@ int main(int argc, char *argv[])
         printTiledTA(tiledTA);
         convertTiledTAtoDOT(stringsGetter.getOutputDOTsDirPath(), TAName, tiledTA);
         convertTiledTAtoTCK(stringsGetter.getOutputDirPath(), TAName, tiledTA);
+
+        // Storing the bounds that have been found before starting a new iteration.
+        TABoundsCalculator::storeTABounds(TAName);
     }
 
     gatherResults(stringsGetter, cliHandler);
