@@ -1,7 +1,10 @@
 #ifndef UTOTPARSER_TABOUNDSCALCULATOR_H
 #define UTOTPARSER_TABOUNDSCALCULATOR_H
 
+#define USE_BOUNDS
+
 #include <limits>
+#include <stack>
 
 #include "utilities/Utils.hpp"
 
@@ -16,11 +19,12 @@
 //     bound:nan:nan
 
 // WARNING:
-// The actual implementation computes the strictest interval on all paths, not taking into account the semantic of the given
-// compositional string. That is, if in a tile with two 'out' locations we have different paths using a disjoint set of tiles
-// for each path, the actual implementation computes the interval considering all the tiles used (that is, it simply updates
-// the interval for each added tile in sequence, look at the ActionPushTile.hpp class).
-// As a future enhancement, intervals may be computed taking into account only the tiles relevant in a certain path.
+// The actual implementation computes bounds intervals for each path in the resulting TA.
+// For each tile with multiple 'out' locations, all the bounds it generates are taken into
+// account for each path, since otherwise the bounds declaration should be dependent on the
+// tile design. This creates redundant paths but still, the relevant ones are detected.
+
+#ifdef USE_BOUNDS
 
 typedef struct {
     bool isNan;
@@ -35,8 +39,11 @@ private:
     // A map storing for each string key (which will be the name of a TA), the corresponding bounds that have been found.
     static std::map<std::string, std::vector<Bound>> taBounds;
 
-    // Vector containing the bounds which constrain the value of the parameter.
-    static std::vector<Bound> bounds;
+    // A stack saving the current history of bounds found for each forking path due to multiple 'out' locations tiles.
+    static std::stack<std::vector<Bound>> boundsHistory;
+
+    // A vector collecting all the bounds found for all paths for a given TA.
+    static std::vector<Bound> pathBounds;
 
     // The keyword corresponding to the nan bound.
     static const std::string nanKeyword;
@@ -62,7 +69,7 @@ private:
         double r { (tokens[2] == infKeyword) ? std::numeric_limits<double>::max() : std::stod(tokens[2]) };
 
         bool isDisjoint { l > r };
-        bool isNan { tokens[1] == nanKeyword && tokens[2] == nanKeyword };
+        bool isNan { tokens[1] == nanKeyword || tokens[2] == nanKeyword };
 
         return Bound { isNan, isDisjoint, l, r };
     }
@@ -96,39 +103,29 @@ private:
         // If l and r are equal to the "nan" keyword, then no bounds must be added/compared.
         if (!bound.isNan)
         {
-            // Vector collecting bounds to be pushed into the 'bounds' vector at the end of the for loop.
+            // Vector collecting bounds to be pushed into the current level of history vector at the end of the for loop.
             std::vector<Bound> toBePushed {};
 
-            // Bounds must be updated and, if needed, pushed inside the 'bounds' vector.
-            for (Bound &b: bounds)
+            // Bounds must be updated and, if needed, pushed inside the current level of history vector.
+            for (Bound &b: boundsHistory.top())
             {
                 // If a bound is already disjoint, or it is nan, the computation on it can be skipped.
                 if (!(b.isDisjoint || b.isNan))
                 {
-                    Bound newBound = getBoundIntersection(b, bound);
+                    Bound updatedBound = getBoundIntersection(b, bound);
                     if (pushBound)
-                        toBePushed.push_back(newBound);
+                        toBePushed.push_back(updatedBound);
                     else
-                        b = newBound;
+                        b = updatedBound;
                 }
             }
-
             // Inserting eventual bounds that had to be pushed.
-            bounds.insert(bounds.end(), toBePushed.begin(), toBePushed.end());
+            boundsHistory.top().insert(boundsHistory.top().end(), toBePushed.begin(), toBePushed.end());
         }
     }
 
 
 public:
-    /**
-     * Method used to delete all elements from the 'bounds' vector and to set 'isDisjoint' to false.
-     */
-    static void resetBoundsVector()
-    {
-        bounds.clear();
-    }
-
-
     /**
      * Method used to add new bounds or update old ones.
      * @param boundString a string containing one or more bounds, specified using the syntax for bounds reported
@@ -140,15 +137,18 @@ public:
         std::vector<std::string> singleBounds { getTokenizedString(boundString, '|') };
 
         // If no bound is present, simply push the given ones.
-        if (bounds.empty())
+        if (boundsHistory.empty())
+        {
+            std::vector<Bound> toBePushed;
             for (const std::string &bound: singleBounds)
             {
                 Bound b = getBound(bound);
 
                 if (!b.isNan)
-                    bounds.push_back(b);
+                    toBePushed.push_back(b);
             }
-        else
+            boundsHistory.push(toBePushed);
+        } else
         {
             bool pushBound { false };
             for (const std::string &bound: singleBounds)
@@ -168,7 +168,7 @@ public:
      */
     static void storeTABounds(const std::string &nameTA)
     {
-        taBounds.insert(std::make_pair(nameTA, bounds));
+        taBounds.insert(std::make_pair(nameTA, pathBounds));
     }
 
 
@@ -180,6 +180,47 @@ public:
     static std::vector<Bound> getStoredBounds(const std::string &nameTA)
     {
         return taBounds.find(nameTA)->second;
+    }
+
+
+    /**
+     * Method used to reset the containers used to store bounds in order to prepare them for handling a new TA.
+     */
+    static void resetBoundCalculator()
+    {
+        pathBounds.clear();
+        while (!boundsHistory.empty())
+            boundsHistory.pop();
+    }
+
+
+    /**
+     * Method used to duplicate the current history by inserting a copy of its top element at the top of the stack.
+     */
+    static void duplicateHistory()
+    {
+        if (!boundsHistory.empty())
+            boundsHistory.push(boundsHistory.top());
+    }
+
+
+    /**
+     * Method used to poop the first element from the bounds history.
+     */
+    static void popFromHistory()
+    {
+        if (!boundsHistory.empty())
+            boundsHistory.pop();
+    }
+
+
+    /**
+     * Method used to save the current level of bounds history in the vector that will store all the bounds found.
+     */
+    static void saveCurrentHistoryInPathBounds()
+    {
+        if (!boundsHistory.empty())
+            pathBounds.insert(pathBounds.end(), boundsHistory.top().begin(), boundsHistory.top().end());
     }
 
 
@@ -230,17 +271,26 @@ public:
     }
 
 
-    static std::vector<Bound> getBounds()
+    /**
+     * Method used to return the size of the given bound.
+     * @param bound the bound to compute the size.
+     * @return the size of the given bound computed as bound.r - bound.r.
+     */
+    static double computeBoundSize(const Bound &bound)
     {
-        return bounds;
-    };
+        if (!(bound.isDisjoint || bound.isNan))
+            return bound.r - bound.l;
+    }
 
 };
 
 // Defining static attributes.
 std::map<std::string, std::vector<Bound>> TABoundsCalculator::taBounds {};
-std::vector<Bound> TABoundsCalculator::bounds {};
 const std::string TABoundsCalculator::nanKeyword { "nan" };
 const std::string TABoundsCalculator::infKeyword { "inf" };
+std::stack<std::vector<Bound>> TABoundsCalculator::boundsHistory {};
+std::vector<Bound> TABoundsCalculator::pathBounds {};
+
+#endif
 
 #endif //UTOTPARSER_TABOUNDSCALCULATOR_H

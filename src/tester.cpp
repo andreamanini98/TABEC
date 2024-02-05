@@ -275,10 +275,45 @@ std::string getParameterString(StringsGetter &stringsGetter, const std::string &
 
 
 /**
+ * Function used to print the results on bounds after testing has been performed.
+ * @param cliHandler a cliHandler.
+ * @param out the stream in which to write the results.
+ * @param parameterValue the value of the found parameter.
+ * @param nameTA the name of the current TA.
+ */
+void printBoundResults(CliHandler &cliHandler, std::ofstream &out, double parameterValue, const std::string &nameTA)
+{
+    if (cliHandler.isCmd(bds))
+    {
+        out << "The following bounds have been found:\n" << TABoundsCalculator::getBoundsAsString(nameTA);
+        out << "The parameter value is: " << std::fixed << std::setprecision(1) << parameterValue << '\n';
+    }
+
+    double strictestBoundSize { std::numeric_limits<double>::max() };
+    Bound resultBound {};
+
+    // Getting the strictest bound as a result.
+    for (const Bound &b: TABoundsCalculator::getStoredBounds(nameTA))
+        if (!(b.isDisjoint || b.isNan) && b.l <= parameterValue && parameterValue <= b.r)
+        {
+            double boundSize { TABoundsCalculator::computeBoundSize(b) };
+            if (boundSize <= strictestBoundSize)
+            {
+                resultBound = b;
+                strictestBoundSize = boundSize;
+            }
+        }
+
+    out << "Parameter value: " << std::fixed << std::setprecision(1) << parameterValue
+        << " is within found bound: " << TABoundsCalculator::getBoundAsString(resultBound);
+}
+
+
+/**
  * Function used to print into a file the results concerning the bounds found for the parameter.
  * @param stringsGetter a string getter.
  */
-void checkParameterInterval(StringsGetter &stringsGetter)
+void checkParameterInterval(StringsGetter &stringsGetter, CliHandler &cliHandler)
 {
     std::ofstream out;
     std::string outputFileName { "ParametersBounds.txt" };
@@ -294,20 +329,8 @@ void checkParameterInterval(StringsGetter &stringsGetter)
         std::string parString { getParameterString(stringsGetter, entryPath) };
 
         if (!parString.empty())
-        {
-            double parameterValue { std::stod(parString) };
-
-            out << "The following bounds have been found:\n" << TABoundsCalculator::getBoundsAsString(nameTA);
-            out << "The parameter value is: " << std::fixed << std::setprecision(1) << parameterValue << '\n';
-
-            for (const Bound &b: TABoundsCalculator::getStoredBounds(nameTA))
-                if (b.l <= parameterValue && parameterValue <= b.r)
-                {
-                    out << "Parameter value: " << std::fixed << std::setprecision(1) << parameterValue
-                        << " is within specified bound: " << TABoundsCalculator::getBoundAsString(b);
-                    break;
-                }
-        } else
+            printBoundResults(cliHandler, out, std::stod(parString), nameTA);
+        else
             out << "The language of the given TA is empty and thus no parameter has been found.\n";
 
         out << "\n\n";
@@ -357,8 +380,7 @@ int main(int argc, char *argv[])
     int numTests = cliHandler.isCmd(nbt) ? std::stoi(cliHandler.getCmdArgument(nbt)) : 10;
     for (int i = 0; i < numTests; i++)
     {
-        // Resetting the bounds vector for storing new bounds in the new iteration.
-        TABoundsCalculator::resetBoundsVector();
+        TABoundsCalculator::resetBoundCalculator();
 
         // Resetting the nonce at each test generation in order to avoid the index becoming too big.
         TATileRenamer::resetTANonce();
@@ -369,7 +391,6 @@ int main(int argc, char *argv[])
         json tiledTA = taTileInputParser.getTiledTA(regEx);
 
         std::string TAName = "RegExTA_" + std::to_string(i + 1);
-
         writeLogs(stringsGetter, taTileInputParser, TAName, regEx);
 
         printTiledTA(tiledTA);
@@ -382,7 +403,7 @@ int main(int argc, char *argv[])
 
     gatherResults(stringsGetter, cliHandler);
     gatherResourcesUsage(stringsGetter);
-    checkParameterInterval(stringsGetter);
+    checkParameterInterval(stringsGetter, cliHandler);
 
     return EXIT_SUCCESS;
 }

@@ -69,6 +69,9 @@ const std::string atc { "-atc" };
 // Used to specify in the tester that, after the checker execution, the results must be printed in the console.
 const std::string atp { "-atp" };
 
+// Used to print all the bounds found when executing tests.
+const std::string bds { "-bds" };
+
 // ------------------------------------------------------------------------------------------
 
 
@@ -81,7 +84,8 @@ private:
                                                    tdt, rfd, ttt,
                                                    inp, tst, tns,
                                                    sup, hcr, nbt,
-                                                   cls, atc, atp };
+                                                   cls, atc, atp,
+                                                   bds };
 
     // A pointer to main's argc.
     int *argc_p;

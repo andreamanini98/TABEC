@@ -1,12 +1,15 @@
 #ifndef UTOTPARSER_ACTIONPUSHTILE_H
 #define UTOTPARSER_ACTIONPUSHTILE_H
 
+#define USE_BOUNDS
+
 #include "nlohmann/json.hpp"
 
 #include "TAHeaders/TATileHeaders/TATileRenamer.hpp"
 #include "utilities/StringsGetter.hpp"
 #include "TAHeaders/TATileHeaders/parserActionFactory/Action.hpp"
 #include "TAHeaders/TATileHeaders/tileEnums/TileTypeEnum.h"
+#include "TAHeaders/TABoundsCalculator.hpp"
 #include "TAHeaders/TABoundsCalculator.hpp"
 
 using json = nlohmann::json;
@@ -16,6 +19,59 @@ class ActionPushTile : public Action {
 
 private:
     TileTypeEnum tileType;
+
+
+#ifdef USE_BOUNDS
+    /**
+     * Method used to duplicate the bounds history in the case where, if a tile not having multiple
+     * outputs is read, if a multi 'out' location tile operator has still to be performed, the history
+     * needs to be duplicated in order to use it in the other branch.
+     */
+    void duplicateHistoryIfNotMultiOut()
+    {
+        // The following if condition performs those checks:
+        // 1) Check if the tile is not a multi 'out' location tile.
+        // 2) Check if the tile is the first one of the new branch (WARNING: this condition is dependent on whether the bounds
+        //    manipulation is performed before or after pushing the tile onto the stack).
+        // 3) Check that at least one multi 'out' location tile will be done after consuming the current node.
+        // 4) Check that one branch has already been consumed (a tile has been put in
+        //    the lower level of the list, together with the multi 'out' location one).
+        // 5) Check that at least one operator in the lower level of the list is present.
+        // TODO: can be enhanced by not hard-coding the tile type.
+        if (tileType != triTile
+            && parserList.getHead()->content.nestingLevel > 0
+            && parserList.getHead()->content.tileStack.empty()
+            && parserList.getHead()->prev->content.tileStack.size() > 1
+            && !parserList.getHead()->prev->content.operatorStack.empty())
+        {
+            // The following if condition performs those checks:
+            // 1) Check that the actual operator present in the lower level is a multi 'out' location tile operator.
+            // TODO: can be enhanced by not hard-coding the operator name.
+            if (parserList.getHead()->prev->content.operatorStack.top() == "tree_op")
+                TABoundsCalculator::duplicateHistory();
+        }
+    }
+
+
+    /**
+     * Method used to handle bounds calculation when a new tile is processed.
+     * @param tile the tile being processed.
+     */
+    void handleBounds(const json &tile)
+    {
+        duplicateHistoryIfNotMultiOut();
+
+        // Updating the bounds for the current TA based on the tile just collected.
+        TABoundsCalculator::addBounds(TAContentExtractor::getDeclaration(tile));
+
+        // If the tile is a multi 'out' location tile, the history of current paths bounds must be saved.
+        // The check on the size is done to avoid duplicates if the first tile is already a triTile.
+        // TODO: can be enhanced by not hard-coding the tile type.
+        if (tileType == triTile)
+            TABoundsCalculator::duplicateHistory();
+    }
+#endif
+
 
 public:
     ActionPushTile(StringsGetter &stringsGetter, DoublyLinkedList<ParserNode> &parserList, const std::string &token, TileTypeEnum tileType) :
@@ -67,8 +123,9 @@ public:
         // CONSIDERED AN ARRAY, WHILE IN CLANG IT WILL BE CONSIDERED SIMPLY A JSON AS IT SHOULD BE.
         json tile = getTile();
 
-        // Updating the bounds for the current TA based on the tile just collected.
-        TABoundsCalculator::addBounds(TAContentExtractor::getDeclaration(tile));
+#ifdef USE_BOUNDS
+        handleBounds(tile);
+#endif
 
         // Each tile has to be renamed in order to avoid name clashes.
         TATileRenamer::renameIDs(tile);
