@@ -24,6 +24,9 @@
 // account for each path, since otherwise the bounds declaration should be dependent on the
 // tile design. This creates redundant paths but still, the relevant ones are detected.
 
+// WARNING:
+// Bounds computation works only if the tiles used in the branches of multi 'out' locations tiles are enclosed in parentheses.
+
 #ifdef USE_BOUNDS
 
 typedef struct {
@@ -219,6 +222,7 @@ public:
      */
     static void saveCurrentHistoryInPathBounds()
     {
+        std::cout << "Bound history saved.\n";
         if (!boundsHistory.empty())
             pathBounds.insert(pathBounds.end(), boundsHistory.top().begin(), boundsHistory.top().end());
     }

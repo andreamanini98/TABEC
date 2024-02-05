@@ -50,6 +50,8 @@ private:
             if (parserList.getHead()->prev->content.operatorStack.top() == "tree_op")
             {
                 TABoundsCalculator::saveCurrentHistoryInPathBounds();
+
+                // Popping the current head of the history since it will not be useful anymore.
                 TABoundsCalculator::popFromHistory();
             }
         }
