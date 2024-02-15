@@ -98,8 +98,10 @@ print_scaled_param() {
 # value of the parameter according to an appropriate parameter update policy.
 # Parameters:
 # $1 : an integer telling the function how to update mu during the loop.
+# $2 : an integer telling the function that only one check with parameter 0 must be done.
 check_emptiness() {
   local mu_selector="$1"
+  local only_zero="$2" # This can be enhanced.
 
   local loop_start=0
   local loop_end=$((4 * C - 1)) # This ensures to try all multiples of 0.5 if we set mu as below.
@@ -111,17 +113,23 @@ check_emptiness() {
     # We calculate the new value of the parameter according to Theorem 5.
     printf "\nStarting iteration number: %s\n" "$n"
 
-    case "$mu_selector" in
-      0)
-        # Here we start from 0.5. However, we have to magnify it (as done for all the other constants in the TA).
-        # Please note that we have 5 and a division by 10 here: this is to obtain the same result of putting 0.5 without any division.
-        # This has been done since a shell script may not support decimals or floating point numbers.
-        mu=$((n * alpha_mag / 2 + (5 * alpha_mag / 10)))
-        ;;
-      1)
-        mu=$(((n * alpha_mag / 2) + Alpha))
-        ;;
-    esac
+    if [[ $only_zero == 0 ]]; then
+      mu=0
+    else
+
+      case "$mu_selector" in
+        0)
+          # Here we start from 0.5. However, we have to magnify it (as done for all the other constants in the TA).
+          # Please note that we have 5 and a division by 10 here: this is to obtain the same result of putting 0.5 without any division.
+          # This has been done since a shell script may not support decimals or floating point numbers.
+          mu=$((n * alpha_mag / 2 + (5 * alpha_mag / 10)))
+          ;;
+        1)
+          mu=$(((n * alpha_mag / 2) + Alpha))
+          ;;
+      esac
+
+    fi
 
     echo "Now trying parameter value: $mu"
 
@@ -142,6 +150,10 @@ check_emptiness() {
     else
       echo "Solution not found with parameter value: $mu, starting new loop iteration."
     fi
+
+   if [[ $only_zero == 0 ]]; then
+         break
+   fi
   done
 }
 
@@ -156,7 +168,8 @@ echo "Now starting testing parameter values multiple of 0.5 and less than or equ
 printf "$Parameter < 2C testing.\n-----------------------\n" >> "$testing_resource_usage_directory/$ta_results_file_name"
 
 # Testing parameter multiple of 0.5 and less than or equal to 2C.
-check_emptiness 0
+check_emptiness 0 0
+check_emptiness 0 1
 
 if [[ "$is_not_empty" != "true" ]]; then
   printf "\nAcceptance condition not found, we now have to try parameter values of the form: (n / 2) + alpha.\n"
@@ -164,7 +177,7 @@ if [[ "$is_not_empty" != "true" ]]; then
   printf "Alpha value: %s\n" "$Alpha"
 
   # Testing parameter of the form: (n / 2) + alpha.
-  check_emptiness 1
+  check_emptiness 1 1
 
   if [[ ! "$is_not_empty" == "true" ]]; then
     echo "Acceptance condition not found."

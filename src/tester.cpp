@@ -346,6 +346,9 @@ int main(int argc, char *argv[])
 
     // TODO: also add comments explaining the differences between algorithm running time and tchecker running time.
 
+    // TODO: WHEN TAs COMPOSED ONLY BY RANDOM TILES ARE GENERATED, BOUNDS ARE WRONGLY DETERMINED (I.E., {0,0}) BUT
+    //       THIS IS DUE TO THE FACT THAT BOUNDS ARE NOT COMPUTED FOR RANDOM TILES.
+
     CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
     TATileInputParser taTileInputParser(stringsGetter);
