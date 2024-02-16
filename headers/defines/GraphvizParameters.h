@@ -13,7 +13,7 @@
 #define FINAL_NODE_STYLE "style=filled, fillcolor=\"#FF00004C\""
 #define NODE_LABEL_COLOR "BLACK"
 #define GUARD_COLOR "GREEN2"
-#define ASSIGNMENT_COLOR "PURPLE"
+#define ASSIGNMENT_COLOR "blue"
 #define LOCATION_FONT_SIZE "8pt"
 #define EDGE_FONT_SIZE "8pt"
 #define ARROW_SIZE "0.5"
