@@ -20,11 +20,7 @@
 #include <ostream>
 #include <string>
 
-#ifdef _WIN32
-#include <stdio.h>
-#endif
-
-#define BUFFER_SIZE 8
+#define BUFFER_SIZE 32
 
 
 class Command {
@@ -44,14 +40,23 @@ public:
         std::array<char, BUFFER_SIZE> buffer {};
         std::string result;
 
-#ifdef _WIN32
-#define popen _popen
-#define pclose _pclose
-#endif
-
         FILE *pipe = popen(command.c_str(), "r");
         if (pipe == nullptr)
-            throw std::runtime_error("popen() failed!");
+        {
+            // Saving the error number that led to pipe being a nullptr.
+            int errorNumber = errno;
+            std::perror("popen() failed");
+
+            if (errorNumber == EAGAIN)
+                throw std::runtime_error("popen() failed due to resource limit (EAGAIN)");
+            else if (errorNumber == EMFILE)
+                throw std::runtime_error("popen() failed due to too many open files (EMFILE)");
+            else if (errorNumber == ENFILE)
+                throw std::runtime_error("popen() failed due to too many open files in the system (ENFILE)");
+            else
+                throw std::runtime_error("popen() failed with an unknown error: " + std::to_string(errorNumber) + ")");
+        }
+
         try
         {
             std::size_t bytesRead;
@@ -62,6 +67,10 @@ public:
             pclose(pipe);
             throw;
         }
+
+        // Closing pipe to free system resources.
+        // This was NOT present in the original code and led to errors when opening large amounts of files.
+        pclose(pipe);
         return result;
     }
 

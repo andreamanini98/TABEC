@@ -190,7 +190,7 @@ private:
                     bool syntaxParameterFound = lookForSyntaxParameter(tokenizedStringToParse, syntaxParameter);
 
                     if (syntaxParameterFound)
-                        std::cout << "Found parameter with value: " << syntaxParameter << '\n';
+                        std::cout << "Found syntax parameter with value: " << syntaxParameter << '\n';
 
                     performAction(token.first, syntaxParameter);
                     break;

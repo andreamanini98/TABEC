@@ -15,6 +15,12 @@
 using json = nlohmann::json;
 
 
+// Tiles naming conventions (how they have to be stored in the folders as .xml files):
+// Accepting tiles: acc.xml
+// Binary tiles: bin_bounds.xml
+// Ternary tiles: tri_bounds.xml
+// Binary tiles with an accepting location: bin_acc_bounds.xml
+
 class ActionPushTile : public Action {
 
 private:
@@ -57,12 +63,18 @@ private:
      * Method used to handle bounds calculation when a new tile is processed.
      * @param tile the tile being processed.
      */
-    void handleBounds(const json &tile)
+    void handleBounds(const json &tile, const std::string &token)
     {
         duplicateHistoryIfNotMultiOut();
 
         // Updating the bounds for the current TA based on the tile just collected.
         TABoundsCalculator::addBounds(TAContentExtractor::getDeclaration(tile));
+
+        // If a tile is not properly an accepting tile but has an accepting location, the bound needs to be stored.
+        // Necessary for example if such tile is the first of the Tl0 string.
+        // TODO: this is based on naming convention of the .xml file, it can be enhanced someway.
+        if (token.find("_acc") != std::string::npos)
+            TABoundsCalculator::saveCurrentHistoryInPathBounds();
 
         // If the tile is a multi 'out' location tile, the history of current paths bounds must be saved.
         // The check on the size is done to avoid duplicates if the first tile is already a triTile.
@@ -124,7 +136,7 @@ public:
         json tile = getTile();
 
 #ifdef USE_BOUNDS
-        handleBounds(tile);
+        handleBounds(tile, token);
 #endif
 
         // Each tile has to be renamed in order to avoid name clashes.

@@ -311,12 +311,13 @@ protected:
     /**
      * Method used to get a blueprint of an empty tile.
      * In order to get rid of null values, the corresponding fields should be cleared first (with the .clear() method).
+     * Bounds are set to [0, inf) since they're not known for a randomly-generated tile.
      * @return a json representing an empty tile.
      */
     static json getBlankTA()
     {
         json blankTA;
-        blankTA[NTA][DECLARATION] = "BlankTA";
+        blankTA[NTA][DECLARATION] = "bound:0:inf";
         blankTA[NTA][TEMPLATE][DECLARATION] = "clock x, y;";
         blankTA[NTA][TEMPLATE][INIT][REF] = {};
         blankTA[NTA][TEMPLATE][LOCATION] = {};

@@ -29,8 +29,11 @@ private:
      * outputs is read, if a multi 'out' location tile operator has still to be performed, the history
      * needs to be duplicated in order to use it in the other branch.
      */
-    void handleBounds()
+    void handleBounds(const json &tile)
     {
+        // Updating the bounds for the current TA based on the tile just collected.
+        TABoundsCalculator::addBounds(TAContentExtractor::getDeclaration(tile));
+
         // The following if condition performs those checks:
         // 1) Check that at least one multi 'out' location tile will be done after consuming the current node.
         // 2) Check if the tile is the first one of the new branch (WARNING: this condition is dependent on whether the bounds
@@ -61,15 +64,15 @@ public:
 
     void performAction() override
     {
-#ifdef USE_BOUNDS
-        handleBounds();
-#endif
-
         std::cout << "Now generating random tile\n";
 
         TileRandomCreatorFactory *randomCreatorFactory = new RandomCreatorFactory();
         RandomCreator *randomCreator = randomCreatorFactory->createRandomCreator(token, syntaxParameter);
         json randomTile = randomCreator->createRandomTile();
+
+#ifdef USE_BOUNDS
+        handleBounds(randomTile);
+#endif
 
         // Each tile has to be renamed in order to avoid name clashes.
         TATileRenamer::renameIDs(randomTile);
