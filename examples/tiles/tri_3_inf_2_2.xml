@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>bound:3:inf|bound:2:2</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<declaration>// Place local declarations here.
+clock x, y;</declaration>
+		<location id="id0" x="-136" y="0">
+			<name x="-146" y="-34">in</name>
+			<label kind="comments" x="-204" y="-8">y = 0</label>
+		</location>
+		<location id="id1" x="0" y="0">
+		</location>
+		<location id="id2" x="238" y="0">
+			<name x="228" y="-34">out</name>
+		</location>
+		<location id="id3" x="238" y="136">
+			<name x="228" y="102">out</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-17" y="93">x == param &amp;&amp; y == 4</label>
+		</transition>
+		<transition id="id5">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="42" y="-25">x == param &amp;&amp; y &gt; 6</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-110" y="-25">y == param</label>
+			<label kind="assignment" x="-93" y="8">x = 0</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Process = Template();
+// List one or more processes to be composed into a system.
+system Process;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>
