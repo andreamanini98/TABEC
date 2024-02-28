@@ -77,8 +77,15 @@ printf "Integer %s replaced and saved in:\n%s\n" "$integer_gt_2C" "$output_file"
 # Moving into the right folder for calling other scripts.
 cd ../scriptsForChecks || exit
 
+# Collecting the total number of locations and transitions of the given TA.
+total_locations=$(grep -c "location:" "$input_file")
+total_transitions=$(grep -c "edge:" "$input_file")
+
 # Calling with '>' since the check on parameter > 2C must be carried out first.
-printf "$Parameter > 2C testing.\n-----------------------\n" > "$testing_resource_usage_directory/$ta_results_file_name"
+printf "TOTAL_LOCATIONS $total_locations\n" > "$testing_resource_usage_directory/$ta_results_file_name"
+printf "TOTAL_TRANSITIONS $total_transitions\n\n" >> "$testing_resource_usage_directory/$ta_results_file_name"
+
+printf "$Parameter > 2C testing.\n-----------------------\n" >> "$testing_resource_usage_directory/$ta_results_file_name"
 
 # Now calling tChecker to test the emptiness.
 result=$(./tCheckerLiveness.sh "$output_file" "$tChecker_liveness_path" "$ta_results_file_name" "$testing_resource_usage_directory")

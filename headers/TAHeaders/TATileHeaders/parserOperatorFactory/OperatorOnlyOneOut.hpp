@@ -23,7 +23,7 @@ public:
 
 
     /**
-     * Method used to execute the match_inout_size operator.
+     * Method used to execute the only_one_out operator.
      * The resulting tile must be pushed on top of the stack after the operator has finished its actions.
      */
     void executeOperator() override

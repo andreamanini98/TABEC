@@ -198,6 +198,14 @@ void gatherResourcesUsage(StringsGetter &stringsGetter)
         std::string outputFileName { "ResourceUsages.txt" };
         out.open(stringsGetter.getTestingResultsDirPath() + "/" + outputFileName, std::ofstream::out | std::ofstream::app);
 
+        // Now getting the total number of locations and transitions of a given TA.
+
+        std::string totalLocations_command { "grep \"TOTAL_LOCATIONS\" " + entryPath + " | awk '{print $NF}'" };
+        int totalLocations { std::stoi(Command::exec(totalLocations_command)) };
+
+        std::string totalTransitions_command { "grep \"TOTAL_TRANSITIONS\" " + entryPath + " | awk '{print $NF}'" };
+        int totalTransitions { std::stoi(Command::exec(totalTransitions_command)) };
+
         // Now getting the total number of runs in order to use it in computing averages.
         // The number of total runs is equal to the number of times tChecker has been called during the check
         // of the parameter being > 2C and the parameter being < 2C, conditioned by the fact of having enabled the
@@ -236,16 +244,18 @@ void gatherResourcesUsage(StringsGetter &stringsGetter)
 
         out << nameTA << '\n';
         out << std::string(nameTA.length(), '-') << '\n';
-        out << "Total number of runs:                        " << totalRuns << '\n';
-        out << "Mean algorithm running time [milliseconds]:  " << meanRunningTime * 1000 << '\n';
-        out << "Peak algorithm running time [milliseconds]:  " << peakRunningTime * 1000 << '\n';
-        out << "Mean tChecker running time [milliseconds]:   " << meanExecutionTime << '\n';
-        out << "Peak tChecker running time [milliseconds]:   " << peakExecutionTime << '\n';
-        out << "Mean maximum memory utilization [Bytes]:     " << meanMemoryMaxRSS << '\n';
-        out << "Peak maximum memory utilization [Bytes]:     " << peakMemoryMaxRSS << '\n';
-        out << "Mean number of stored states:                " << meanStoredStates << '\n';
-        out << "Mean number of visited states:               " << meanVisitedStates << '\n';
-        out << "Mean number of visited transitions:          " << meanVisitedTransitions << '\n';
+        out << "Total number of locations:                     " << totalLocations << '\n';
+        out << "Total number of transitions:                   " << totalTransitions << '\n';
+        out << "Total number of runs:                          " << totalRuns << '\n';
+        out << "Mean algorithm running time [milliseconds]:    " << meanRunningTime * 1000 << '\n';
+        out << "Peak algorithm running time [milliseconds]:    " << peakRunningTime * 1000 << '\n';
+        out << "Mean tChecker running time [milliseconds]:     " << meanExecutionTime << '\n';
+        out << "Peak tChecker running time [milliseconds]:     " << peakExecutionTime << '\n';
+        out << "Mean maximum memory utilization [Bytes]:       " << meanMemoryMaxRSS << '\n';
+        out << "Peak maximum memory utilization [Bytes]:       " << peakMemoryMaxRSS << '\n';
+        out << "Mean number of stored zone graph states:       " << meanStoredStates << '\n';
+        out << "Mean number of visited zone graph states:      " << meanVisitedStates << '\n';
+        out << "Mean number of visited zone graph transitions: " << meanVisitedTransitions << '\n';
         out << "\n\n";
 
         out.flush();
@@ -292,10 +302,13 @@ void printBoundResults(CliHandler &cliHandler, std::ofstream &out, double parame
     double strictestBoundSize { std::numeric_limits<double>::max() };
     Bound resultBound {};
 
+    bool isInBound {};
+
     // Getting the strictest bound as a result.
     for (const Bound &b: TABoundsCalculator::getStoredBounds(nameTA))
         if (!(b.isDisjoint || b.isNan) && b.l <= parameterValue && parameterValue <= b.r)
         {
+            isInBound = true;
             double boundSize { TABoundsCalculator::computeBoundSize(b) };
             if (boundSize <= strictestBoundSize)
             {
@@ -305,7 +318,8 @@ void printBoundResults(CliHandler &cliHandler, std::ofstream &out, double parame
         }
 
     out << "Parameter value: " << std::fixed << std::setprecision(1) << parameterValue
-        << " is within found bound: " << TABoundsCalculator::getBoundAsString(resultBound);
+        << " is within found bound: " << TABoundsCalculator::getBoundAsString(resultBound)
+        << (isInBound ? "true" : "false");
 }
 
 
