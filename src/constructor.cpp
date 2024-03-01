@@ -86,6 +86,8 @@ void gatherNeededTiles(const std::string &inputDirPath, std::vector<std::pair<st
 }
 #endif
 
+// This file is deprecated and no longer actively maintained.
+// It is recommended to use the newer implementation in file tester.cpp.
 
 int main(int argc, char *argv[])
 {

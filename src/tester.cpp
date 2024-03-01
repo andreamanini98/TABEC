@@ -395,8 +395,12 @@ int main(int argc, char *argv[])
     std::cout << "Starting generating random tests.\n";
 
     int numTests = cliHandler.isCmd(nbt) ? std::stoi(cliHandler.getCmdArgument(nbt)) : 10;
-    for (int i = 0; i < numTests; i++)
+    for (int i = 0; i <= numTests; i++)
     {
+        // TODO: also this if condition is related to the TODO below.
+        if (i == 0 && numTests > 0)
+            ++i;
+
         TABoundsCalculator::resetBoundCalculator();
 
         // Resetting the nonce at each test generation in order to avoid the index becoming too big.
@@ -405,9 +409,17 @@ int main(int argc, char *argv[])
         std::string regEx { taTileRegExGenerator->generateRegEx() };
         std::cout << "Obtained string:\n" << regEx << "\n";
 
-        json tiledTA = taTileInputParser.getTiledTA(regEx);
+        // TODO: LAST MINUTE CHANGE, THIS IF CONDITION NEEDS TO BE ENHANCED.
+        //       You should also find a way to know the input string in order to pass it to the writeLogs function.
+        json tiledTA;
+        if (numTests == 0)
+        {
+            TATileInputParser t(stringsGetter, true);
+            tiledTA = t.getTiledTA();
+        } else
+            tiledTA = taTileInputParser.getTiledTA(regEx);
 
-        std::string TAName = "RegExTA_" + std::to_string(i + 1);
+        std::string TAName = "RegExTA_" + std::to_string(i);
         writeLogs(stringsGetter, taTileInputParser, TAName, regEx);
 
         printTiledTA(tiledTA);

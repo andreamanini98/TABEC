@@ -143,18 +143,6 @@ private:
 
 
     /**
-     * Method used to display some examples to the user.
-     */
-    static void displayExampleSyntax()
-    {
-        std::cout << "An example of a syntactically-valid compositional string is as follows:\n";
-        std::cout << "t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))\n";
-        std::cout << "\nTry also this to have fun:\n";
-        std::cout << "t4 ++ (t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3))) (t4 ++ (t4 ++ (t1 + t2 + t3) (t1 + t1 + t3)) (t4 ++ (t1 + t1 + t3) (t2 + t2 + t3)))\n";
-    }
-
-
-    /**
      * Method used to get a tokenized representation of the given string.
      * @param str the string to tokenize.
      * @return a tokenized version of the string.
@@ -205,8 +193,6 @@ public:
 
         std::cout << '\n';
         displayAvailableOperators();
-
-        displayExampleSyntax();
     }
 
 
