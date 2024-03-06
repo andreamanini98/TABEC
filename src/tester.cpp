@@ -131,7 +131,7 @@ void gatherResults(StringsGetter &stringsGetter, CliHandler &cliHandler)
                              stringsGetter.getTestingResultsDirPath(),                   // $2
                              stringsGetter.getTCheckerBinPath(),                         // $3
                              std::to_string(cliHandler.isCmd(atc)), // $4
-                             std::to_string(cliHandler.isCmd(atp))  // $5
+                             std::to_string(cliHandler.isCmd(all))  // $5
                      }).c_str());
 }
 
@@ -362,6 +362,8 @@ int main(int argc, char *argv[])
 
     // TODO: WHEN TAs COMPOSED ONLY BY RANDOM TILES ARE GENERATED, BOUNDS ARE WRONGLY DETERMINED (I.E., {0,0}) BUT
     //       THIS IS DUE TO THE FACT THAT BOUNDS ARE NOT COMPUTED FOR RANDOM TILES.
+
+    // TODO: UP TO NOW, TO PROPERLY FIND BOUNDS THE ENTIRE TA MUST BE ENCLOSED WITHIN PARENTHESES (like it happens in the strict version of Tl0)
 
     CliHandler cliHandler(&argc, &argv);
     StringsGetter stringsGetter(cliHandler);
