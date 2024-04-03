@@ -1,4 +1,6 @@
-# utotparser
+# TABEC
+
+WARNING: the README is still in construction and the current version may be incomplete.
 
 ---
 
