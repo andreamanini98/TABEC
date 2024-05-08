@@ -3,7 +3,7 @@
 ![Maintainer](https://img.shields.io/badge/maintainer-andreamanini98-blue)
 [![Open Source Love svg3](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
-[![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/Naereen/ama)
+[![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://github.com/andreamanini98)
 
 ![Madewith](https://img.shields.io/badge/Made_with-C++17-blue)
 ![Madewith](https://img.shields.io/badge/Made_with-Bash-blue)
