@@ -356,8 +356,6 @@ void checkParameterInterval(StringsGetter &stringsGetter, CliHandler &cliHandler
 
 int main(int argc, char *argv[])
 {
-    // TODO: you should put in the documentation that MacOS users need coreutils to be installed via homebrew.
-
     // TODO: also add comments explaining the differences between algorithm running time and tchecker running time.
 
     // TODO: WHEN TAs COMPOSED ONLY BY RANDOM TILES ARE GENERATED, BOUNDS ARE WRONGLY DETERMINED (I.E., {0,0}) BUT
