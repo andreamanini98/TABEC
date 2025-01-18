@@ -72,6 +72,12 @@ const std::string atp { "-atp" };
 // Used to print all the bounds found when executing tests.
 const std::string bds { "-bds" };
 
+// Used to specify that TO parser accept a single formula (just after the -tos option).
+const std::string tos { "-tos" };
+
+// Used to specify that TO parser accept multiple formulas (in a file).
+const std::string tom {"-tom"};
+
 // ------------------------------------------------------------------------------------------
 
 
@@ -85,7 +91,7 @@ private:
                                                    inp, tst, tns,
                                                    sup, hcr, nbt,
                                                    cls, atc, atp,
-                                                   bds };
+                                                   bds, tos, tom};
 
     // A pointer to main's argc.
     int *argc_p;

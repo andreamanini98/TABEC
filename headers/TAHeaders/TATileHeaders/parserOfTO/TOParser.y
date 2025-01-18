@@ -113,7 +113,6 @@ t_type:
 t_def:
     tile_name LBRACE IINT RBRACE
     {
-        std::cout << "tilename: " << $1 << std::endl << "locations_num: " << $3 << std::endl;
         TTILE->setName($1);
         TTILE->setLocationsNum($3);
     }

@@ -1,13 +1,19 @@
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <string>
+#include <filesystem>
 
+#include "utilities/Utils.hpp"
+#include "utilities/CliHandler.hpp"
+#include "utilities/StringsGetter.hpp"
 #include "TAHeaders/TATileHeaders/parserOfTO/TOParser.hpp"
 #include "TAHeaders/TATileHeaders/parserOfTO/TOTATileBuffer.hpp"
 
 extern int yyparse();
 extern void yy_scan_string(const char *str);
 
+// parse input string
 int parseInputString(const std::string &input)
 {
     TATileBuffer::getInstance().initialize();
@@ -15,49 +21,70 @@ int parseInputString(const std::string &input)
     return yyparse();
 }
 
-int main()
+// handle a single formula and reset the buffer
+int handleSingleFormula(const std::string &formula)
 {
-    std::string input = "\
-create tile aa(5) with \
-(\
-initial = (0,1,2), \
-input = (0,1), \
-output = (3,4), \
-accepting = (4,1,2,3), \
-params = (param1, param2, param3), \
-transitions = \
-(\
-((2,4),(),()),\
-((1,3),(),()),\
-((0,1),(),()),\
-((1,4),(),())\
-)\
-);";
-    std::cout << "Input:" << std::endl
-              << input << std::endl;
+    int result = parseInputString(formula);
 
-    int parse_result = parseInputString(input);
-
-    if (parse_result == 0)
+    if (!result)
     {
-        std::cout << "Parsing successful" << std::endl;
-
         TATileBuffer::getInstance().tile()->output();
-        bool is_valid = TATileBuffer::getInstance().tile()->check();
-        if (is_valid)
-        {
-        }
-        else
-        {
-            std::cout << "Invalid tile(did not pass checking)\n"
-                      << std::endl;
-            return 1;
-        }
+        std::cout << "parse successful" << std::endl;
     }
     else
+        std::cout << "parse failed" << std::endl;
+
+    TATileBuffer::getInstance().destroy();
+    return result;
+}
+
+int main(int argc, char *argv[])
+{
+    CliHandler cliHandler(&argc, &argv);
+    StringsGetter stringsGetter(cliHandler);
+
+    // must specify one of the two options
+    if (!(cliHandler.isCmd(tos) ^ cliHandler.isCmd(tom)))
     {
-        std::cout << "Parsing failed" << std::endl;
+        std::cerr << "Cannot specify both(neither) -tos and(nor) -tom options" << std::endl;
         return 1;
+    }
+
+    if (cliHandler.isCmd(tos))
+    {
+        // single formula (from command line)
+        std::string TOformula = cliHandler.getCmdArgument(tos);
+
+        return handleSingleFormula(TOformula);
+    }
+    else if (cliHandler.isCmd(tom))
+    {
+        // multiple formulas (from a input source file)
+        std::string file_name = cliHandler.getCmdArgument(tom);
+        std::string file_path = stringsGetter.getInputDirPath() + "/" + file_name;
+        std::ifstream input_file(file_path);
+
+        if (!input_file.is_open())
+            std::cerr << "Error opening file: " << file_path << std::endl;
+        else
+        {
+            std::string line;
+            std::vector<std::string> lines;
+
+            while (std::getline(input_file, line))
+            {
+                // Add each line to the vector
+                lines.push_back(line);
+            }
+
+            for (int i = 0; i < (int)lines.size(); i++)
+            {
+                // handle every line of the lines
+                (void)handleSingleFormula(lines[i]);
+            }
+
+            input_file.close();
+        }
     }
 
     return 0;

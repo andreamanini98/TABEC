@@ -1,6 +1,7 @@
 #ifndef TOPARSER_TATILEBUFFER_H
 #define TOPARSER_TATILEBUFFER_H
 
+#include <iostream>
 #include <cstring>
 #include <vector>
 #include <string>
@@ -9,9 +10,7 @@
 using std::string;
 using std::vector;
 
-/*
- * a new-delete version of strdup
- */
+// a new-delete version of strdup
 static char *strdup_new(const char *s)
 {
     size_t len = strlen(s) + 1;
@@ -670,7 +669,7 @@ public:
         }
     }
 
-    // not private actually
+    // tile_ not private actually
     TATile *tile()
     {
         return tile_;
@@ -678,6 +677,7 @@ public:
 
 private:
     TATileBuffer() : tile_(nullptr) {}
+ 
     void addDefaultClocks()
     {
         tile_->addClock(Clock(0, "x"));
