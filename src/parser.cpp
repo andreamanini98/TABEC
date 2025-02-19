@@ -13,10 +13,14 @@
 extern int yyparse();
 extern void yy_scan_string(const char *str);
 
+#define PARSE_FAIL 0
+#define PARSE_SUCCESS 1
+#define BUFFER_CLEAN TOBuffer::getInstance().destroy()
+
 // parse input string
 int parseInputString(const std::string &input)
 {
-    TATileBuffer::getInstance().initialize();
+    TOBuffer::getInstance().initialize();
     yy_scan_string(input.c_str());
     return yyparse();
 }
@@ -28,14 +32,22 @@ int handleSingleFormula(const std::string &formula)
 
     if (!result)
     {
-        TATileBuffer::getInstance().tile()->output();
-        std::cout << "parse successful" << std::endl;
+        // ITODO:post-process
+        if (TOBuffer::getInstance().tile()->postProcess())
+        {
+            if (TOBuffer::getInstance().tile()->check())
+            {
+                return PARSE_SUCCESS;
+            }
+            else
+                printf("check failed, ");
+        }
+        else
+            printf("post process failed, ");
     }
-    else
-        std::cout << "parse failed" << std::endl;
 
-    TATileBuffer::getInstance().destroy();
-    return result;
+    // parse failed
+    return PARSE_FAIL;
 }
 
 int main(int argc, char *argv[])
@@ -55,7 +67,19 @@ int main(int argc, char *argv[])
         // single formula (from command line)
         std::string TOformula = cliHandler.getCmdArgument(tos);
 
-        return handleSingleFormula(TOformula);
+        int result = handleSingleFormula(TOformula);
+        if (result == PARSE_SUCCESS)
+        {
+            printf("parse success\n");
+            // post process of the formula(only create statement now, so just create it)
+            TOBuffer::getInstance().tile()->exportTo(stringsGetter.getOutputDirPath());
+        }
+        else
+        {
+            // post process of the formula(when failed)
+            printf("parse failed\n");
+            BUFFER_CLEAN;
+        }
     }
     else if (cliHandler.isCmd(tom))
     {
@@ -68,22 +92,50 @@ int main(int argc, char *argv[])
             std::cerr << "Error opening file: " << file_path << std::endl;
         else
         {
-            std::string line;
-            std::vector<std::string> lines;
+            std::vector<std::string> commands;
+            std::string line, currentCommand;
 
             while (std::getline(input_file, line))
             {
-                // Add each line to the vector
-                lines.push_back(line);
-            }
+                if (line.empty() || line.find("--") == 0)
+                {
+                    continue;
+                }
 
-            for (int i = 0; i < (int)lines.size(); i++)
-            {
-                // handle every line of the lines
-                (void)handleSingleFormula(lines[i]);
+                size_t start = line.find_first_not_of(" \t");
+                size_t end = line.find_last_not_of(" \t");
+                if (start == std::string::npos || end == std::string::npos)
+                {
+                    continue;
+                }
+                line = line.substr(start, end - start + 1);
+
+                currentCommand += line + " ";
+
+                if (line.back() == ';')
+                {
+                    commands.push_back(currentCommand);
+                    currentCommand.clear();
+                }
             }
 
             input_file.close();
+
+            for (const std::string &command : commands)
+            {
+                int result = handleSingleFormula(command);
+
+                if (result == PARSE_SUCCESS)
+                {
+                    std::cout << "Parse success\n";
+                    TOBuffer::getInstance().tile()->exportTo(stringsGetter.getOutputDirPath());
+                }
+                else
+                {
+                    std::cout << "Parse failed\n";
+                    BUFFER_CLEAN;
+                }
+            }
         }
     }
 

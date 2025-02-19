@@ -8,7 +8,7 @@ int yylex();
 
 using namespace std;
 
-#define TTILE TATileBuffer::getInstance().tile()
+#define TTILE TOBuffer::getInstance().tile()
 
 %}
 
@@ -28,10 +28,14 @@ using namespace std;
     std::vector<ClockAssignment*>* assignment_list;
     ClockConstraint* constraint_ptr;
     std::vector<ClockConstraint*>* constraint_list;
+    State* state_ptr;
+    std::vector<State*>* state_list;
     Transition* transition_ptr;
     std::vector<Transition*>* transition_list;
     Value* value_ptr;
     std::vector<Value*>* value_list;
+    Param* param_ptr;
+    std::vector<Param*>* param_list;
     int int_val;
     std::vector<int>* int_list;
     double float_val;
@@ -45,29 +49,27 @@ using namespace std;
 %token <int_val> IINT
 %token <float_val> FFLOAT
 
-%type <str_ptr> clock_name
-%type <str_ptr> tile_name
-%type <str_ptr> param
-%type <assignment_ptr> assignment
-%type <assignment_list> assignment_list
 %type <assignment_list> opt_assignment_list
-%type <constraint_ptr> constraint
-%type <constraint_list> constraint_list
+%type <assignment_list> assignment_list
+%type <assignment_ptr> assignment
 %type <constraint_list> opt_constraint_list
-%type <transition_ptr> transition
-%type <transition_list> transition_list
+%type <constraint_list> constraint_list
+%type <constraint_ptr> constraint
 %type <transition_list> opt_transition_list
-%type <clock_ptr> clock
-%type <clock_list> clock_list
+%type <transition_list> transition_list
+%type <transition_ptr> transition
 %type <clock_list> opt_clock_list
-%type <value_ptr> value
-%type <value_list> value_list
+%type <clock_list> clock_list
+%type <clock_ptr> clock
 %type <value_list> opt_value_list
-%type <c_op> cop
-%type <int_list> int_list
+%type <value_list> value_list
+%type <value_ptr> value
+%type <param_list> opt_param_list
+%type <param_list> param_list
+%type <param_ptr> param
 %type <int_list> opt_int_list
-%type <str_list> param_list
-%type <str_list> opt_param_list
+%type <int_list> int_list
+%type <c_op> cop
 
 %start TO
 
@@ -111,17 +113,14 @@ t_type:
     ;
 
 t_def:
-    tile_name LBRACE IINT RBRACE
+    SSTR LBRACE IINT RBRACE
     {
         TTILE->setName($1);
-        TTILE->setLocationsNum($3);
-    }
-    ;
-
-tile_name:
-    SSTR
-    {
-        $$ = $1;
+        for (int i = 0;i < $3;i++)
+        {
+            State * state = new State(i);
+            TTILE->addState(state);
+        }
     }
     ;
 
@@ -152,90 +151,91 @@ with_args_list:
     ;
 
 with_arg:
-    ACCEPTING EQ LBRACE opt_int_list RBRACE
+    PARAMS ASSIGNMENT LBRACE opt_param_list RBRACE
     {
-        if (!TTILE->getAcceptingStates().empty()) {
-            yyerror("Accepting states already set");
-            YYABORT;
-        }
-
         if ($4 != nullptr)
         {
             for (int i = 0; i < (int)$4->size(); i++)
-                TTILE->addAcceptingState($4->at(i));
+            {
+                TTILE->appendParam($4->at(i));
+            }
         }
     }
-    | INITIAL EQ LBRACE opt_int_list RBRACE
+    | CLOCKS ASSIGNMENT LBRACE opt_clock_list RBRACE
     {
-        if (!TTILE->getInitialStates().empty()) {
-            yyerror("Initial states already set");
-            YYABORT;
-        }
-
         if ($4 != nullptr)
         {
             for (int i = 0; i < (int)$4->size(); i++)
-                TTILE->addInitialState($4->at(i));
+            {
+                TTILE->appendClock($4->at(i));
+            }
         }
     }
-    | INPUT EQ LBRACE opt_int_list RBRACE
+    | TRANSITIONS ASSIGNMENT LBRACE opt_transition_list RBRACE 
     {
-        if (!TTILE->getInputStates().empty()) {
-            yyerror("Input states already set");
-            YYABORT;
-        }
-
         if ($4 != nullptr)
         {
             for (int i = 0; i < (int)$4->size(); i++)
-                TTILE->addInputState($4->at(i));
+            {
+                TTILE->appendTransition($4->at(i));
+            }
         }
     }
-    | OUTPUT EQ LBRACE opt_int_list RBRACE
+    | ACCEPTING ASSIGNMENT LBRACE opt_int_list RBRACE
     {
-        if (!TTILE->getOutputStates().empty()) {
-            yyerror("Output states already set");
-            YYABORT;
-        }
-
         if ($4 != nullptr)
         {
             for (int i = 0; i < (int)$4->size(); i++)
-                TTILE->addOutputState($4->at(i));
+            {
+                if (!TTILE->setStateAccepting($4->at(i), true))
+                {
+                    yyerror("Invalid state index while setting accepting states");
+                    YYABORT;
+                }
+            }
         }
     }
-    | TRANSITIONS EQ LBRACE opt_transition_list RBRACE 
+    | INITIAL ASSIGNMENT LBRACE opt_int_list RBRACE
     {
-        // no action
+        if ($4 != nullptr)
+        {
+            for (int i = 0; i < (int)$4->size(); i++)
+            {
+                if(!TTILE->setStateInitial($4->at(i), true))
+                {
+                    yyerror("Invalid state index while setting initial state");
+                    YYABORT;
+                }
+            }
+        }
     }
-    | CLOCKS EQ LBRACE opt_clock_list RBRACE
+    | INPUT ASSIGNMENT LBRACE opt_int_list RBRACE
     {
-        yyerror("Clocks not supported yet(we use default clocks for now)");
-        YYABORT;
+        if ($4 != nullptr)
+        {
+            for (int i = 0; i < (int)$4->size(); i++)
+            {
+                if(!TTILE->setStateInput($4->at(i), true))
+                {
+                    yyerror("Invalid state index while setting input states");
+                    YYABORT;
+                }
+            }
+        }
     }
-    | PARAMS EQ LBRACE opt_param_list RBRACE
+    | OUTPUT ASSIGNMENT LBRACE opt_int_list RBRACE
     {
-        // no action
-    }
-    ;
-
-param:
-    SSTR
-    {
-        $$ = $1;
-    }
-    ;
-
-param_list:
-    param
-    {
-        $$ = new vector<char*>;
-        $$->push_back($1);
-    }
-    | param_list COMMA param
-    {
-        $$ = $1;
-        $$->push_back($3);
+        if ($4 != nullptr)
+        {
+            for (int i = 0; i < (int)$4->size(); i++)
+            {
+                if(!TTILE->setStateOutput($4->at(i), true))
+                {
+                    yyerror("Invalid state index while setting output states");
+                    YYABORT;
+                }
+            }
+        }
     }
     ;
 
@@ -250,19 +250,34 @@ opt_param_list:
     }
     ;
 
-transition:
-    LBRACE LBRACE IINT COMMA IINT RBRACE COMMA LBRACE opt_constraint_list RBRACE COMMA LBRACE opt_assignment_list RBRACE RBRACE
+param_list:
+    param
     {
-        //((x,y),(),())
-        $$ = new Transition($3, $5);
-        if ($9 == nullptr)
-        {
+        $$ = new vector<Param*>;
+        $$->push_back($1);
+    }
+    | param_list COMMA param
+    {
+        $$ = $1;
+        $$->push_back($3);
+    }
+    ;
 
-        }
-        if ($13 == nullptr)
-        {
+param:
+    SSTR
+    {
+        $$ = new Param($1);
+    }
+    ;
 
-        }
+opt_transition_list:
+    transition_list
+    {
+        $$ = $1;
+    }
+    | /* empty */
+    {
+        $$ = nullptr;
     }
     ;
 
@@ -280,60 +295,58 @@ transition_list:
     }
     ;
 
-opt_transition_list:
-    transition_list
+transition:
+    LBRACE LBRACE IINT COMMA IINT RBRACE COMMA LBRACE opt_constraint_list RBRACE COMMA LBRACE opt_assignment_list RBRACE RBRACE
     {
-        // no action
-    }
-    | /* empty */
-    {
-        // no action
-    }
-    ;
+        //((from,to),(guard1,guard2,...),(action1,action2,...))
+        $$ = new Transition($3, $5);
 
-constraint:
-    clock cop value
-    {
-    }
-    ;
+        if ($9 != nullptr)
+        {
+            for (int i = 0; i < (int)$9->size(); i++)
+            {
+                $$->addGuard($9->at(i));
+            }
+        }
 
-constraint_list:
-    constraint
-    {
-        // no action
-    }
-    | constraint_list COMMA constraint
-    {
-        // no action
+        if ($13 != nullptr)
+        {
+            for (int i = 0; i < (int)$13->size(); i++)
+            {
+                $$->addAction($13->at(i));
+            }
+        }
     }
     ;
 
 opt_constraint_list:
     constraint_list
     {
-        // no action
+        $$ = $1;
     }
     | /* empty */
     {
-        // no action
+        $$ = nullptr;
     }
     ;
 
-assignment:
-    clock_name ASSIGNMENT value
+constraint_list:
+    constraint
     {
-        // no action
+        $$ = new vector<ClockConstraint*>;
+        $$->push_back($1);
+    }
+    | constraint_list COMMA constraint
+    {
+        $$ = $1;
+        $$->push_back($3);
     }
     ;
 
-assignment_list:
-    assignment
+constraint:
+    SSTR cop value
     {
-        // no action
-    }
-    | assignment_list COMMA assignment
-    {
-        // no action
+        $$ = new ClockConstraint($1, $2, $3);
     }
     ;
 
@@ -348,10 +361,34 @@ opt_assignment_list:
     }
     ;
 
-clock:
-    IINT COMMA clock_name
+assignment_list:
+    assignment
     {
-        // no action
+        $$ = new vector<ClockAssignment*>;
+        $$->push_back($1);
+    }
+    | assignment_list COMMA assignment
+    {
+        $$ = $1;
+        $$->push_back($3);
+    }
+    ;
+
+assignment:
+    SSTR ASSIGNMENT value
+    {
+        $$ = new ClockAssignment($1, $3);
+    }
+    ;
+
+opt_clock_list:
+    clock_list
+    {
+        $$ = $1;
+    }
+    | /* empty */
+    {
+        $$ = nullptr;
     }
     ;
 
@@ -368,8 +405,16 @@ clock_list:
     }
     ;
 
-opt_clock_list:
-    clock_list
+clock:
+    SSTR
+    {
+        // no action
+        $$ = new Clock($1);
+    }
+    ;
+
+opt_value_list:
+    value_list
     {
         $$ = $1;
     }
@@ -379,24 +424,31 @@ opt_clock_list:
     }
     ;
 
-clock_name:
-    SSTR
+value_list:
+    value
+    {
+        $$ = new vector<Value*>;
+        $$->push_back($1);
+    }
+    | value_list COMMA value
     {
         $$ = $1;
+        $$->push_back($3);
     }
+    ;
 
 value:
     IINT
     {
-        $$ = new Value(ValueType::INT, nullptr, $1);
+        $$ = new Value(ValueType::INT, static_cast<void*>(&$1));
     }
     | FFLOAT
     {
-        $$ = new Value(ValueType::FLOAT, nullptr, $1);
+        $$ = new Value(ValueType::DOUBLE, static_cast<void*>(&$1));
     }
     | SSTR
     {
-        $$ = new Value(ValueType::PARAM, $1, 0);
+        $$ = new Value(ValueType::PARAM, static_cast<void*>($1));
     }
     ;
 
@@ -405,7 +457,7 @@ opt_int_list:
     {
         $$ = $1;
     }
-    |
+    | /* empty */
     {
         $$ = nullptr;
     }
@@ -461,5 +513,5 @@ void yyerror(const char* s) {
     std::cerr << "Error: " << s << std::endl;
 
     // Deconstruct the tile buffer (actually delete all data stored in it)
-    TATileBuffer::getInstance().destroy();
+    // TOBuffer::getInstance().destroy();
 }

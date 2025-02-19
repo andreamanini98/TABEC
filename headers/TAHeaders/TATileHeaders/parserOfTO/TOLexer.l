@@ -27,11 +27,12 @@ DOT              \.
 {WHITE_SAPCE}                                           { /* ignore whitespace */ }
 ";"                                                     { RETURN_TOKEN(SEMICOLON); }
 ","                                                     { RETURN_TOKEN(COMMA); }
-"="                                                     { RETURN_TOKEN(EQ); }
+"=="                                                    { RETURN_TOKEN(EQ); }
 ":="                                                    { RETURN_TOKEN(ASSIGNMENT); }
-"=="                                                    { RETURN_TOKEN(ASSIGNMENT); }
+"="                                                     { RETURN_TOKEN(ASSIGNMENT); }
 "<="                                                    { RETURN_TOKEN(LE); }
-"<>" | "!="                                             { RETURN_TOKEN(NE); }
+"<>"                                                    { RETURN_TOKEN(NE); }
+"!="                                                    { RETURN_TOKEN(NE); }
 "<"                                                     { RETURN_TOKEN(LT); }
 ">="                                                    { RETURN_TOKEN(GE); }
 ">"                                                     { RETURN_TOKEN(GT); }
