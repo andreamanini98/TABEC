@@ -13,6 +13,8 @@
 #include <filesystem>
 #include "nlohmann/json.hpp"
 
+#include "defines/TOjsonAttributes.h"
+
 using std::string;
 using std::unordered_map;
 using std::unordered_set;
@@ -332,6 +334,80 @@ public:
 private:
     int id_;
     char *name_;
+};
+
+class BoundItem
+{
+public:
+    BoundItem() : value_(0), is_inf_(false), is_nan_(false) {};
+
+    void setValue(int value)
+    {
+        value_ = value;
+    }
+
+    void setInf(bool is_inf)
+    {
+        is_inf_ = is_inf;
+    }
+
+    void setNan(bool is_nan)
+    {
+        is_nan_ = is_nan;
+    }
+
+    int getValue() const
+    {
+        return value_;
+    }
+
+    bool getIsInf() const
+    {
+        return is_inf_;
+    }
+
+    bool getIsNan() const
+    {
+        return is_nan_;
+    }
+
+private:
+    bool is_inf_;
+    bool is_nan_;
+    int value_;
+};
+
+class BoundsItem
+{
+public:
+    BoundsItem() = default;
+
+    void setLBound(BoundItem item)
+    {
+        l_bound_.setInf(item.getIsInf());
+        l_bound_.setNan(item.getIsNan());
+        l_bound_.setValue(item.getValue());
+    }
+
+    void setRBound(BoundItem item)
+    {
+        r_bound_.setInf(item.getIsInf());
+        r_bound_.setNan(item.getIsNan());
+        r_bound_.setValue(item.getValue());
+    }
+
+    BoundItem getLBound() const
+    {
+        return l_bound_;
+    }
+
+    BoundItem getRBound() const
+    {
+        return r_bound_;
+    }
+
+private:
+    BoundItem l_bound_, r_bound_;
 };
 
 class Clock
@@ -769,6 +845,13 @@ public:
             transition->destroy();
         }
         transitions_.clear();
+
+        for (auto bounds : boundss_)
+        {
+            delete bounds;
+        }
+        boundss_.clear();
+
     }
 
     void appendClock(Clock *clock)
@@ -915,88 +998,171 @@ public:
 
         // json write
         nlohmann::ordered_json j;
-        j["tile_name"] = name_;
-        j["states_num"] = states_.size();
+        j[TOTNAME] = name_;
 
-        j["clocks_num"] = clocks_.size();
-        j["clocks"] = nlohmann::json::array();
+        if (states_.size() == 0)
+        {
+            std::cout << "no states in the TATile" << std::endl;
+            return;
+        }
+
+        if (boundss_.size() != 0)
+        {
+            j[TOBOUNDS] = nlohmann::json::array();
+            for(auto bounds : boundss_)
+            {
+                BoundItem left = bounds->getLBound(), right = bounds->getRBound();
+                nlohmann::ordered_json jobject;
+
+                if (left.getIsInf())
+                {
+                    jobject[TOLEFT] = TOINF;
+                }
+                else if (left.getIsNan())
+                {
+                    jobject[TOLEFT] = TONAN;
+                }
+                else
+                {
+                    jobject[TOLEFT] = left.getValue();
+                }
+
+                if (right.getIsInf())
+                {
+                    jobject[TORIGHT] = TOINF;
+                }
+                else if (right.getIsNan())
+                {
+                    jobject[TORIGHT] = TONAN;
+                }
+                else
+                {
+                    jobject[TORIGHT] = right.getValue();
+                }
+
+                j[TOBOUNDS].push_back(jobject);
+            }
+        }
+
+        j[TONSTATES] = states_.size();
+
+        vector<int> ins, outs, accepts, inits;
+        for (int i = 0; i < states_.size(); i++)
+        {
+            auto state = getStates().at(i);
+            if (state->isInput())
+                ins.push_back(i);
+            if (state->isOutput())
+                outs.push_back(i);
+            if (state->isAccepting())
+                accepts.push_back(i);
+            if (state->isInitial())
+                inits.push_back(i);
+        }
+
+        j[TOINPUT] = nlohmann::json::array();
+        for (int i = 0; i < ins.size(); i++)
+        {
+            j[TOINPUT].push_back(ins[i]);
+        }
+
+        j[TOOUTPUT] = nlohmann::json::array();
+        for (int i = 0; i < outs.size(); i++)
+        {
+            j[TOOUTPUT].push_back(outs[i]);
+        }
+
+        j[TOINITIAL] = nlohmann::json::array();
+        for (int i = 0; i < inits.size(); i++)
+        {
+            j[TOINITIAL].push_back(inits[i]);
+        }
+
+        j[TOACCEPTING] = nlohmann::json::array();
+        for (int i = 0; i < accepts.size(); i++)
+        {
+            j[TOACCEPTING].push_back(accepts[i]);
+        }
+
+        j[TONCLOCKS] = clocks_.size();
+        j[TOCLOCKS] = nlohmann::json::array();
         for (int i = 0; i < clocks_.size(); i++)
         {
             nlohmann::ordered_json jclock;
-            jclock["id"] = clocks_[i]->getId();
-            jclock["name"] = clocks_[i]->getName();
-            j["clocks"].push_back(jclock);
+            jclock[TOID] = clocks_[i]->getId();
+            jclock[TONAME] = clocks_[i]->getName();
+            j[TOCLOCKS].push_back(jclock);
         }
 
-        j["params_num"] = params_.size();
-        j["params"] = nlohmann::json::array();
+        j[TONPARAMS] = params_.size();
+        j[TOPARAMS] = nlohmann::json::array();
         for (int i = 0; i < params_.size(); i++)
         {
             nlohmann::ordered_json jparam;
-            jparam["id"] = params_[i]->getId();
-            jparam["name"] = params_[i]->getName();
-            j["params"].push_back(jparam);
+            jparam[TOID] = params_[i]->getId();
+            jparam[TONAME] = params_[i]->getName();
+            j[TOPARAMS].push_back(jparam);
         }
 
-        j["transitions_num"] = transitions_.size();
-        j["transitions"] = nlohmann::json::array();
+        j[TONTRANSITIONS] = transitions_.size();
+        j[TOTRANSITIONS] = nlohmann::json::array();
         for (int i = 0; i < transitions_.size(); i++)
         {
             nlohmann::ordered_json jtransition;
-            jtransition["from"] = transitions_[i]->getFrom();
-            jtransition["to"] = transitions_[i]->getTo();
-            jtransition["guards_num"] = transitions_[i]->getGuards().size();
-            if (jtransition["guards_num"] > 0)
+            jtransition[TOFROM] = transitions_[i]->getFrom();
+            jtransition[TOTO] = transitions_[i]->getTo();
+            jtransition[TONGUARDS] = transitions_[i]->getGuards().size();
+            if (jtransition[TONGUARDS] > 0)
             {
-                jtransition["guards"] = nlohmann::json::array();
+                jtransition[TOGUARDS] = nlohmann::json::array();
                 for (int j = 0; j < transitions_[i]->getGuards().size(); j++)
                 {
                     nlohmann::ordered_json jguard;
-                    jguard["clock"] = transitions_[i]->getGuards()[j]->getClock().getName();
-                    jguard["op"] = COP2Symbol(transitions_[i]->getGuards()[j]->getCOP());
+                    jguard[TOCLOCK] = transitions_[i]->getGuards()[j]->getClock().getName();
+                    jguard[TOOP] = COP2Symbol(transitions_[i]->getGuards()[j]->getCOP());
                     switch (transitions_[i]->getGuards()[j]->getValue().getType())
                     {
                     case ValueType::NDEFINED:
                         assert(false);
                     case ValueType::INT:
-                        jguard["value"] = *static_cast<int *>(transitions_[i]->getGuards()[j]->getValue().getValue());
+                        jguard[TOVALUE] = *static_cast<int *>(transitions_[i]->getGuards()[j]->getValue().getValue());
                         break;
                     case ValueType::DOUBLE:
-                        jguard["value"] = *static_cast<double *>(transitions_[i]->getGuards()[j]->getValue().getValue());
+                        jguard[TOVALUE] = *static_cast<double *>(transitions_[i]->getGuards()[j]->getValue().getValue());
                         break;
                     case ValueType::PARAM:
-                        jguard["value"] = static_cast<char *>(transitions_[i]->getGuards()[j]->getValue().getValue());
+                        jguard[TOVALUE] = static_cast<char *>(transitions_[i]->getGuards()[j]->getValue().getValue());
                         break;
                     }
-                    jtransition["guards"].push_back(jguard);
+                    jtransition[TOGUARDS].push_back(jguard);
                 }
             }
-            jtransition["actions_num"] = transitions_[i]->getActions().size();
-            if (jtransition["actions_num"] > 0)
+            jtransition[TONACTIONS] = transitions_[i]->getActions().size();
+            if (jtransition[TONACTIONS] > 0)
             {
-                jtransition["actions"] = nlohmann::json::array();
+                jtransition[TOACTIONS] = nlohmann::json::array();
                 for (int j = 0; j < transitions_[i]->getActions().size(); j++)
                 {
                     nlohmann::ordered_json jaction;
-                    jaction["clock"] = transitions_[i]->getActions()[j]->getClock().getName();
+                    jaction[TOCLOCK] = transitions_[i]->getActions()[j]->getClock().getName();
                     switch (transitions_[i]->getActions()[j]->getValue().getType())
                     {
                     case ValueType::NDEFINED:
                         assert(false);
                     case ValueType::INT:
-                        jaction["value"] = *static_cast<int *>(transitions_[i]->getActions()[j]->getValue().getValue());
+                        jaction[TOVALUE] = *static_cast<int *>(transitions_[i]->getActions()[j]->getValue().getValue());
                         break;
                     case ValueType::DOUBLE:
-                        jaction["value"] = *static_cast<double *>(transitions_[i]->getActions()[j]->getValue().getValue());
+                        jaction[TOVALUE] = *static_cast<double *>(transitions_[i]->getActions()[j]->getValue().getValue());
                         break;
                     case ValueType::PARAM:
-                        jaction["value"] = static_cast<char *>(transitions_[i]->getActions()[j]->getValue().getValue());
+                        jaction[TOVALUE] = static_cast<char *>(transitions_[i]->getActions()[j]->getValue().getValue());
                         break;
                     }
-                    jtransition["actions"].push_back(jaction);
+                    jtransition[TOACTIONS].push_back(jaction);
                 }
             }
-            j["transitions"].push_back(jtransition);
+            j[TOTRANSITIONS].push_back(jtransition);
         }
 
         out_file << j.dump(4) << std::endl;
@@ -1004,8 +1170,6 @@ public:
 
     bool postProcess()
     {
-        addDefaultGuards();
-        addDefaultActions();
         (void)buildMap();
         // validate guards
         for (auto transition : transitions_)
@@ -1065,6 +1229,11 @@ public:
             return false;
 
         return true;
+    }
+
+    void appendBounds(BoundsItem* bounds)
+    {
+        boundss_.push_back(bounds);
     }
 
 private:
@@ -1227,6 +1396,7 @@ private:
 
 private:
     char *name_;
+    vector<BoundsItem*> boundss_;
     unordered_map<string, int> clocks_map_;
     unordered_map<string, int> params_map_;
     vector<Clock *> clocks_;
@@ -1251,9 +1421,8 @@ public:
     {
         if (tile_ != nullptr)
             delete tile_;
-        tile_ = new TATile;
 
-        addDefaultClocks();
+        tile_ = new TATile;
     }
 
     void destroy()

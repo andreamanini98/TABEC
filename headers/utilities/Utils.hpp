@@ -2,10 +2,13 @@
 #define UTOTPARSER_UTILS_H
 
 #include <sstream>
+#include <unordered_map>
 #include "nlohmann/json.hpp"
 
 #include "Exceptions.h"
 #include "XMLtoJSONInclude/xml2json.hpp"
+#include "defines/UPPAALxmlAttributes.h"
+#include "defines/TOjsonAttributes.h"
 
 using json = nlohmann::json;
 
@@ -30,6 +33,268 @@ json getJsonFromFileStream(std::ifstream &file, bool isXml = true)
         return json::parse(xml2json(xml_str));
     } else
         throw NotXMLFormatException("Provided file should be of .xml type!");
+}
+
+
+/**
+ * Function used to form bounds part in .xml json
+ * @param TOfile json representation of the .tot file
+ * @param result the result json
+ */
+void formJsonBounds(const json &TOfile, json &result)
+{
+    std::string bound_declaration_string;
+    int bound_idx = 0;
+
+    for (const auto &bound : TOfile[TOBOUNDS])
+    {
+        if (bound_idx != 0)
+            bound_declaration_string += "|";
+
+        json left = bound[TOLEFT], right = bound[TORIGHT];
+
+        bound_declaration_string += "bound:";
+        if (left.is_number())
+        {
+            bound_declaration_string += std::to_string(left.get<int>());
+            bound_declaration_string += ":";
+        }
+        else if (left.is_string())
+        {
+            bound_declaration_string += left.get<std::string>();
+            bound_declaration_string += ":";
+        }
+
+        if (right.is_number())
+        {
+            bound_declaration_string += std::to_string(right.get<int>());
+        }
+        else if (right.is_string())
+        {
+            bound_declaration_string += right.get<std::string>();
+        }
+
+        bound_idx++;
+    }
+
+    result[NTA][DECLARATION] = bound_declaration_string;
+}
+
+
+/**
+ * Function used to form clocks part in .xml json
+ * @param TOfile json representation of the .tot file
+ * @param result the result json
+ */
+void formJsonClocks(const json &TOfile, json &result)
+{
+    std::string clock_declaration_string;
+    int clock_idx = 0;
+    clock_declaration_string += "// Place local declarations here.\nclock ";
+
+    for (const auto &clock : TOfile[TOCLOCKS])
+    {
+        clock_declaration_string += (clock_idx != 0) ? ", " : "";
+        clock_declaration_string += clock[TONAME].get<std::string>();
+        clock_idx++;
+    }
+
+    clock_declaration_string += ";";
+    result[NTA][TEMPLATE][DECLARATION] = clock_declaration_string;
+}
+
+
+/**
+ * Function used to form locations part in .xml json
+ * @param TOfile json representation of the .tot file
+ * @param result the result json
+ * @param state_id_to_name mapping from state id to state name
+ */
+void formJsonLocations(const json &TOfile, json &result, std::unordered_map<int, std::string> &state_id_to_name)
+{
+    json &locations = result[NTA][TEMPLATE][LOCATION];
+    locations = json::array();
+    int states_num = TOfile[TONSTATES].get<int>();
+    json inputs = TOfile[TOINPUT], outputs = TOfile[TOOUTPUT], acceptings = TOfile[TOACCEPTING];
+
+    for (int i = 0; i < states_num; i++)
+    {
+        json location;
+        std::string state_name = "id" + std::to_string(i);
+        location[ID] = state_name;
+        state_id_to_name.emplace(i, state_name);
+
+        // form input symbol for input location
+        for (const auto &input : inputs)
+        {
+            if (input.get<int>() == i)
+            {
+                location[NAME][TEXT] = "in";
+                break;
+            }
+        }
+
+        // form output symbol for output location
+        for (const auto &output : outputs)
+        {
+            if (output.get<int>() == i)
+            {
+                location[NAME][TEXT] = "out";
+                break;
+            }
+        }
+
+        // form accpeting location symbol
+        for (const auto &accepting:acceptings)
+        {
+            if (accepting.get<int>() == i)
+            {
+                location[COLOR] = "SYMBOL";
+                break;
+            }
+        }
+
+        locations.push_back(location);
+    }
+}
+
+
+/**
+ * Function used to form transitions part in .xml json
+ * @param TOfile json representation of the .tot file
+ * @param result the result json
+ * @param state_id_to_name mapping from state id to state name
+ */
+void formJsonTransitions(const json &TOfile, json &result, const std::unordered_map<int, std::string> &state_id_to_name)
+{
+    json &transitions = result[NTA][TEMPLATE][TRANSITION];
+    transitions = json::array();
+    int transitions_num = TOfile[TONTRANSITIONS].get<int>();
+    int transition_idx = state_id_to_name.size();
+
+    if (TOfile[TONTRANSITIONS].get<int>() != 0)
+    {
+        for (const auto &transition : TOfile[TOTRANSITIONS])
+        {
+            json jtransition;
+
+            jtransition[ID] = "id" + std::to_string(transition_idx);
+            jtransition[SOURCE][REF] = state_id_to_name.at(transition[TOFROM].get<int>());
+            jtransition[TARGET][REF] = state_id_to_name.at(transition[TOTO].get<int>());
+
+            if (transition[TONGUARDS].get<int>() != 0 or transition[TONACTIONS].get<int>() != 0)
+                jtransition[LABEL] = json::array();
+
+            if (transition[TONGUARDS].get<int>() != 0)
+            {
+                std::string guards_string;
+                int guard_idx = 0;
+
+                for (const auto &guard : transition[TOGUARDS])
+                {
+                    if (guard_idx != 0)
+                        guards_string += " && ";
+
+                    guards_string += guard[TOCLOCK].get<std::string>();
+                    guards_string += " ";
+                    guards_string += guard[TOOP].get<std::string>();
+                    guards_string += " ";
+                    guards_string += (guard[TOVALUE].is_number()) ? std::to_string(guard[TOVALUE].get<int>())
+                                                                  : guard[TOVALUE].get<std::string>();
+                    guard_idx++;
+                }
+
+                json jguards;
+                jguards[TEXT] = guards_string;
+                jguards[KIND] = "guard";
+                jtransition[LABEL].push_back(jguards);
+            }
+
+            if (transition[TONACTIONS].get<int>() != 0)
+            {
+                std::string actions_string;
+                int action_idx = 0;
+
+                for (const auto &action : transition[TOACTIONS])
+                {
+                    if (action_idx != 0)
+                        actions_string += " && ";
+
+                    actions_string += action[TOCLOCK].get<std::string>();
+                    actions_string += " = ";
+                    actions_string += (action[TOVALUE].is_number()) ? std::to_string(action[TOVALUE].get<int>())
+                                                                    : action[TOVALUE].get<std::string>();
+                    action_idx++;
+                }
+
+                json jactions;
+                jactions[TEXT] = actions_string;
+                jactions[KIND] = "assignment";
+                jtransition[LABEL].push_back(jactions);
+            }
+
+            transitions.push_back(jtransition);
+        }
+    }
+}
+
+
+/**
+ * Function used to form other parts not handled yet in .xml json
+ * @param TOfile json representation of the .tot file
+ * @param result the result json
+ * @param state_id_to_name mapping from state id to state name
+ */
+void formJsonOthers(const json &TOfile, json &result, const std::unordered_map<int, std::string> &state_id_to_name)
+{
+    json jinitial = TOfile[TOINITIAL];
+
+    if (!jinitial.empty())
+    {
+        result[NTA][TEMPLATE][INIT][REF] = state_id_to_name.at(jinitial[0].get<int>());
+    }
+}
+
+
+/**
+ * Function used to return a json representation in the system from a .tot file
+ * @param file the file from which to get a json representation.
+ * @return a TOT-version json representation of the given file.
+ */
+json getJsonFromTOFile(std::ifstream &file, bool isTot = true)
+{
+    if (isTot)
+    {
+        json j_object;
+        file >> j_object;
+
+        if (file.fail())
+            std::cerr << "failed to read json from .tot file" << std::endl;
+
+        // make a json representation from .tot file
+        json result;
+        std::unordered_map<int, std::string> state_id_to_name;
+
+        // form declaration (bound)
+        formJsonBounds(j_object, result);
+
+        // form decalaration (clocks)
+        formJsonClocks(j_object, result);
+
+        // form locations (as there is no name for state(location) in .tot file, we need to generate it
+        // and we stored the mapping from id to name in state_id_to_name)
+        formJsonLocations(j_object, result, state_id_to_name);
+
+        // form transitions
+        formJsonTransitions(j_object, result, state_id_to_name);
+
+        // form other parts of json
+        formJsonOthers(j_object, result, state_id_to_name);
+
+        return result;
+    }
+    else
+        throw NotTOTFormatException("Provided file should be of .tot type!");
 }
 
 
@@ -279,10 +544,25 @@ json getJsonFromFileName(const std::string &inputDirPath, const std::string &nam
     for (const auto &entry: getEntriesInAlphabeticalOrder(inputDirPath))
     {
         std::ifstream file(entry.path());
-        std::string fileName = getStringGivenPosAndToken(getWordAfterLastSymbol(entry.path(), '/'), '.', 0);
+        std::string filename = getWordAfterLastSymbol(entry.path(), '/');
 
-        if (name == fileName)
-            return getJsonFromFileStream(file);
+        // 2 accepted file formats: .tot and .xml
+        if (filename.size() >= 4 && filename.compare(filename.size() - 4, 4, ".tot") == 0)
+        {
+            std::string fileNameWithoutExtension = getStringGivenPosAndToken(filename, '.', 0);
+            if (name == fileNameWithoutExtension)
+                return getJsonFromTOFile(file);
+        }
+        else if (filename.size() >= 4 && filename.compare(filename.size() - 4, 4, ".xml") == 0)
+        {
+            std::string fileNameWithoutExtension = getStringGivenPosAndToken(filename, '.', 0);
+            if (name == fileNameWithoutExtension)
+                return getJsonFromFileStream(file);
+        }
+        else
+        {
+            std::cerr << "Error: file " << filename << " is not a .tot or .xml file" << std::endl;
+        }
     }
 }
 

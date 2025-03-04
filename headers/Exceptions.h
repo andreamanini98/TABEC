@@ -1,6 +1,21 @@
 #ifndef UTOTPARSER_EXCEPTIONS_H
 #define UTOTPARSER_EXCEPTIONS_H
 
+class NotTOTFormatException : public std::exception
+{
+public:
+    explicit NotTOTFormatException(const char *message) : message_(message)
+    {
+    }
+
+    [[nodiscard]] const char *what() const noexcept override
+    {
+        return message_.c_str();
+    }
+
+private:
+    std::string message_;
+};
 
 class NotXMLFormatException : public std::exception {
 public:

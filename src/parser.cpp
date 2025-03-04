@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     {
         // multiple formulas (from a input source file)
         std::string file_name = cliHandler.getCmdArgument(tom);
-        std::string file_path = stringsGetter.getInputDirPath() + "/" + file_name;
+        std::string file_path = stringsGetter.getTOTilesDirPath() + "/" + file_name;
         std::ifstream input_file(file_path);
 
         if (!input_file.is_open())
@@ -124,11 +124,12 @@ int main(int argc, char *argv[])
             for (const std::string &command : commands)
             {
                 int result = handleSingleFormula(command);
+                // std::cout << "COMMAND: " << command << std::endl;
 
                 if (result == PARSE_SUCCESS)
                 {
                     std::cout << "Parse success\n";
-                    TOBuffer::getInstance().tile()->exportTo(stringsGetter.getOutputDirPath());
+                    TOBuffer::getInstance().tile()->exportTo(stringsGetter.getInputDirPath());
                 }
                 else
                 {

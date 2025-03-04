@@ -37,6 +37,9 @@ DOT              \.
 ">="                                                    { RETURN_TOKEN(GE); }
 ">"                                                     { RETURN_TOKEN(GT); }
 "CREATE"                                                { RETURN_TOKEN(CREATE); }
+"ALTER"                                                 { RETURN_TOKEN(ALTER); }
+"EXPORT"                                                { RETURN_TOKEN(EXPORT); }
+"IMPORT"                                                { RETURN_TOKEN(IMPORT); }
 "TILE"                                                  { RETURN_TOKEN(TILE); }
 "ACT"                                                   { RETURN_TOKEN(ACT); }
 "BIN"                                                   { RETURN_TOKEN(BIN); }
@@ -50,6 +53,9 @@ DOT              \.
 "TRANSITIONS"                                           { RETURN_TOKEN(TRANSITIONS); }
 "CLOCKS"                                                { RETURN_TOKEN(CLOCKS); }
 "PARAMS"                                                { RETURN_TOKEN(PARAMS); }
+"BOUNDS"                                                { RETURN_TOKEN(BOUNDS); }
+"INF"                                                   { RETURN_TOKEN(INF); }
+"NAN"                                                   { RETURN_TOKEN(NAN); }
 "("                                                     { RETURN_TOKEN(LBRACE); }
 ")"                                                     { RETURN_TOKEN(RBRACE); }
 [\-]?{DIGIT}+{DOT}{DIGIT}+                              { yylval.float_val = atof(yytext); RETURN_TOKEN(FFLOAT); }

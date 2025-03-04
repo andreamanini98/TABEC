@@ -54,6 +54,9 @@ private:
     // Path to the directory containing ternary tiles to be used by the constructor.
     std::string triTilesDirPath {};
 
+    // Path to the directory containing TO input files.
+    std::string TOTilesDirPath {}; 
+
     // Path to the directory containing results derived from testing.
     std::string testingResultsDirPath {};
 
@@ -76,6 +79,7 @@ public:
         accTilesDirPath = inputTilesDirPath + "/accTiles";
         binTilesDirPath = inputTilesDirPath + "/binTiles";
         triTilesDirPath = inputTilesDirPath + "/triTiles";
+        TOTilesDirPath = inputTilesDirPath + "/TOTiles";
         testingResultsDirPath = currentDirPath + "/outputs/logs/testingResults";
         otherScriptsPath = currentDirPath + "/scripts";
         testingResourceUsageDirPath = currentDirPath + "/outputs/logs/testingResourceUsage";
@@ -153,6 +157,11 @@ public:
         return triTilesDirPath;
     }
 
+
+    [[nodiscard]] const std::string &getTOTilesDirPath() const
+    {
+        return TOTilesDirPath;
+    }
 
     [[nodiscard]] const std::string &getTestingResultsDirPath() const
     {

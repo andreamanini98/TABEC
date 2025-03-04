@@ -430,6 +430,8 @@ int main(int argc, char *argv[])
 
         // Storing the bounds that have been found before starting a new iteration.
         TABoundsCalculator::storeTABounds(TAName);
+
+        // tiledTA.clear();
     }
 
     gatherResults(stringsGetter, cliHandler);

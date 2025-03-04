@@ -40,10 +40,13 @@ using namespace std;
     std::vector<int>* int_list;
     double float_val;
     COP c_op;
+    BoundsItem* boundsitem_ptr;
+    std::vector<BoundsItem*>* boundsitem_list;
+    BoundItem* bounditem_ptr;
 }
 
-%token CREATE TILE ACT BIN TRI RNG LBRACE RBRACE WITH COMMA ACCEPTING INITIAL SEMICOLON EQ LE NE LT GE GT
-       INPUT OUTPUT TRANSITIONS ASSIGNMENT CLOCKS PARAMS
+%token CREATE ALTER EXPORT IMPORT TILE ACT BIN TRI RNG LBRACE RBRACE WITH COMMA ACCEPTING INITIAL SEMICOLON EQ LE NE LT GE GT
+       INPUT OUTPUT TRANSITIONS ASSIGNMENT CLOCKS PARAMS BOUNDS INF NAN
 
 %token <str_ptr> SSTR
 %token <int_val> IINT
@@ -70,6 +73,10 @@ using namespace std;
 %type <int_list> opt_int_list
 %type <int_list> int_list
 %type <c_op> cop
+%type <boundsitem_list> opt_bounds_item_list
+%type <boundsitem_list> bounds_item_list
+%type <boundsitem_ptr> bounds_item
+%type <bounditem_ptr> bound_item
 
 %start TO
 
@@ -79,6 +86,18 @@ TO:
     create
     {
         // no action
+    }
+    | export
+    {
+        // not implemented
+    }
+    | import
+    {
+        // not implemented
+    }
+    | alter
+    {
+        // not implemented
     }
     ;
 
@@ -124,6 +143,26 @@ t_def:
     }
     ;
 
+alter:
+    ALTER SSTR with_clause SEMICOLON
+    {
+        // no action
+    }
+    ;
+
+export:
+    EXPORT SSTR SEMICOLON
+    {
+        // not implemented
+    };
+
+
+import:
+    IMPORT SSTR SEMICOLON
+    {
+        // not implemented
+    }
+
 with_clause:
     /* empty */
     {
@@ -151,7 +190,17 @@ with_args_list:
     ;
 
 with_arg:
-    PARAMS ASSIGNMENT LBRACE opt_param_list RBRACE
+    BOUNDS ASSIGNMENT LBRACE opt_bounds_item_list RBRACE
+    {
+        if ($4 != nullptr)
+        {
+            for (int i = 0; i < (int)$4->size(); i++)
+            {
+                TTILE->appendBounds($4->at(i));
+            }
+        }
+    }
+    | PARAMS ASSIGNMENT LBRACE opt_param_list RBRACE
     {
         if ($4 != nullptr)
         {
@@ -238,6 +287,54 @@ with_arg:
         }
     }
     ;
+
+opt_bounds_item_list:
+    bounds_item_list
+    {
+        $$ = $1;
+    }
+    | /* empty */
+    {
+        $$ = nullptr;
+    }
+    ;
+
+bounds_item_list:
+    bounds_item
+    {
+        $$ = new vector<BoundsItem*>;
+        $$->push_back($1);
+    }
+    | bounds_item_list COMMA bounds_item
+    {
+        $$ = $1;
+        $$->push_back($3);
+    }
+
+bounds_item:
+    LBRACE bound_item COMMA bound_item RBRACE
+    {
+        $$ = new BoundsItem();
+        $$->setLBound(*$2);
+        $$->setRBound(*$4);
+    }
+
+bound_item:
+    INF
+    {
+        $$ = new BoundItem();
+        $$->setInf(true);
+    }
+    | NAN
+    {
+        $$ = new BoundItem();
+        $$->setNan(true);
+    }
+    | IINT
+    {
+        $$ = new BoundItem();
+        $$->setValue($1);
+    }
 
 opt_param_list:
     param_list
