@@ -299,6 +299,28 @@ json getJsonFromTOFile(std::ifstream &file, bool isTot = true)
 
 
 /**
+ * Function used to return a json representation in the system from a .totj file
+ * @param file the file from which to get a json representation.
+ * @return a TOTJ-version json representation of the given file.
+ */
+json getJsonFromTOJFile(std::ifstream &file, bool isTotj = true)
+{
+    if (isTotj)
+    {
+        json j_object;
+        file >> j_object;
+
+        if (file.fail())
+            std::cerr << "failed to read json from .tot file" << std::endl;
+
+        return j_object;
+    }
+    else
+        throw NotTOTJFormatException("Provided file should be of .totj type!");
+}
+
+
+/**
  * Function used to collect inside a vector all the integer occurrences inside a string.
  * @param str the string into which we're looking for integers occurrences.
  * @return a vector containing all integer numbers present in the string parameter.
@@ -541,7 +563,7 @@ bool sortVectorByElementLength(const std::string &str1, const std::string &str2)
  */
 json getJsonFromFileName(const std::string &inputDirPath, const std::string &name)
 {
-    for (const auto &entry: getEntriesInAlphabeticalOrder(inputDirPath))
+    for (const auto &entry : getEntriesInAlphabeticalOrder(inputDirPath))
     {
         std::ifstream file(entry.path());
         std::string filename = getWordAfterLastSymbol(entry.path(), '/');
@@ -552,6 +574,12 @@ json getJsonFromFileName(const std::string &inputDirPath, const std::string &nam
             std::string fileNameWithoutExtension = getStringGivenPosAndToken(filename, '.', 0);
             if (name == fileNameWithoutExtension)
                 return getJsonFromTOFile(file);
+        }
+        else if (filename.size() >= 5 and filename.compare(filename.size() - 5, 5, ".totj") == 0)
+        {
+            std::string fileNameWithoutExtension = getStringGivenPosAndToken(filename, '.', 0);
+            if (name == fileNameWithoutExtension)
+                return getJsonFromTOJFile(file);
         }
         else if (filename.size() >= 4 && filename.compare(filename.size() - 4, 4, ".xml") == 0)
         {

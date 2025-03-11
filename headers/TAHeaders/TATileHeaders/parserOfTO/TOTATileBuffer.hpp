@@ -1,19 +1,20 @@
 #ifndef TOPARSER_TATILEBUFFER_H
 #define TOPARSER_TATILEBUFFER_H
 
-#include <iostream>
-#include <fstream>
-#include <cstring>
-#include <vector>
-#include <string>
+#include "nlohmann/json.hpp"
 #include <cassert>
 #include <cstdio>
-#include <unordered_set>
-#include <unordered_map>
+#include <cstring>
 #include <filesystem>
-#include "nlohmann/json.hpp"
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
 
 #include "defines/TOjsonAttributes.h"
+#include "defines/UPPAALxmlAttributes.h"
 
 using std::string;
 using std::unordered_map;
@@ -29,8 +30,7 @@ namespace fs = std::filesystem;
 #define RIGHT_BRACE "}"
 #define UNDEFINED_ID -1
 #define DEFAULT_CLOCK "xy"
-#define DEBUG_PRINT(fmt, ...) \
-    printf("[%s:%d] %s: " fmt "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#define DEBUG_PRINT(fmt, ...) printf("[%s:%d] %s: " fmt "\n", __FILE__, __LINE__, __func__, ##__VA_ARGS__)
 
 // a new-delete version of strdup
 static char *strdup_new(const char *s)
@@ -87,7 +87,9 @@ static string COP2Symbol(COP op)
 class Value
 {
 public:
-    Value() : type_(ValueType::NDEFINED), value_(nullptr) {}
+    Value() : type_(ValueType::NDEFINED), value_(nullptr)
+    {
+    }
 
     Value(ValueType type, void *value)
     {
@@ -198,24 +200,6 @@ public:
         return *this;
     }
 
-    void output()
-    {
-        switch (type_)
-        {
-        case ValueType::INT:
-            printf("type: float, value: %d", *static_cast<int *>(value_));
-            break;
-        case ValueType::DOUBLE:
-            printf("type: double, value: %f", *static_cast<double *>(value_));
-            break;
-        case ValueType::PARAM:
-            printf("type: param, name: %s", static_cast<char *>(value_));
-            break;
-        default:
-            assert(false);
-        }
-    }
-
     void setType(ValueType type)
     {
         type_ = type;
@@ -306,16 +290,12 @@ public:
         return *this;
     }
 
-    void debug_output()
-    {
-        printf("(%d, %s)", id_, name_);
-    }
-
     void setName(const char *name)
     {
         delete[] name_;
         name_ = strdup_new(name);
     }
+
     const char *getName() const
     {
         return name_;
@@ -473,11 +453,6 @@ public:
         name_ = strdup_new(name);
     }
 
-    void debug_output()
-    {
-        printf("(%d, %s)", id_, name_);
-    }
-
 private:
     int id_;
     char *name_;
@@ -523,26 +498,6 @@ public:
         return *this;
     }
 
-    void output()
-    {
-        if (value_.getType() == ValueType::PARAM)
-        {
-            printf("%s = %s", clock_.getName(), static_cast<char *>(value_.getValue()));
-        }
-        else if (value_.getType() == ValueType::INT)
-        {
-            printf("%s = %d", clock_.getName(), *static_cast<int *>(value_.getValue()));
-        }
-        else if (value_.getType() == ValueType::DOUBLE)
-        {
-            printf("%s = %f", clock_.getName(), *static_cast<double *>(value_.getValue()));
-        }
-        else
-        {
-            assert(false);
-        }
-    }
-
     const Clock &getClock() const
     {
         return clock_;
@@ -573,7 +528,8 @@ public:
         {
             assert(false);
         }
-        else if (value_.getType() == ValueType::PARAM or value_.getType() == ValueType::INT or value_.getType() == ValueType::DOUBLE)
+        else if (value_.getType() == ValueType::PARAM or value_.getType() == ValueType::INT or
+                 value_.getType() == ValueType::DOUBLE)
         {
             value_.setValue(value);
         }
@@ -612,13 +568,6 @@ public:
         return *this;
     }
 
-    void output()
-    {
-        printf("%s ", clock_.getName());
-        printf("%s ", COP2Symbol(op_).c_str());
-        printf("%d", *static_cast<int *>(value_.getValue()));
-    }
-
     const Clock &getClock() const
     {
         return clock_;
@@ -643,9 +592,13 @@ private:
 class State
 {
 public:
-    State() : id_(-1), attrs_(0) {}
+    State() : id_(-1), attrs_(0)
+    {
+    }
 
-    State(int id) : id_(id), attrs_(0) {}
+    State(int id) : id_(id), attrs_(0)
+    {
+    }
 
     void setId(int id)
     {
@@ -722,7 +675,9 @@ private:
 class Transition
 {
 public:
-    Transition(int from, int to) : from_(from), to_(to) {}
+    Transition(int from, int to) : from_(from), to_(to)
+    {
+    }
 
     Transition(const Transition &other)
     {
@@ -743,25 +698,6 @@ public:
         {
             guard->destroy();
         }
-    }
-
-    void output()
-    {
-        printf("{\n");
-        printf("from:%d to:%d\n", from_, to_);
-        printf("%d guards:\n", (int)guards_.size());
-        for (int i = 0; i < (int)guards_.size(); i++)
-        {
-            guards_[i]->output();
-            printf("\n");
-        }
-        printf("%d actions:\n", (int)actions_.size());
-        for (int i = 0; i < actions_.size(); i++)
-        {
-            actions_[i]->output();
-            printf("\n");
-        }
-        printf("}\n");
     }
 
     void setFrom(int from)
@@ -851,7 +787,6 @@ public:
             delete bounds;
         }
         boundss_.clear();
-
     }
 
     void appendClock(Clock *clock)
@@ -977,28 +912,24 @@ public:
         if (!fs::exists(dir_path))
         {
             std::cout << "given directory path does not exist" << std::endl;
+            return;
         }
-
-        if (!fs::is_directory(dir_path))
+        else if (!fs::is_directory(dir_path))
         {
             std::cout << "given path is not a directory" << std::endl;
+            return;
         }
 
         fs::path file_path = dir_path;
         string file_name = string(name_) + ".tot";
         file_path.append(file_name);
 
-        // if (fs::exists(file_path) and !fs::is_directory(file_path))
-        // {
-        //     std::cout << "to tile file already exists" << std::endl;
-        // }
-
         std::ofstream out_file(file_path);
         assert(out_file.is_open());
 
         // json write
-        nlohmann::ordered_json j;
-        j[TOTNAME] = name_;
+        nlohmann::ordered_json result;
+        result[TOTNAME] = name_;
 
         if (states_.size() == 0)
         {
@@ -1008,8 +939,8 @@ public:
 
         if (boundss_.size() != 0)
         {
-            j[TOBOUNDS] = nlohmann::json::array();
-            for(auto bounds : boundss_)
+            result[TOBOUNDS] = nlohmann::json::array();
+            for (auto bounds : boundss_)
             {
                 BoundItem left = bounds->getLBound(), right = bounds->getRBound();
                 nlohmann::ordered_json jobject;
@@ -1040,11 +971,11 @@ public:
                     jobject[TORIGHT] = right.getValue();
                 }
 
-                j[TOBOUNDS].push_back(jobject);
+                result[TOBOUNDS].push_back(jobject);
             }
         }
 
-        j[TONSTATES] = states_.size();
+        result[TONSTATES] = states_.size();
 
         vector<int> ins, outs, accepts, inits;
         for (int i = 0; i < states_.size(); i++)
@@ -1060,52 +991,52 @@ public:
                 inits.push_back(i);
         }
 
-        j[TOINPUT] = nlohmann::json::array();
+        result[TOINPUT] = nlohmann::json::array();
         for (int i = 0; i < ins.size(); i++)
         {
-            j[TOINPUT].push_back(ins[i]);
+            result[TOINPUT].push_back(ins[i]);
         }
 
-        j[TOOUTPUT] = nlohmann::json::array();
+        result[TOOUTPUT] = nlohmann::json::array();
         for (int i = 0; i < outs.size(); i++)
         {
-            j[TOOUTPUT].push_back(outs[i]);
+            result[TOOUTPUT].push_back(outs[i]);
         }
 
-        j[TOINITIAL] = nlohmann::json::array();
+        result[TOINITIAL] = nlohmann::json::array();
         for (int i = 0; i < inits.size(); i++)
         {
-            j[TOINITIAL].push_back(inits[i]);
+            result[TOINITIAL].push_back(inits[i]);
         }
 
-        j[TOACCEPTING] = nlohmann::json::array();
+        result[TOACCEPTING] = nlohmann::json::array();
         for (int i = 0; i < accepts.size(); i++)
         {
-            j[TOACCEPTING].push_back(accepts[i]);
+            result[TOACCEPTING].push_back(accepts[i]);
         }
 
-        j[TONCLOCKS] = clocks_.size();
-        j[TOCLOCKS] = nlohmann::json::array();
+        result[TONCLOCKS] = clocks_.size();
+        result[TOCLOCKS] = nlohmann::json::array();
         for (int i = 0; i < clocks_.size(); i++)
         {
             nlohmann::ordered_json jclock;
             jclock[TOID] = clocks_[i]->getId();
             jclock[TONAME] = clocks_[i]->getName();
-            j[TOCLOCKS].push_back(jclock);
+            result[TOCLOCKS].push_back(jclock);
         }
 
-        j[TONPARAMS] = params_.size();
-        j[TOPARAMS] = nlohmann::json::array();
+        result[TONPARAMS] = params_.size();
+        result[TOPARAMS] = nlohmann::json::array();
         for (int i = 0; i < params_.size(); i++)
         {
             nlohmann::ordered_json jparam;
             jparam[TOID] = params_[i]->getId();
             jparam[TONAME] = params_[i]->getName();
-            j[TOPARAMS].push_back(jparam);
+            result[TOPARAMS].push_back(jparam);
         }
 
-        j[TONTRANSITIONS] = transitions_.size();
-        j[TOTRANSITIONS] = nlohmann::json::array();
+        result[TONTRANSITIONS] = transitions_.size();
+        result[TOTRANSITIONS] = nlohmann::json::array();
         for (int i = 0; i < transitions_.size(); i++)
         {
             nlohmann::ordered_json jtransition;
@@ -1128,7 +1059,8 @@ public:
                         jguard[TOVALUE] = *static_cast<int *>(transitions_[i]->getGuards()[j]->getValue().getValue());
                         break;
                     case ValueType::DOUBLE:
-                        jguard[TOVALUE] = *static_cast<double *>(transitions_[i]->getGuards()[j]->getValue().getValue());
+                        jguard[TOVALUE] =
+                            *static_cast<double *>(transitions_[i]->getGuards()[j]->getValue().getValue());
                         break;
                     case ValueType::PARAM:
                         jguard[TOVALUE] = static_cast<char *>(transitions_[i]->getGuards()[j]->getValue().getValue());
@@ -1153,7 +1085,8 @@ public:
                         jaction[TOVALUE] = *static_cast<int *>(transitions_[i]->getActions()[j]->getValue().getValue());
                         break;
                     case ValueType::DOUBLE:
-                        jaction[TOVALUE] = *static_cast<double *>(transitions_[i]->getActions()[j]->getValue().getValue());
+                        jaction[TOVALUE] =
+                            *static_cast<double *>(transitions_[i]->getActions()[j]->getValue().getValue());
                         break;
                     case ValueType::PARAM:
                         jaction[TOVALUE] = static_cast<char *>(transitions_[i]->getActions()[j]->getValue().getValue());
@@ -1162,10 +1095,60 @@ public:
                     jtransition[TOACTIONS].push_back(jaction);
                 }
             }
-            j[TOTRANSITIONS].push_back(jtransition);
+            result[TOTRANSITIONS].push_back(jtransition);
         }
 
-        out_file << j.dump(4) << std::endl;
+        out_file << result.dump(4) << std::endl;
+    }
+
+    void exportToJSON(string dir_path)
+    {
+        std::cout << "exportToJson begin\n";
+        // double check
+        if (!check())
+        {
+            std::cout << "TATile is not valid, cannot export to file" << std::endl;
+            return;
+        }
+
+        // export to file
+        if (!fs::exists(dir_path))
+        {
+            std::cout << "given directory path does not exist" << std::endl;
+            return;
+        }
+        else if (!fs::is_directory(dir_path))
+        {
+            std::cout << "given path is not a directory" << std::endl;
+            return;
+        }
+
+        fs::path file_path = dir_path;
+        string file_name = string(name_) + ".totj";
+        file_path.append(file_name);
+
+        std::ofstream out_file(file_path);
+        std::cout << "file_path:"<<file_path.string()<<std::endl;
+        assert(out_file.is_open());
+
+        // json write
+        nlohmann::ordered_json result;
+        std::unordered_map<int, std::string> state_id_to_name;
+
+        if (states_.size() == 0)
+        {
+            std::cout << "no states in the TATile" << std::endl;
+            return;
+        }
+
+        formJsonBoundsD(result);
+        formJsonClocksD(result);
+        formJsonLocationsD(result, state_id_to_name);
+        formJsonTransitionsD(result, state_id_to_name);
+        formJsonOthersD(result, state_id_to_name);
+
+        out_file << result.dump(4) << std::endl;
+        std::cout << "exportToJson end\n";
     }
 
     bool postProcess()
@@ -1231,7 +1214,7 @@ public:
         return true;
     }
 
-    void appendBounds(BoundsItem* bounds)
+    void appendBounds(BoundsItem *bounds)
     {
         boundss_.push_back(bounds);
     }
@@ -1269,10 +1252,6 @@ private:
     {
         if (name_ == nullptr)
             return false;
-        else
-        {
-            // ITODO: check if name is not duplicated
-        }
 
         if (states_.size() == 0)
             return false;
@@ -1395,8 +1374,223 @@ private:
     }
 
 private:
+    void formJsonBoundsD(nlohmann::ordered_json &result)
+    {
+        std::string bound_declaration_string;
+        int bound_idx = 0;
+
+        for (const auto &bound : boundss_)
+        {
+            if (bound_idx != 0)
+                bound_declaration_string += "|";
+
+            const auto &left = bound->getLBound(), &right = bound->getRBound();
+
+            bound_declaration_string += "bound:";
+
+            if (left.getIsInf())
+            {
+                bound_declaration_string += "inf:";
+            }
+            else if (left.getIsNan())
+            {
+                bound_declaration_string += "nan:";
+            }
+            else
+            {
+                bound_declaration_string += std::to_string(left.getValue()) + ":";
+            }
+
+            if (right.getIsInf())
+            {
+                bound_declaration_string += "inf:";
+            }
+            else if (right.getIsNan())
+            {
+                bound_declaration_string += "nan:";
+            }
+            else
+            {
+                bound_declaration_string += std::to_string(left.getValue()) + ":";
+            }
+
+            bound_idx++;
+        }
+
+        result[NTA][DECLARATION] = bound_declaration_string;
+    }
+
+    void formJsonClocksD(nlohmann::ordered_json &result)
+    {
+        std::string clock_declaration_string;
+        int clock_idx = 0;
+        clock_declaration_string += "// Place local declarations here.\nclock ";
+
+        for (const auto &clock : clocks_)
+        {
+            clock_declaration_string += (clock_idx != 0) ? ", " : "";
+            clock_declaration_string += std::string(clock->getName());
+            clock_idx++;
+        }
+
+        clock_declaration_string += ";";
+        result[NTA][TEMPLATE][DECLARATION] = clock_declaration_string;
+    }
+
+    void formJsonLocationsD(nlohmann::ordered_json &result, std::unordered_map<int, std::string> &state_id_to_name)
+    {
+        nlohmann::ordered_json &locations = result[NTA][TEMPLATE][LOCATION];
+        locations = nlohmann::json::array();
+
+        for (int i = 0; i < states_.size(); i++)
+        {
+            nlohmann::ordered_json location;
+            std::string state_name = "id" + std::to_string(i);
+            location[ID] = state_name;
+            state_id_to_name.emplace(i, state_name);
+
+            if (states_[i]->isInput())
+                location[NAME][TEXT] = "in";
+
+            if (states_[i]->isOutput())
+                location[NAME][TEXT] = "out";
+
+            if (states_[i]->isAccepting())
+                location[COLOR] = "SYMBOL";
+
+            locations.push_back(location);
+        }
+    }
+
+    void formJsonTransitionsD(nlohmann::ordered_json &result, std::unordered_map<int, std::string> &state_id_to_name)
+    {
+        nlohmann::ordered_json &transitions = result[NTA][TEMPLATE][TRANSITION];
+        transitions = nlohmann::json::array();
+        int transitions_num = transitions_.size();
+        int transition_idx = state_id_to_name.size();
+
+        if (transitions_num != 0)
+        {
+            for (const auto &transition : transitions_)
+            {
+                nlohmann::ordered_json jtransition;
+
+                jtransition[ID] = "id" + std::to_string(transition_idx);
+                jtransition[SOURCE][REF] = state_id_to_name.at(transition->getFrom());
+                jtransition[TARGET][REF] = state_id_to_name.at(transition->getTo());
+
+                if (transition->getGuards().size() != 0 or transition->getActions().size() != 0)
+                    jtransition[LABEL] = nlohmann::json::array();
+
+                if (transition->getGuards().size() != 0)
+                {
+                    std::string guards_string;
+                    int guard_idx = 0;
+
+                    for (const auto &guard : transition->getGuards())
+                    {
+                        if (guard_idx != 0)
+                            guards_string += " && ";
+
+                        guards_string += std::string(guard->getClock().getName());
+                        guards_string += " ";
+                        guards_string += COP2Symbol(guard->getCOP());
+                        guards_string += " ";
+
+                        if (guard->getValue().getType() == ValueType::INT)
+                        {
+                            guards_string += std::to_string(*static_cast<int *>(guard->getValue().getValue()));
+                        }
+                        else if (guard->getValue().getType() == ValueType::DOUBLE)
+                        {
+                            guards_string += std::to_string(*static_cast<double *>(guard->getValue().getValue()));
+                        }
+                        else if (guard->getValue().getType() == ValueType::PARAM)
+                        {
+                            guards_string += std::string(static_cast<char *>(guard->getValue().getValue()));
+                        }
+                        else
+                        {
+                            std::cerr << "guard value type is not supported" << std::endl;
+                            assert(false);
+                        }
+
+                        guard_idx++;
+                    }
+
+                    nlohmann::ordered_json jguards;
+                    jguards[TEXT] = guards_string;
+                    jguards[KIND] = "guard";
+                    jtransition[LABEL].push_back(jguards);
+                }
+
+                if (transition->getActions().size() != 0)
+                {
+                    std::string actions_string;
+                    int action_idx = 0;
+
+                    for (const auto &action : transition->getActions())
+                    {
+                        if (action_idx != 0)
+                            actions_string += " && ";
+
+                        actions_string += std::string(action->getClock().getName());
+                        actions_string += " = ";
+
+                        if (action->getValue().getType() == ValueType::INT)
+                        {
+                            actions_string += std::to_string(*static_cast<int *>(action->getValue().getValue()));
+                        }
+                        else if (action->getValue().getType() == ValueType::DOUBLE)
+                        {
+                            actions_string += std::to_string(*static_cast<double *>(action->getValue().getValue()));
+                        }
+                        else if (action->getValue().getType() == ValueType::PARAM)
+                        {
+                            actions_string += std::string(static_cast<char *>(action->getValue().getValue()));
+                        }
+                        else
+                        {
+                            std::cerr << "action value type is not supported" << std::endl;
+                            assert(false);
+                        }
+
+                        action_idx++;
+                    }
+
+                    nlohmann::ordered_json jactions;
+                    jactions[TEXT] = actions_string;
+                    jactions[KIND] = "assignment";
+                    jtransition[LABEL].push_back(jactions);
+                }
+
+                transitions.push_back(jtransition);
+            }
+        }
+    }
+
+    void formJsonOthersD(nlohmann::ordered_json &result, const std::unordered_map<int, std::string> &state_id_to_name)
+    {
+        int initial_state_id = -1;
+
+        for (int i = 0; i < states_.size(); i++)
+        {
+            if (states_[i]->isInitial())
+            {
+                initial_state_id = i;
+                break;
+            }
+        }
+
+        if (initial_state_id != -1)
+        {
+            result[NTA][TEMPLATE][INIT][REF] = state_id_to_name.at(initial_state_id);
+        }
+    }
+
+private:
     char *name_;
-    vector<BoundsItem*> boundss_;
+    vector<BoundsItem *> boundss_;
     unordered_map<string, int> clocks_map_;
     unordered_map<string, int> params_map_;
     vector<Clock *> clocks_;
@@ -1441,7 +1635,9 @@ public:
     }
 
 private:
-    TOBuffer() : tile_(nullptr) {}
+    TOBuffer() : tile_(nullptr)
+    {
+    }
 
     void addDefaultClocks()
     {
@@ -1452,4 +1648,4 @@ private:
     TATile *tile_;
 };
 
-#endif // TOPARSER_TATILEBUFFER_H
+#endif  // TOPARSER_TATILEBUFFER_H

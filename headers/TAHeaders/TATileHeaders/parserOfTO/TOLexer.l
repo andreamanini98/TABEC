@@ -37,14 +37,7 @@ DOT              \.
 ">="                                                    { RETURN_TOKEN(GE); }
 ">"                                                     { RETURN_TOKEN(GT); }
 "CREATE"                                                { RETURN_TOKEN(CREATE); }
-"ALTER"                                                 { RETURN_TOKEN(ALTER); }
-"EXPORT"                                                { RETURN_TOKEN(EXPORT); }
-"IMPORT"                                                { RETURN_TOKEN(IMPORT); }
 "TILE"                                                  { RETURN_TOKEN(TILE); }
-"ACT"                                                   { RETURN_TOKEN(ACT); }
-"BIN"                                                   { RETURN_TOKEN(BIN); }
-"TRI"                                                   { RETURN_TOKEN(TRI); }
-"RNG"                                                   { RETURN_TOKEN(RNG); }
 "WITH"                                                  { RETURN_TOKEN(WITH); }
 "ACCEPTING"                                             { RETURN_TOKEN(ACCEPTING); }
 "INITIAL"                                               { RETURN_TOKEN(INITIAL); }

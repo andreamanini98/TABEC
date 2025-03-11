@@ -1,14 +1,14 @@
-#include <iostream>
+#include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
-#include <filesystem>
 
-#include "utilities/Utils.hpp"
-#include "utilities/CliHandler.hpp"
-#include "utilities/StringsGetter.hpp"
 #include "TAHeaders/TATileHeaders/parserOfTO/TOParser.hpp"
 #include "TAHeaders/TATileHeaders/parserOfTO/TOTATileBuffer.hpp"
+#include "utilities/CliHandler.hpp"
+#include "utilities/StringsGetter.hpp"
+#include "utilities/Utils.hpp"
 
 extern int yyparse();
 extern void yy_scan_string(const char *str);
@@ -36,9 +36,7 @@ int handleSingleFormula(const std::string &formula)
         if (TOBuffer::getInstance().tile()->postProcess())
         {
             if (TOBuffer::getInstance().tile()->check())
-            {
                 return PARSE_SUCCESS;
-            }
             else
                 printf("check failed, ");
         }
@@ -72,7 +70,10 @@ int main(int argc, char *argv[])
         {
             printf("parse success\n");
             // post process of the formula(only create statement now, so just create it)
-            TOBuffer::getInstance().tile()->exportTo(stringsGetter.getOutputDirPath());
+            if (cliHandler.isCmd(jsn))
+                TOBuffer::getInstance().tile()->exportToJSON(stringsGetter.getOutputDirPath());
+            else
+                TOBuffer::getInstance().tile()->exportTo(stringsGetter.getOutputDirPath());
         }
         else
         {
@@ -98,16 +99,14 @@ int main(int argc, char *argv[])
             while (std::getline(input_file, line))
             {
                 if (line.empty() || line.find("--") == 0)
-                {
                     continue;
-                }
 
                 size_t start = line.find_first_not_of(" \t");
                 size_t end = line.find_last_not_of(" \t");
+
                 if (start == std::string::npos || end == std::string::npos)
-                {
                     continue;
-                }
+
                 line = line.substr(start, end - start + 1);
 
                 currentCommand += line + " ";
@@ -129,7 +128,10 @@ int main(int argc, char *argv[])
                 if (result == PARSE_SUCCESS)
                 {
                     std::cout << "Parse success\n";
-                    TOBuffer::getInstance().tile()->exportTo(stringsGetter.getInputDirPath());
+                    if (cliHandler.isCmd(jsn))
+                        TOBuffer::getInstance().tile()->exportToJSON(stringsGetter.getInputDirPath());
+                    else
+                        TOBuffer::getInstance().tile()->exportTo(stringsGetter.getInputDirPath());
                 }
                 else
                 {

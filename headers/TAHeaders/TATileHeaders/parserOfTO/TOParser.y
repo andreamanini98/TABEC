@@ -87,18 +87,6 @@ TO:
     {
         // no action
     }
-    | export
-    {
-        // not implemented
-    }
-    | import
-    {
-        // not implemented
-    }
-    | alter
-    {
-        // not implemented
-    }
     ;
 
 create:
@@ -110,22 +98,6 @@ create:
 
 t_type:
     TILE
-    {
-        // no action
-    }
-    | ACT
-    {
-        // no action
-    }
-    | BIN
-    {
-        // no action
-    }
-    | TRI
-    {
-        // no action
-    }
-    | RNG
     {
         // no action
     }
@@ -142,26 +114,6 @@ t_def:
         }
     }
     ;
-
-alter:
-    ALTER SSTR with_clause SEMICOLON
-    {
-        // no action
-    }
-    ;
-
-export:
-    EXPORT SSTR SEMICOLON
-    {
-        // not implemented
-    };
-
-
-import:
-    IMPORT SSTR SEMICOLON
-    {
-        // not implemented
-    }
 
 with_clause:
     /* empty */
@@ -606,9 +558,7 @@ cop:
 
 %%
 
-void yyerror(const char* s) {
+void yyerror(const char* s)
+{
     std::cerr << "Error: " << s << std::endl;
-
-    // Deconstruct the tile buffer (actually delete all data stored in it)
-    // TOBuffer::getInstance().destroy();
 }

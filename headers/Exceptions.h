@@ -17,6 +17,24 @@ private:
     std::string message_;
 };
 
+
+class NotTOTJFormatException : public std::exception
+{
+public:
+    explicit NotTOTJFormatException(const char *message) : message_(message)
+    {
+    }
+
+    [[nodiscard]] const char *what() const noexcept override
+    {
+        return message_.c_str();
+    }
+
+private:
+    std::string message_;
+};
+
+
 class NotXMLFormatException : public std::exception {
 public:
     explicit NotXMLFormatException(const char *message) : message_(message)
