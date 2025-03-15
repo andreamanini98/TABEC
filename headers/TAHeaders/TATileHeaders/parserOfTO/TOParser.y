@@ -43,9 +43,11 @@ using namespace std;
     BoundsItem* boundsitem_ptr;
     std::vector<BoundsItem*>* boundsitem_list;
     BoundItem* bounditem_ptr;
+    InputComment* input_comment_ptr;
+    std::vector<InputComment*>* input_comment_list;
 }
 
-%token CREATE ALTER EXPORT IMPORT TILE ACT BIN TRI RNG LBRACE RBRACE WITH COMMA ACCEPTING INITIAL SEMICOLON EQ LE NE LT GE GT
+%token CREATE TILE LBRACE RBRACE WITH COMMA ACCEPTING INITIAL SEMICOLON EQ LE NE LT GE GT
        INPUT OUTPUT TRANSITIONS ASSIGNMENT CLOCKS PARAMS BOUNDS INF NAN
 
 %token <str_ptr> SSTR
@@ -77,6 +79,10 @@ using namespace std;
 %type <boundsitem_list> bounds_item_list
 %type <boundsitem_ptr> bounds_item
 %type <bounditem_ptr> bound_item
+%type <input_comment_list> opt_input_comment_list
+%type <input_comment_list> input_comment_list
+%type <input_comment_ptr> input_comment
+
 
 %start TO
 
@@ -210,17 +216,23 @@ with_arg:
             }
         }
     }
-    | INPUT ASSIGNMENT LBRACE opt_int_list RBRACE
+    | INPUT ASSIGNMENT LBRACE opt_input_comment_list RBRACE
     {
         if ($4 != nullptr)
         {
             for (int i = 0; i < (int)$4->size(); i++)
             {
-                if(!TTILE->setStateInput($4->at(i), true))
+                if(!TTILE->setStateInput($4->at(i)->getId(), true))
                 {
                     yyerror("Invalid state index while setting input states");
                     YYABORT;
                 }
+
+                if ($4->at(i)->getAssignment() != nullptr)
+                {
+                    TTILE->addInputComment($4->at(i));
+                }
+
             }
         }
     }
@@ -237,6 +249,41 @@ with_arg:
                 }
             }
         }
+    }
+    ;
+
+opt_input_comment_list:
+    input_comment_list
+    {
+        $$ = $1;
+    }
+    | /* empty */
+    {
+        $$ = nullptr;
+    }
+    ;
+
+input_comment_list:
+    input_comment
+    {
+        $$ = new vector<InputComment*>;
+        $$->push_back($1);
+    }
+    | input_comment_list COMMA input_comment
+    {
+        $$ = $1;
+        $$->push_back($3);
+    }
+    ;
+
+input_comment:
+    IINT
+    {
+        $$ = new InputComment($1);
+    }
+    | LBRACE IINT COMMA assignment RBRACE
+    {
+        $$ = new InputComment($2, $4);
     }
     ;
 

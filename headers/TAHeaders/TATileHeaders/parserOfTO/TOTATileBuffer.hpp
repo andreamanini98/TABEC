@@ -747,6 +747,52 @@ private:
     vector<ClockAssignment *> actions_;
 };
 
+class InputComment
+{
+public:
+    InputComment(int id)
+    {
+        id_ = id;
+        assignment_ = nullptr;
+    }
+
+    InputComment(int id, ClockAssignment *assignment)
+    {
+        id_ = id;
+        assignment_ = assignment;
+    }
+
+    ClockAssignment *getAssignment() const
+    {
+        return assignment_;
+    }
+
+    void setAssignment(ClockAssignment *assignment)
+    {
+        assignment_ = assignment;
+    }
+
+    int getId() const
+    {
+        return id_;
+    }
+
+    void setId(int id)
+    {
+        id_ = id;
+    }
+
+    void destroy()
+    {
+        if (assignment_ != nullptr)
+            assignment_->destroy();
+    }
+
+private:
+    int id_;
+    ClockAssignment *assignment_;
+};
+
 class TATile
 {
 public:
@@ -857,6 +903,16 @@ public:
     const vector<Transition *> &getTransitions() const
     {
         return transitions_;
+    }
+
+    void addInputComment(InputComment *input_comment)
+    {
+        input_comments_.push_back(input_comment);
+    }
+
+    const vector<InputComment *> &getInputComments() const
+    {
+        return input_comments_;
     }
 
     bool setStateInitial(int state_id, bool is_initial)
@@ -1098,12 +1154,40 @@ public:
             result[TOTRANSITIONS].push_back(jtransition);
         }
 
+        result[TONINPUTCOMMENTS] = input_comments_.size();
+        result[TOINPUTCOMMENTS] = nlohmann::json::array();
+        for (int i = 0; i < input_comments_.size(); i++)
+        {
+            nlohmann::ordered_json jinputcomment;
+            jinputcomment[TOID] = input_comments_[i]->getId();
+            jinputcomment[TOACTION][TOCLOCK] = input_comments_[i]->getAssignment()->getClock().getName();
+
+            switch (input_comments_[i]->getAssignment()->getValue().getType())
+            {
+            case ValueType::NDEFINED:
+                assert(false);
+            case ValueType::INT:
+                jinputcomment[TOACTION][TOVALUE] =
+                    *static_cast<int *>(input_comments_[i]->getAssignment()->getValue().getValue());
+                break;
+            case ValueType::DOUBLE:
+                jinputcomment[TOACTION][TOVALUE] =
+                    *static_cast<double *>(input_comments_[i]->getAssignment()->getValue().getValue());
+                break;
+            case ValueType::PARAM:
+                jinputcomment[TOACTION][TOVALUE] =
+                    static_cast<char *>(input_comments_[i]->getAssignment()->getValue().getValue());
+                break;
+            }
+
+            result[TOINPUTCOMMENTS].push_back(jinputcomment);
+        }
+
         out_file << result.dump(4) << std::endl;
     }
 
     void exportToJSON(string dir_path)
     {
-        std::cout << "exportToJson begin\n";
         // double check
         if (!check())
         {
@@ -1128,7 +1212,6 @@ public:
         file_path.append(file_name);
 
         std::ofstream out_file(file_path);
-        std::cout << "file_path:"<<file_path.string()<<std::endl;
         assert(out_file.is_open());
 
         // json write
@@ -1148,7 +1231,6 @@ public:
         formJsonOthersD(result, state_id_to_name);
 
         out_file << result.dump(4) << std::endl;
-        std::cout << "exportToJson end\n";
     }
 
     bool postProcess()
@@ -1458,6 +1540,34 @@ private:
             if (states_[i]->isAccepting())
                 location[COLOR] = "SYMBOL";
 
+            for ( int j =0;j<input_comments_.size();j++)
+            {
+                if (i == input_comments_[j]->getId() and input_comments_[j]->getAssignment() != nullptr)
+                {
+                    std::string input_comment_string;
+                    input_comment_string += std::string(input_comments_[j]->getAssignment()->getClock().getName()) + " = ";
+                    switch (input_comments_[j]->getAssignment()->getValue().getType())
+                    {
+                        case ValueType::NDEFINED:
+                            assert(false);
+                        case ValueType::INT:
+                            input_comment_string += std::to_string(
+                                *static_cast<int *>(input_comments_[j]->getAssignment()->getValue().getValue()));
+                            break;
+                        case ValueType::DOUBLE:
+                            input_comment_string += std::to_string(
+                                *static_cast<double *>(input_comments_[j]->getAssignment()->getValue().getValue()));
+                            break;
+                        case ValueType::PARAM:
+                            input_comment_string += std::string(
+                                static_cast<char *>(input_comments_[j]->getAssignment()->getValue().getValue()));
+                            break;
+                    }
+                    location[LABEL][TEXT] = input_comment_string;
+                    location[LABEL][KIND] = "comments";
+                }
+            }
+
             locations.push_back(location);
         }
     }
@@ -1597,6 +1707,7 @@ private:
     vector<Param *> params_;
     vector<State *> states_;
     vector<Transition *> transitions_;
+    vector<InputComment*> input_comments_;
 };
 
 class TOBuffer

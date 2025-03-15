@@ -116,6 +116,8 @@ void formJsonLocations(const json &TOfile, json &result, std::unordered_map<int,
     locations = json::array();
     int states_num = TOfile[TONSTATES].get<int>();
     json inputs = TOfile[TOINPUT], outputs = TOfile[TOOUTPUT], acceptings = TOfile[TOACCEPTING];
+    int input_comments_num = TOfile[TONINPUTCOMMENTS].get<int>();
+    json input_comments = TOfile[TOINPUTCOMMENTS];
 
     for (int i = 0; i < states_num; i++)
     {
@@ -151,6 +153,17 @@ void formJsonLocations(const json &TOfile, json &result, std::unordered_map<int,
             {
                 location[COLOR] = "SYMBOL";
                 break;
+            }
+        }
+
+        for ( int j =0 ;j< input_comments_num; j++)
+        {
+            if ( i == input_comments[j][TOID].get<int>())
+            {
+                std::string input_comment_string = input_comments[j][TOACTION][TOCLOCK].get<std::string>() + " = " +
+                                                   std::to_string(input_comments[j][TOACTION][TOVALUE].get<int>());
+                location[LABEL][TEXT] = input_comment_string;
+                location[LABEL][KIND] = "comments";
             }
         }
 

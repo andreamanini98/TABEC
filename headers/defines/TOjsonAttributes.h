@@ -29,7 +29,10 @@ const std::string TOCLOCK{"clock"};
 const std::string TOOP{"op"};
 const std::string TOVALUE{"value"};
 const std::string TONACTIONS{"nactions"};
+const std::string TOACTION{"action"};
 const std::string TOACTIONS{"actions"};
+const std::string TONINPUTCOMMENTS{"ninputcomments"};
+const std::string TOINPUTCOMMENTS{"inputcomments"};
 
 const std::string TOINF{"inf"};
 const std::string TONAN{"nan"};
