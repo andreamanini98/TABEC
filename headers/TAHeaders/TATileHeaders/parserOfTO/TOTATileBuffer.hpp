@@ -1468,32 +1468,32 @@ private:
 
             const auto &left = bound->getLBound(), &right = bound->getRBound();
 
-            bound_declaration_string += "bound:";
+            bound_declaration_string += "bound";
 
             if (left.getIsInf())
             {
-                bound_declaration_string += "inf:";
+                bound_declaration_string += ":inf";
             }
             else if (left.getIsNan())
             {
-                bound_declaration_string += "nan:";
+                bound_declaration_string += ":nan";
             }
             else
             {
-                bound_declaration_string += std::to_string(left.getValue()) + ":";
+                bound_declaration_string += ":" + std::to_string(left.getValue());
             }
 
             if (right.getIsInf())
             {
-                bound_declaration_string += "inf:";
+                bound_declaration_string += ":inf";
             }
             else if (right.getIsNan())
             {
-                bound_declaration_string += "nan:";
+                bound_declaration_string += ":nan";
             }
             else
             {
-                bound_declaration_string += std::to_string(left.getValue()) + ":";
+                bound_declaration_string += ":" + std::to_string(right.getValue());
             }
 
             bound_idx++;
@@ -1540,28 +1540,29 @@ private:
             if (states_[i]->isAccepting())
                 location[COLOR] = "SYMBOL";
 
-            for ( int j =0;j<input_comments_.size();j++)
+            for (int j = 0; j < input_comments_.size(); j++)
             {
                 if (i == input_comments_[j]->getId() and input_comments_[j]->getAssignment() != nullptr)
                 {
                     std::string input_comment_string;
-                    input_comment_string += std::string(input_comments_[j]->getAssignment()->getClock().getName()) + " = ";
+                    input_comment_string +=
+                        std::string(input_comments_[j]->getAssignment()->getClock().getName()) + " = ";
                     switch (input_comments_[j]->getAssignment()->getValue().getType())
                     {
-                        case ValueType::NDEFINED:
-                            assert(false);
-                        case ValueType::INT:
-                            input_comment_string += std::to_string(
-                                *static_cast<int *>(input_comments_[j]->getAssignment()->getValue().getValue()));
-                            break;
-                        case ValueType::DOUBLE:
-                            input_comment_string += std::to_string(
-                                *static_cast<double *>(input_comments_[j]->getAssignment()->getValue().getValue()));
-                            break;
-                        case ValueType::PARAM:
-                            input_comment_string += std::string(
-                                static_cast<char *>(input_comments_[j]->getAssignment()->getValue().getValue()));
-                            break;
+                    case ValueType::NDEFINED:
+                        assert(false);
+                    case ValueType::INT:
+                        input_comment_string += std::to_string(
+                            *static_cast<int *>(input_comments_[j]->getAssignment()->getValue().getValue()));
+                        break;
+                    case ValueType::DOUBLE:
+                        input_comment_string += std::to_string(
+                            *static_cast<double *>(input_comments_[j]->getAssignment()->getValue().getValue()));
+                        break;
+                    case ValueType::PARAM:
+                        input_comment_string += std::string(
+                            static_cast<char *>(input_comments_[j]->getAssignment()->getValue().getValue()));
+                        break;
                     }
                     location[LABEL][TEXT] = input_comment_string;
                     location[LABEL][KIND] = "comments";
@@ -1707,7 +1708,7 @@ private:
     vector<Param *> params_;
     vector<State *> states_;
     vector<Transition *> transitions_;
-    vector<InputComment*> input_comments_;
+    vector<InputComment *> input_comments_;
 };
 
 class TOBuffer

@@ -53,24 +53,26 @@ void formJsonBounds(const json &TOfile, json &result)
 
         json left = bound[TOLEFT], right = bound[TORIGHT];
 
-        bound_declaration_string += "bound:";
+        bound_declaration_string += "bound";
         if (left.is_number())
         {
-            bound_declaration_string += std::to_string(left.get<int>());
             bound_declaration_string += ":";
+            bound_declaration_string += std::to_string(left.get<int>());
         }
         else if (left.is_string())
         {
-            bound_declaration_string += left.get<std::string>();
             bound_declaration_string += ":";
+            bound_declaration_string += left.get<std::string>();
         }
 
         if (right.is_number())
         {
+            bound_declaration_string += ":";
             bound_declaration_string += std::to_string(right.get<int>());
         }
         else if (right.is_string())
         {
+            bound_declaration_string += ":";
             bound_declaration_string += right.get<std::string>();
         }
 
@@ -156,9 +158,9 @@ void formJsonLocations(const json &TOfile, json &result, std::unordered_map<int,
             }
         }
 
-        for ( int j =0 ;j< input_comments_num; j++)
+        for (int j = 0; j < input_comments_num; j++)
         {
-            if ( i == input_comments[j][TOID].get<int>())
+            if (i == input_comments[j][TOID].get<int>())
             {
                 std::string input_comment_string = input_comments[j][TOACTION][TOCLOCK].get<std::string>() + " = " +
                                                    std::to_string(input_comments[j][TOACTION][TOVALUE].get<int>());
